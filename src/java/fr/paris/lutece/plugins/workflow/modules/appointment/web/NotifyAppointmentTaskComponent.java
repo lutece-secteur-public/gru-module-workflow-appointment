@@ -47,21 +47,22 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * 
+ *
  * NotifyAppointmentTaskComponent
- * 
+ *
  */
 public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
 {
@@ -130,17 +131,17 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
         {
             Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD,
-                    tabRequiredFields, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
+                AdminMessage.TYPE_STOP );
         }
 
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId( ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId(  ) );
         Boolean bCreate = false;
 
         if ( config == null )
         {
-            config = new TaskNotifyAppointmentConfig( );
-            config.setIdTask( task.getId( ) );
+            config = new TaskNotifyAppointmentConfig(  );
+            config.setIdTask( task.getId(  ) );
             bCreate = true;
         }
 
@@ -168,20 +169,20 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId( ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId(  ) );
 
-        String strDefaultSenderName = MailService.getNoReplyEmail( );
+        String strDefaultSenderName = MailService.getNoReplyEmail(  );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_CONFIG, config );
         model.put( MARK_DEFAULT_SENDER_NAME, strDefaultSenderName );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, request.getLocale( ) );
+        model.put( MARK_LOCALE, request.getLocale(  ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
 
-        return template.getHtml( );
+        return template.getHtml(  );
     }
 
     /**

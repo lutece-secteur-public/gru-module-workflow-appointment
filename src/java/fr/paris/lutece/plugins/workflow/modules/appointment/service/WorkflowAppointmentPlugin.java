@@ -48,6 +48,7 @@ public class WorkflowAppointmentPlugin extends Plugin
      * Name of the workflow appointment module
      */
     public static final String PLUGIN_NAME = "workflow-appointment";
+
     /**
      * Transaction manage bean name for services of this plugin
      */
@@ -78,7 +79,7 @@ public class WorkflowAppointmentPlugin extends Plugin
      * Get the workflow appointment module
      * @return The workflow appointment module
      */
-    public static Plugin getPlugin( )
+    public static Plugin getPlugin(  )
     {
         return PluginService.getPlugin( PLUGIN_NAME );
     }

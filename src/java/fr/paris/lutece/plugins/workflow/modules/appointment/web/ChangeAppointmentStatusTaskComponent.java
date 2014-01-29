@@ -48,21 +48,22 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * 
+ *
  * ChangeAppointmentStatusTaskComponent
- * 
+ *
  */
 public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
 {
@@ -110,24 +111,23 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
             }
         }
 
-        int nAppointmentStatus = AppointmentService.getService( ).parseInt( strAppointmentStatus );
+        int nAppointmentStatus = AppointmentService.getService(  ).parseInt( strAppointmentStatus );
 
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
             Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD,
-                    tabRequiredFields, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
+                AdminMessage.TYPE_STOP );
         }
 
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task
-                .getId( ) );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
         Boolean bCreate = false;
 
         if ( config == null )
         {
-            config = new TaskChangeAppointmentStatusConfig( );
-            config.setIdTask( task.getId( ) );
+            config = new TaskChangeAppointmentStatusConfig(  );
+            config.setIdTask( task.getId(  ) );
             bCreate = true;
         }
 
@@ -151,24 +151,23 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task
-                .getId( ) );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
 
-        ReferenceList refListStatus = new ReferenceList( );
+        ReferenceList refListStatus = new ReferenceList(  );
         refListStatus.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
         refListStatus.addItem( Appointment.STATUS_VALIDATED,
-                I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_VALIDATED, locale ) );
+            I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_VALIDATED, locale ) );
         refListStatus.addItem( Appointment.STATUS_REJECTED,
-                I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_REJECTED, locale ) );
+            I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_REJECTED, locale ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_CONFIG, config );
         model.put( MARK_REF_LIST_STATUS, refListStatus );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
 
-        return template.getHtml( );
+        return template.getHtml(  );
     }
 
     /**
@@ -177,10 +176,11 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task
-                .getId( ) );
-        return I18nService.getLocalizedString( config.getAppointmentStatus( ) > 0 ? MESSAGE_APPOINTMENT_VALIDATED
-                : MESSAGE_APPOINTMENT_CANCELED, locale );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
+
+        return I18nService.getLocalizedString( ( config.getAppointmentStatus(  ) > 0 ) ? MESSAGE_APPOINTMENT_VALIDATED
+                                                                                       : MESSAGE_APPOINTMENT_CANCELED,
+            locale );
     }
 
     /**

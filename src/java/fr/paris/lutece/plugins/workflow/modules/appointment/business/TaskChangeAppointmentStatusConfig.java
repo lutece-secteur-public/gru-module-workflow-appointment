@@ -37,9 +37,9 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 
 /**
- * 
+ *
  * TaskChangeAppointmentStatusConfig
- * 
+ *
  */
 public class TaskChangeAppointmentStatusConfig extends TaskConfig
 {
@@ -49,7 +49,7 @@ public class TaskChangeAppointmentStatusConfig extends TaskConfig
      * Get the status to set appointments
      * @return the status to set appointments
      */
-    public int getAppointmentStatus( )
+    public int getAppointmentStatus(  )
     {
         return _nAppointmentStatus;
     }

@@ -37,9 +37,9 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 
 /**
- * 
+ *
  * TaskNotifyAppointmentConfig
- * 
+ *
  */
 public class TaskNotifyAppointmentConfig extends TaskConfig
 {

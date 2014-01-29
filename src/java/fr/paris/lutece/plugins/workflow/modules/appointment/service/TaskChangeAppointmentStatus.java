@@ -42,13 +42,14 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistorySer
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -74,18 +75,17 @@ public class TaskChangeAppointmentStatus extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this
-                .getId( ) );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this.getId(  ) );
 
-        if ( ( config != null ) && ( resourceHistory != null )
-                && Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) )
+        if ( ( config != null ) && ( resourceHistory != null ) &&
+                Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
         {
             // We get the appointment to update
-            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
+            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
             if ( appointment != null )
             {
-                appointment.setStatus( config.getAppointmentStatus( ) );
+                appointment.setStatus( config.getAppointmentStatus(  ) );
                 AppointmentHome.update( appointment );
             }
         }
@@ -95,9 +95,9 @@ public class TaskChangeAppointmentStatus extends SimpleTask
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig( )
+    public void doRemoveConfig(  )
     {
-        _taskChangeAppointmentStatusConfigService.remove( this.getId( ) );
+        _taskChangeAppointmentStatusConfigService.remove( this.getId(  ) );
     }
 
     /**
@@ -106,13 +106,12 @@ public class TaskChangeAppointmentStatus extends SimpleTask
     @Override
     public String getTitle( Locale locale )
     {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this
-                .getId( ) );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {
-            return I18nService.getLocalizedString( config.getAppointmentStatus( ) > 0 ? MESSAGE_ACTIVATE_APPOINTMENT
-                    : MESSAGE_DEACTIVATE_APPOINTMENT, locale );
+            return I18nService.getLocalizedString( ( config.getAppointmentStatus(  ) > 0 )
+                ? MESSAGE_ACTIVATE_APPOINTMENT : MESSAGE_DEACTIVATE_APPOINTMENT, locale );
         }
 
         return StringUtils.EMPTY;

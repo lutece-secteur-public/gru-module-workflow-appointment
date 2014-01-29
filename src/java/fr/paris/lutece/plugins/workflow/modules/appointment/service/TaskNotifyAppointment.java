@@ -47,6 +47,8 @@ import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -54,9 +56,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -66,7 +67,6 @@ public class TaskNotifyAppointment extends SimpleTask
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFY_MAIL = "admin/plugins/workflow/modules/appointment/task_notify_appointment_mail.html";
-
     private static final String MARK_MESSAGE = "message";
     private static final String MARK_LIST_RESPONSE = "listResponse";
     private static final String MARK_FIRSTNAME = "firstName";
@@ -90,42 +90,41 @@ public class TaskNotifyAppointment extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
 
-        if ( ( config != null ) && ( resourceHistory != null )
-                && Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) )
+        if ( ( config != null ) && ( resourceHistory != null ) &&
+                Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
         {
             // Record
-            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
+            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
             if ( appointment != null )
             {
-                AppointmentSlot appointmentSlot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot( ) );
+                AppointmentSlot appointmentSlot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
 
                 if ( appointmentSlot != null )
                 {
                     Map<String, Object> model = fillModel( config, appointment, appointmentSlot );
 
-                    String strSubject = AppTemplateService.getTemplateFromStringFtl( config.getSubject( ), locale,
-                            model ).getHtml( );
+                    String strSubject = AppTemplateService.getTemplateFromStringFtl( config.getSubject(  ), locale,
+                            model ).getHtml(  );
 
-                    boolean bHasRecipients = ( StringUtils.isNotBlank( config.getRecipientsBcc( ) ) || StringUtils
-                            .isNotBlank( config.getRecipientsCc( ) ) );
+                    boolean bHasRecipients = ( StringUtils.isNotBlank( config.getRecipientsBcc(  ) ) ||
+                        StringUtils.isNotBlank( config.getRecipientsCc(  ) ) );
 
-                    String strContent = AppTemplateService.getTemplateFromStringFtl(
-                            AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml( ),
-                            locale, model ).getHtml( );
+                    String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( 
+                                TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ), locale, model ).getHtml(  );
 
                     if ( bHasRecipients )
                     {
-                        MailService.sendMailHtml( appointment.getEmail( ), config.getRecipientsCc( ),
-                                config.getRecipientsBcc( ), config.getSenderName( ), MailService.getNoReplyEmail( ),
-                                strSubject, strContent );
+                        MailService.sendMailHtml( appointment.getEmail(  ), config.getRecipientsCc(  ),
+                            config.getRecipientsBcc(  ), config.getSenderName(  ), MailService.getNoReplyEmail(  ),
+                            strSubject, strContent );
                     }
                     else
                     {
-                        MailService.sendMailHtml( appointment.getEmail( ), config.getSenderName( ),
-                                MailService.getNoReplyEmail( ), strSubject, strContent );
+                        MailService.sendMailHtml( appointment.getEmail(  ), config.getSenderName(  ),
+                            MailService.getNoReplyEmail(  ), strSubject, strContent );
                     }
                 }
             }
@@ -136,9 +135,9 @@ public class TaskNotifyAppointment extends SimpleTask
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig( )
+    public void doRemoveConfig(  )
     {
-        _taskNotifyAppointmentConfigService.remove( this.getId( ) );
+        _taskNotifyAppointmentConfigService.remove( this.getId(  ) );
     }
 
     /**
@@ -147,33 +146,36 @@ public class TaskNotifyAppointment extends SimpleTask
     @Override
     public String getTitle( Locale locale )
     {
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {
-            return config.getSubject( );
+            return config.getSubject(  );
         }
 
         return StringUtils.EMPTY;
     }
 
     private Map<String, Object> fillModel( TaskNotifyAppointmentConfig config, Appointment appointment,
-            AppointmentSlot appointmentSlot )
+        AppointmentSlot appointmentSlot )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
-        model.put( MARK_FIRSTNAME, appointment.getFirstName( ) );
-        model.put( MARK_LASTNAME, appointment.getLastName( ) );
-        model.put( MARK_EMAIL, appointment.getEmail( ) );
-        model.put( MARK_REFERENCE, AppointmentService.getService( ).computeRefAppointment( appointment ) );
-        model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment( ) );
-        String strStartingTime = AppointmentService.getService( ).getFormatedStringTime( appointmentSlot.getStartingHour( ),
-                appointmentSlot.getEndingHour( ) );
+        model.put( MARK_FIRSTNAME, appointment.getFirstName(  ) );
+        model.put( MARK_LASTNAME, appointment.getLastName(  ) );
+        model.put( MARK_EMAIL, appointment.getEmail(  ) );
+        model.put( MARK_REFERENCE, AppointmentService.getService(  ).computeRefAppointment( appointment ) );
+        model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
+
+        String strStartingTime = AppointmentService.getService(  )
+                                                   .getFormatedStringTime( appointmentSlot.getStartingHour(  ),
+                appointmentSlot.getEndingHour(  ) );
         model.put( MARK_TIME_APPOINTMENT, strStartingTime );
-        model.put( MARK_MESSAGE, config.getMessage( ) );
+        model.put( MARK_MESSAGE, config.getMessage(  ) );
 
-        List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment( ) );
+        List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
         model.put( MARK_LIST_RESPONSE, listResponse );
+
         return model;
     }
 }
