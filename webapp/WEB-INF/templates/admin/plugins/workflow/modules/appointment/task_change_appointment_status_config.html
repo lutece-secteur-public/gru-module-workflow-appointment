@@ -1,0 +1,15 @@
+<fieldset>
+	<legend> #i18n{module.workflow.appointment.task_notify_appointment_config.title}</legend>
+	<div class="control-group">
+		<label class="control-label" for="status">#i18n{module.workflow.appointment.task_change_appointment_status_config.label_status} * </label>
+		<div class="controls">
+			<#if config??>
+				<#assign default_value = config.appointmentStatus?string />
+			<#else>
+				<#assign default_value = '' />
+			</#if> 
+			<@combo name="status" items=refListStatus default_value=default_value />
+			<span class="help-block">#i18n{module.workflow.appointment.task_change_appointment_status_config.label_status_comment}</span>
+		</div>
+	</div>
+</fieldset>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<plug-in>
+    <name>workflow-appointment</name>
+    <class>fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin</class>
+    <version>1.0.0</version>
+    <documentation></documentation>
+    <installation></installation>
+    <changes></changes>
+    <user-guide></user-guide>
+    <description>module.workflow.appointment.module.description</description>
+    <provider>module.workflow.appointment.module.provider</provider>
+    <provider-url>http://dev.lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
+    <copyright>Copyright (c) 2013 Mairie de Paris</copyright>
+    <db-pool-required>1</db-pool-required>
+    
+    <!-- Admin features parameters -->
+    <admin-features>
+        <admin-feature>
+            <feature-id>APPOINTMENT_MANAGEMENT</feature-id>
+            <feature-title>appointment.adminFeature.ManageAppointment.name</feature-title>
+            <feature-description>appointment.adminFeature.ManageAppointment.description</feature-description>
+            <feature-level>1</feature-level>
+            <feature-url>jsp/admin/plugins/appointment/ManageAppointments.jsp</feature-url>
+            <feature-icon-url></feature-icon-url>
+      </admin-feature>
+        <admin-feature>
+            <feature-id>APPOINTMENT_FORM_MANAGEMENT</feature-id>
+            <feature-title>appointment.adminFeature.ManageAppointmentForm.name</feature-title>
+            <feature-description>appointment.adminFeature.ManageAppointmentForm.description</feature-description>
+            <feature-level>0</feature-level>
+            <feature-url>jsp/admin/plugins/appointment/ManageAppointmentForms.jsp</feature-url>
+            <feature-icon-url></feature-icon-url>
+      </admin-feature>
+    </admin-features>
+	<rbac-resource-types>
+		<rbac-resource-type>
+			<rbac-resource-type-class>
+				fr.paris.lutece.plugins.appointment.service.AppointmentResourceIdService
+			</rbac-resource-type-class>
+		</rbac-resource-type>
+	</rbac-resource-types>    
+  	<!-- XPages parameters -->
+    <applications>
+        <application>
+            <application-id>appointment</application-id>
+            <application-class>fr.paris.lutece.plugins.appointment.web.AppointmentApp</application-class>
+        </application>
+    </applications>
+	<!-- Portlet parameters -->
+    <portlets>
+     <portlet>
+       <portlet-class>fr.paris.lutece.plugins.appointment.business.portlet.AppointmentPortletHome</portlet-class>
+	   <portlet-type-id>APPOINTMENT_PORTLET</portlet-type-id>
+	   <portlet-type-name>appointment.portlet.appointmentAppointmentPortlet.name</portlet-type-name>
+	   <portlet-creation-url>plugins/appointment/CreatePortletAppointment.jsp</portlet-creation-url>
+	   <portlet-update-url>plugins/appointment/ModifyPortletAppointment.jsp</portlet-update-url>
+	   <portlet-create-action-url>plugins/appointment/DoCreatePortletAppointment.jsp</portlet-create-action-url>
+      <portlet-modify-action-url>plugins/appointment/DoModifyPortletAppointment.jsp</portlet-modify-action-url>
+	    <!-- optional entries -->
+        <portlet-create-script-template>/admin/portlet/script_create_portlet.html</portlet-create-script-template>
+        <portlet-modify-script-template>/admin/portlet/script_modify_portlet.html</portlet-modify-script-template>
+        <portlet-create-specific-template>/admin/plugins/appointment/portlet/create_portletappointment.html</portlet-create-specific-template>
+        <portlet-modify-specific-template>/admin/plugins/appointment/portlet/modify_portletappointment.html</portlet-modify-specific-template>
+        <portlet-create-specific-form-template></portlet-create-specific-form-template>
+        <portlet-modify-specific-form-template></portlet-modify-specific-form-template> 
+     </portlet>
+   </portlets>
+	<daemons>
+		<daemon>
+			<daemon-id>DayCreationDaemon</daemon-id>
+			<daemon-name>appointment.daemon.dayCreationDaemon.name</daemon-name>
+			<daemon-description>appointment.daemon.dayCreationDaemon.description</daemon-description>
+			<daemon-class>fr.paris.lutece.plugins.appointment.service.daemon.DayCreationDaemon</daemon-class>
+		</daemon>
+		<daemon>
+			<daemon-id>DayRemovalDaemon</daemon-id>
+			<daemon-name>appointment.daemon.dayRemovalDaemon.name</daemon-name>
+			<daemon-description>appointment.daemon.dayRemovalDaemon.description</daemon-description>
+			<daemon-class>fr.paris.lutece.plugins.appointment.service.daemon.DayRemovalDaemon</daemon-class>
+		</daemon>
+		<daemon>
+			<daemon-id>AppointmentPublicationDaemon</daemon-id>
+			<daemon-name>appointment.daemon.appointmentPublicationDaemon.name</daemon-name>
+			<daemon-description>appointment.daemon.sppointmentPublicationDaemon.description</daemon-description>
+			<daemon-class>fr.paris.lutece.plugins.appointment.service.daemon.AppointmentPublicationDaemon</daemon-class>
+		</daemon>
+	</daemons>
+	
+   <javascript-files>
+        <javascript-files-scope>portal</javascript-files-scope>
+        <javascript-file>appointment/appointment.js</javascript-file>
+    </javascript-files>
+    <css-stylesheets>
+        <css-stylesheets-scope>portal</css-stylesheets-scope>
+        <css-stylesheet>appointment/appointment.css</css-stylesheet>
+    </css-stylesheets>
+</plug-in>
