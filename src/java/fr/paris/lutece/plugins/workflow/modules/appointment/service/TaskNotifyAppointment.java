@@ -47,8 +47,6 @@ import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,8 +54,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -156,6 +155,14 @@ public class TaskNotifyAppointment extends SimpleTask
         return StringUtils.EMPTY;
     }
 
+    /**
+     * Get a model to generate email content for a given appointment and a given
+     * task.
+     * @param config The configuration of the task.
+     * @param appointment The appointment to get data from
+     * @param appointmentSlot The slot associated with the appointment
+     * @return The model with data
+     */
     private Map<String, Object> fillModel( TaskNotifyAppointmentConfig config, Appointment appointment,
         AppointmentSlot appointmentSlot )
     {
