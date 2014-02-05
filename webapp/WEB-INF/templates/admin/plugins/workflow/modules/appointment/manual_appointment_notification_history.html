@@ -1,0 +1,8 @@
+<#list listHistory as history>
+	<div>
+		#i18n{module.workflow.appointment.manual_appointment_history.labelTitle} :<br />
+		#i18n{module.workflow.appointment.manual_appointment_history.labelTo} : ${history.emailTo}<br />
+		#i18n{module.workflow.appointment.manual_appointment_history.labelSubject} : ${history.emailSubject}<br />
+		#i18n{module.workflow.appointment.manual_appointment_history.labelMessage} : ${history.emailMessage}<br />
+	</div>
+</#list>

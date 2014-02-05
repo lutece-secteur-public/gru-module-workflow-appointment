@@ -68,7 +68,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG = "admin/plugins/workflow/modules/appointment/task_change_appointment_status_config.html";
+    private static final String TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG = "admin/plugins/workflow/modules/appointment/task_change_appointment_status_config.html";
 
     // FIELDS
     private static final String FIELD_APPOINTMENT_STATUS = "module.workflow.appointment.task_change_appointment_status.fieldAppointmentStatus";
@@ -165,7 +165,7 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         model.put( MARK_CONFIG, config );
         model.put( MARK_REF_LIST_STATUS, refListStatus );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale, model );
 
         return template.getHtml(  );
     }
