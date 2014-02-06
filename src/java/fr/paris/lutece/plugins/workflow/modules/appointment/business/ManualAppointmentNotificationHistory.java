@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2013, Mairie de Paris
+ * Copyright (c) 2002-2014, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
+
 /**
- * Manual appointment notificatio
+ * Manual appointment notification
  */
 public class ManualAppointmentNotificationHistory
 {
@@ -49,7 +50,7 @@ public class ManualAppointmentNotificationHistory
      * Get the id of the notif
      * @return The id of the notif
      */
-    public int getIdManualNotif( )
+    public int getIdManualNotif(  )
     {
         return _nIdManualNotif;
     }
@@ -67,7 +68,7 @@ public class ManualAppointmentNotificationHistory
      * Get the id of the history of this manual appointment notification
      * @return The id of the history of this manual appointment notification
      */
-    public int getIdHistory( )
+    public int getIdHistory(  )
     {
         return _nIdHistory;
     }
@@ -86,7 +87,7 @@ public class ManualAppointmentNotificationHistory
      * Get the id of the appointment associated with this history
      * @return The id of the appointment associated with this history
      */
-    public int getIdAppointment( )
+    public int getIdAppointment(  )
     {
         return _nIdAppointment;
     }
@@ -105,7 +106,7 @@ public class ManualAppointmentNotificationHistory
      * Get the recipient email
      * @return The recipient email
      */
-    public String getEmailTo( )
+    public String getEmailTo(  )
     {
         return _strEmailTo;
     }
@@ -123,7 +124,7 @@ public class ManualAppointmentNotificationHistory
      * Get the email subject
      * @return The email subject
      */
-    public String getEmailSubject( )
+    public String getEmailSubject(  )
     {
         return _strEmailSubject;
     }
@@ -141,7 +142,7 @@ public class ManualAppointmentNotificationHistory
      * Get the email message
      * @return The email message
      */
-    public String getEmailMessage( )
+    public String getEmailMessage(  )
     {
         return _strEmailMessage;
     }

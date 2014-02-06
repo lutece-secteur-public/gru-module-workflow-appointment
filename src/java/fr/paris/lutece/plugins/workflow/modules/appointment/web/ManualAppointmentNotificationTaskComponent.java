@@ -46,6 +46,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -53,15 +55,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * 
+ *
  * NotifyAppointmentTaskComponent
- * 
+ *
  */
 public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComponent
 {
@@ -92,18 +93,18 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
      */
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-            Locale locale, ITask task )
+        Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, locale );
-        model.put( MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail( ) );
+        model.put( MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail(  ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MANUAL_APPOINTMENT_NOTIFICATION, locale,
                 model );
 
-        return template.getHtml( );
+        return template.getHtml(  );
     }
 
     /**
@@ -111,7 +112,7 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
      */
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-            ITask task )
+        ITask task )
     {
         String strMessage = request.getParameter( PARAMETER_MESSAGE );
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
@@ -120,6 +121,7 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP );
         }
+
         return null;
     }
 
@@ -129,17 +131,19 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
+        List<ManualAppointmentNotificationHistory> listHistory = ManualAppointmentNotificationHistoryHome.findByIdHistory( nIdHistory );
 
-        List<ManualAppointmentNotificationHistory> listHistory = ManualAppointmentNotificationHistoryHome
-                .findByIdHistory( nIdHistory );
-        if ( listHistory.size( ) > 0 )
+        if ( listHistory.size(  ) > 0 )
         {
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<String, Object>(  );
             model.put( MARK_HISTORY_LIST, listHistory );
+
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY,
                     locale, model );
-            return template.getHtml( );
+
+            return template.getHtml(  );
         }
+
         return StringUtils.EMPTY;
     }
 

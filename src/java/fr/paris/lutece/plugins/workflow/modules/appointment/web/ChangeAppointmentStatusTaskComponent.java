@@ -165,7 +165,8 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         model.put( MARK_CONFIG, config );
         model.put( MARK_REF_LIST_STATUS, refListStatus );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale,
+                model );
 
         return template.getHtml(  );
     }

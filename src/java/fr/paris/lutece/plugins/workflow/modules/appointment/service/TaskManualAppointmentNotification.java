@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2013, Mairie de Paris
+ * Copyright (c) 2002-2014, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -99,18 +99,18 @@ public class TaskManualAppointmentNotification extends SimpleTask
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
-        if ( resourceHistory == null
-                || !Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) )
+        if ( ( resourceHistory == null ) ||
+                !Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
         {
             return;
         }
 
         // Record
-        Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
+        Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
         if ( appointment != null )
         {
-            AppointmentSlot appointmentSlot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot( ) );
+            AppointmentSlot appointmentSlot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
 
             String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
             String strCc = request.getParameter( PARAMETER_CC );
@@ -120,35 +120,36 @@ public class TaskManualAppointmentNotification extends SimpleTask
 
             if ( StringUtils.isBlank( strSenderName ) )
             {
-                strSenderName = MailService.getNoReplyEmail( );
+                strSenderName = MailService.getNoReplyEmail(  );
             }
 
-            if ( appointmentSlot != null && StringUtils.isNotBlank( strSubject ) && StringUtils.isNotBlank( strMessage ) )
+            if ( ( appointmentSlot != null ) && StringUtils.isNotBlank( strSubject ) &&
+                    StringUtils.isNotBlank( strMessage ) )
             {
                 Map<String, Object> model = fillModel( strMessage, appointment, appointmentSlot );
 
-                strSubject = AppTemplateService.getTemplateFromStringFtl( strSubject, locale, model ).getHtml( );
+                strSubject = AppTemplateService.getTemplateFromStringFtl( strSubject, locale, model ).getHtml(  );
 
                 boolean bHasRecipients = ( StringUtils.isNotBlank( strBcc ) || StringUtils.isNotBlank( strCc ) );
 
-                String strContent = AppTemplateService.getTemplateFromStringFtl(
-                        AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml( ), locale,
-                        model ).getHtml( );
+                String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( 
+                            TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ), locale, model ).getHtml(  );
 
                 if ( bHasRecipients )
                 {
-                    MailService.sendMailHtml( appointment.getEmail( ), strCc, strBcc, strSenderName,
-                            MailService.getNoReplyEmail( ), strSubject, strContent );
+                    MailService.sendMailHtml( appointment.getEmail(  ), strCc, strBcc, strSenderName,
+                        MailService.getNoReplyEmail(  ), strSubject, strContent );
                 }
                 else
                 {
-                    MailService.sendMailHtml( appointment.getEmail( ), strSenderName, MailService.getNoReplyEmail( ),
-                            strSubject, strContent );
+                    MailService.sendMailHtml( appointment.getEmail(  ), strSenderName, MailService.getNoReplyEmail(  ),
+                        strSubject, strContent );
                 }
-                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory( );
-                history.setIdHistory( resourceHistory.getId( ) );
-                history.setIdAppointment( resourceHistory.getIdResource( ) );
-                history.setEmailTo( appointment.getEmail( ) );
+
+                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
+                history.setIdHistory( resourceHistory.getId(  ) );
+                history.setIdAppointment( resourceHistory.getIdResource(  ) );
+                history.setEmailTo( appointment.getEmail(  ) );
                 history.setEmailSubject( strSubject );
                 history.setEmailMessage( strContent );
                 ManualAppointmentNotificationHistoryHome.create( history );
@@ -175,20 +176,21 @@ public class TaskManualAppointmentNotification extends SimpleTask
      */
     private Map<String, Object> fillModel( String strMessage, Appointment appointment, AppointmentSlot appointmentSlot )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
-        model.put( MARK_FIRSTNAME, appointment.getFirstName( ) );
-        model.put( MARK_LASTNAME, appointment.getLastName( ) );
-        model.put( MARK_EMAIL, appointment.getEmail( ) );
-        model.put( MARK_REFERENCE, AppointmentService.getService( ).computeRefAppointment( appointment ) );
-        model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment( ) );
+        model.put( MARK_FIRSTNAME, appointment.getFirstName(  ) );
+        model.put( MARK_LASTNAME, appointment.getLastName(  ) );
+        model.put( MARK_EMAIL, appointment.getEmail(  ) );
+        model.put( MARK_REFERENCE, AppointmentService.getService(  ).computeRefAppointment( appointment ) );
+        model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
 
-        String strStartingTime = AppointmentService.getService( ).getFormatedStringTime(
-                appointmentSlot.getStartingHour( ), appointmentSlot.getEndingHour( ) );
+        String strStartingTime = AppointmentService.getService(  )
+                                                   .getFormatedStringTime( appointmentSlot.getStartingHour(  ),
+                appointmentSlot.getEndingHour(  ) );
         model.put( MARK_TIME_APPOINTMENT, strStartingTime );
         model.put( MARK_MESSAGE, strMessage );
 
-        List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment( ) );
+        List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
         model.put( MARK_LIST_RESPONSE, listResponse );
 
         return model;

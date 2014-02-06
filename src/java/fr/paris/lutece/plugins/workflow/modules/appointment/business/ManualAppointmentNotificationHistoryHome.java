@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2013, Mairie de Paris
+ * Copyright (c) 2002-2014, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,8 @@ import java.util.List;
  */
 public class ManualAppointmentNotificationHistoryHome
 {
-    private static IManualAppointmentNotificationHistoryDAO _dao = SpringContextService
-            .getBean( "workflow-appointment.manualAppointmentNotificationHistoryDAO" );
+    private static IManualAppointmentNotificationHistoryDAO _dao = SpringContextService.getBean( 
+            "workflow-appointment.manualAppointmentNotificationHistoryDAO" );
     private static Plugin _plugin = PluginService.getPlugin( WorkflowAppointmentPlugin.PLUGIN_NAME );
 
     /**
