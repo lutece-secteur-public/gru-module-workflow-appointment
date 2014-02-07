@@ -37,9 +37,9 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 
 /**
- *
+ * 
  * TaskNotifyAppointmentConfig
- *
+ * 
  */
 public class TaskNotifyAppointmentConfig extends TaskConfig
 {
@@ -48,12 +48,13 @@ public class TaskNotifyAppointmentConfig extends TaskConfig
     private String _strSenderName;
     private String _strRecipientsCc;
     private String _strRecipientsBcc;
+    private int _nIdActionCancel;
 
     /**
      * Get the subject
      * @return the subject of the message
      */
-    public String getSubject(  )
+    public String getSubject( )
     {
         return _strSubject;
     }
@@ -71,7 +72,7 @@ public class TaskNotifyAppointmentConfig extends TaskConfig
      * Get the message
      * @return the message of the notification
      */
-    public String getMessage(  )
+    public String getMessage( )
     {
         return _strMessage;
     }
@@ -89,7 +90,7 @@ public class TaskNotifyAppointmentConfig extends TaskConfig
      * Get the sender name
      * @return the sender name
      */
-    public String getSenderName(  )
+    public String getSenderName( )
     {
         return _strSenderName;
     }
@@ -107,7 +108,7 @@ public class TaskNotifyAppointmentConfig extends TaskConfig
      * Returns the Recipient
      * @return The Recipient
      */
-    public String getRecipientsCc(  )
+    public String getRecipientsCc( )
     {
         return _strRecipientsCc;
     }
@@ -125,7 +126,7 @@ public class TaskNotifyAppointmentConfig extends TaskConfig
      * Returns the Recipient
      * @return The Recipient
      */
-    public String getRecipientsBcc(  )
+    public String getRecipientsBcc( )
     {
         return _strRecipientsBcc;
     }
@@ -137,5 +138,24 @@ public class TaskNotifyAppointmentConfig extends TaskConfig
     public void setRecipientsBcc( String strRecipient )
     {
         _strRecipientsBcc = strRecipient;
+    }
+
+    /**
+     * Get the id of the workflow action to cancel the appointment
+     * @return The id of the workflow action to cancel the appointment
+     */
+    public int getIdActionCancel( )
+    {
+        return _nIdActionCancel;
+    }
+
+    /**
+     * Set the id of the workflow action to cancel the appointment
+     * @param nIdActionCancel The id of the workflow action to cancel the
+     *            appointment
+     */
+    public void setIdActionCancel( int nIdActionCancel )
+    {
+        this._nIdActionCancel = nIdActionCancel;
     }
 }

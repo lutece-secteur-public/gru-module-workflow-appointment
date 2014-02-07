@@ -9,6 +9,7 @@ CREATE TABLE workflow_task_notify_appointment_cf(
   message long VARCHAR DEFAULT NULL,
   recipients_cc VARCHAR(255) DEFAULT '' NOT NULL,
   recipients_bcc VARCHAR(255) DEFAULT '' NOT NULL,
+  id_action_cancel INT DEFAULT NULL,
   PRIMARY KEY  (id_task)
 );
   
@@ -27,4 +28,3 @@ CREATE TABLE workflow_task_manual_app_notify(
   message long VARCHAR DEFAULT NULL,
   PRIMARY KEY  (id_notif)
 );
-

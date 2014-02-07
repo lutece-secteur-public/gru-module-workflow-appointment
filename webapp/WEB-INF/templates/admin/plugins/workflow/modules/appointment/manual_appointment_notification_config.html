@@ -4,46 +4,34 @@
 	<div class="control-group">
 		<label class="control-label" for="sender_name">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name} * </label>
 		<div class="controls">
-			<input type="text" name="sender_name" id="" class="input-xxlarge" value="<#if config?exists && config.senderName?has_content>${config.senderName}<#else>${default_sender_name}</#if>" maxlength="255"/>
+			<input type="text" name="sender_name" id="" class="input-xxlarge" value="${default_sender_name!}" maxlength="255"/>
 			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name_comment}</span>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="recipients_cc">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc}</label>
 		<div class="controls">
-			<input type="text" name="recipients_cc" id="" class="input-xxlarge" value="${(config.recipientsCc)!}"  maxlength="255"/>
+			<input type="text" name="recipients_cc" id="" class="input-xxlarge" value=""  maxlength="255"/>
 			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc_comment}</span>
 		 </div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="recipients_bcc">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc}</label>
 		<div class="controls">
-			<input type="text" name="recipients_bcc" id="" class="input-xxlarge" value="${(config.recipientsBcc)!}"  maxlength="255"/>
+			<input type="text" name="recipients_bcc" id="" class="input-xxlarge" value=""  maxlength="255"/>
 			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc_comment}</span>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="suject">#i18n{module.workflow.appointment.task_notify_appointment_config.label_subject} * </label>
 		<div class="controls">
-			<input type="text" name="subject" id="" class="input-xxlarge" value="${(config.subject)!}" maxlength="255"/>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="status">#i18n{module.workflow.appointment.task_notify_appointment_config.label_action} </label>
-		<div class="controls">
-			<#if config.idActionCancel??>
-				<#assign default_value = config.idActionCancel?string>
-			<#else>
-				<#assign default_value = ''>
-			</#if>
-			<@combo name="id_action" items=list_actions default_value=default_value />
-			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_action_comment}</span>
+			<input type="text" name="subject" id="" class="input-xxlarge" value="" maxlength="255"/>
 		</div>
 	</div>
 	<div class="control-group">
 		<label class="control-label" for="message">#i18n{module.workflow.appointment.task_notify_appointment_config.label_message} * </label>
 		<div class="controls">
-			<textarea class="richtext" id="message" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
+			<textarea class="richtext" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
 			<span class="help-block">
 				#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :
 				<ul>
@@ -53,7 +41,6 @@
 					<li>${r"${date_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
 					<li>${r"${time_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
 					<li>${r"${reference}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
-					<li>${r"${url_cancel}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_url_cancel}</li>
 				</ul>
 			</span>
 		</div>

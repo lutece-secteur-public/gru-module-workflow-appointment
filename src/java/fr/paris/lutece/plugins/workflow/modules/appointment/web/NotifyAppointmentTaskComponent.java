@@ -37,6 +37,9 @@ import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyA
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointmentConfigService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -45,24 +48,25 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
- *
+ * 
  * NotifyAppointmentTaskComponent
- *
+ * 
  */
 public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
 {
@@ -83,6 +87,7 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
     private static final String MARK_CONFIG = "config";
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_LOCALE = "locale";
+    private static final String MARK_LIST_ACTIONS = "list_actions";
 
     // PARAMETERS
     private static final String PARAMETER_APPLY = "apply";
@@ -91,11 +96,63 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
     private static final String PARAMETER_SENDER_NAME = "sender_name";
     private static final String PARAMETER_RECIPIENTS_CC = "recipients_cc";
     private static final String PARAMETER_RECIPIENTS_BCC = "recipients_bcc";
+    private static final String PARAMETER_ID_ACTION = "id_action";
 
     // SERVICES
     @Inject
     @Named( TaskNotifyAppointmentConfigService.BEAN_SERVICE )
     private ITaskConfigService _taskNotifyAppointmentConfigService;
+
+    @Inject
+    @Named( ActionService.BEAN_SERVICE )
+    private ActionService _actionService;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId( ) );
+
+        ActionFilter filter = new ActionFilter( );
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+        filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
+        List<Action> listActions = _actionService.getListActionByFilter( filter );
+
+        // If the action is a reflexive action, we remove it to prevent infinite loops
+        if ( action.getStateAfter( ).getId( ) == action.getStateBefore( ).getId( ) )
+        {
+            for ( Action actionFound : listActions )
+            {
+                if ( actionFound.getId( ) == action.getId( ) )
+                {
+                    listActions.remove( actionFound );
+                    break;
+                }
+            }
+        }
+        ReferenceList refListActions = new ReferenceList( listActions.size( ) + 1 );
+        refListActions.addItem( 0, StringUtils.EMPTY );
+        for ( Action actionFound : listActions )
+        {
+            refListActions.addItem( actionFound.getId( ), actionFound.getName( ) );
+        }
+
+        String strDefaultSenderName = MailService.getNoReplyEmail( );
+
+        Map<String, Object> model = new HashMap<String, Object>( );
+
+        model.put( MARK_CONFIG, config );
+        model.put( MARK_DEFAULT_SENDER_NAME, strDefaultSenderName );
+        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_LOCALE, locale );
+        model.put( MARK_LIST_ACTIONS, refListActions );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
+
+        return template.getHtml( );
+    }
 
     /**
      * {@inheritDoc}
@@ -132,16 +189,16 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
             Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+                    AdminMessage.TYPE_STOP );
         }
 
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId(  ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId( ) );
         Boolean bCreate = false;
 
         if ( config == null )
         {
-            config = new TaskNotifyAppointmentConfig(  );
-            config.setIdTask( task.getId(  ) );
+            config = new TaskNotifyAppointmentConfig( );
+            config.setIdTask( task.getId( ) );
             bCreate = true;
         }
 
@@ -150,6 +207,14 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
         config.setSubject( strSubject );
         config.setRecipientsCc( StringUtils.isNotEmpty( strRecipientsCc ) ? strRecipientsCc : StringUtils.EMPTY );
         config.setRecipientsBcc( StringUtils.isNotEmpty( strRecipientsBcc ) ? strRecipientsBcc : StringUtils.EMPTY );
+
+        String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
+        int nIdAction = 0;
+        if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction ) )
+        {
+            nIdAction = Integer.parseInt( strIdAction );
+        }
+        config.setIdActionCancel( nIdAction );
 
         if ( bCreate )
         {
@@ -161,28 +226,6 @@ public class NotifyAppointmentTaskComponent extends NoFormTaskComponent
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
-    {
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( task.getId(  ) );
-
-        String strDefaultSenderName = MailService.getNoReplyEmail(  );
-
-        Map<String, Object> model = new HashMap<String, Object>(  );
-
-        model.put( MARK_CONFIG, config );
-        model.put( MARK_DEFAULT_SENDER_NAME, strDefaultSenderName );
-        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, locale );
-
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
-
-        return template.getHtml(  );
     }
 
     /**

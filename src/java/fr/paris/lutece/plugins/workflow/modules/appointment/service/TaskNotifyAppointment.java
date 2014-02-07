@@ -40,12 +40,14 @@ import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.web.ExecuteWorkflowAction;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +76,7 @@ public class TaskNotifyAppointment extends SimpleTask
     private static final String MARK_REFERENCE = "reference";
     private static final String MARK_DATE_APPOINTMENT = "date_appointment";
     private static final String MARK_TIME_APPOINTMENT = "time_appointment";
+    private static final String MARK_URL_CANCEL = "url_cancel";
 
     // SERVICES
     @Inject
@@ -103,7 +106,7 @@ public class TaskNotifyAppointment extends SimpleTask
 
                 if ( appointmentSlot != null )
                 {
-                    Map<String, Object> model = fillModel( config, appointment, appointmentSlot );
+                    Map<String, Object> model = fillModel( request, config, appointment, appointmentSlot );
 
                     String strSubject = AppTemplateService.getTemplateFromStringFtl( config.getSubject(  ), locale,
                             model ).getHtml(  );
@@ -124,6 +127,13 @@ public class TaskNotifyAppointment extends SimpleTask
                     {
                         MailService.sendMailHtml( appointment.getEmail(  ), config.getSenderName(  ),
                             MailService.getNoReplyEmail(  ), strSubject, strContent );
+                    }
+
+                    if ( config.getIdActionCancel( ) > 0
+                            && config.getIdActionCancel( ) != appointment.getIdActionCancel( ) )
+                    {
+                        appointment.setIdActionCancel( config.getIdActionCancel( ) );
+                        AppointmentHome.update( appointment );
                     }
                 }
             }
@@ -163,7 +173,8 @@ public class TaskNotifyAppointment extends SimpleTask
      * @param appointmentSlot The slot associated with the appointment
      * @return The model with data
      */
-    private Map<String, Object> fillModel( TaskNotifyAppointmentConfig config, Appointment appointment,
+    private Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig config,
+            Appointment appointment,
         AppointmentSlot appointmentSlot )
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
@@ -173,7 +184,11 @@ public class TaskNotifyAppointment extends SimpleTask
         model.put( MARK_EMAIL, appointment.getEmail(  ) );
         model.put( MARK_REFERENCE, AppointmentService.getService(  ).computeRefAppointment( appointment ) );
         model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
-
+        model.put(
+                MARK_URL_CANCEL,
+                ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
+                        config.getIdActionCancel( ), 0,
+                        appointment.getIdAppointment( ) ) );
         String strStartingTime = AppointmentService.getService(  )
                                                    .getFormatedStringTime( appointmentSlot.getStartingHour(  ),
                 appointmentSlot.getEndingHour(  ) );
