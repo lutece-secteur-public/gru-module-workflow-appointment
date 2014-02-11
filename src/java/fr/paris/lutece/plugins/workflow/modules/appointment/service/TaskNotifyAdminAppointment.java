@@ -36,11 +36,14 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.web.ExecuteWorkflowAction;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.util.AppPathService;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,17 +60,18 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * TaskNotifyAppointment
  */
-public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAppointmentConfig>
+public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAdminAppointmentConfig>
 {
     // TEMPLATES
     private static final String MARK_URL_CANCEL = "url_cancel";
+    private static final String MARK_URL_VALIDATE = "url_validate";
 
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
-    @Named( TaskNotifyAppointmentConfigService.BEAN_SERVICE )
-    private ITaskConfigService _taskNotifyAppointmentConfigService;
+    @Named( TaskNotifyAdminAppointmentConfigService.BEAN_SERVICE )
+    private ITaskConfigService _taskNotifyAppointmentAdminConfigService;
 
     /**
      * {@inheritDoc}
@@ -76,16 +80,25 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
-        Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+        TaskNotifyAdminAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId(  ) );
 
-        if ( this.sendEmail( appointment, resourceHistory, request, locale, config, appointment.getEmail(  ) ) != null )
+        if ( config.getIdAdminUser(  ) > 0 )
         {
-            if ( ( config.getIdActionCancel(  ) > 0 ) &&
-                    ( config.getIdActionCancel(  ) != appointment.getIdActionCancel(  ) ) )
+            AdminUser adminUser = AdminUserHome.findByPrimaryKey( config.getIdAdminUser(  ) );
+
+            if ( adminUser != null )
             {
-                appointment.setIdActionCancel( config.getIdActionCancel(  ) );
-                AppointmentHome.update( appointment );
+                Appointment appointment = AppointmentHome.findByPrimaryKey( nIdResourceHistory );
+                String strContent = this.sendEmail( appointment, resourceHistory, request, locale, config,
+                        adminUser.getEmail(  ) );
+
+                if ( ( strContent != null ) && ( appointment.getIdActionCancel(  ) == 0 ) &&
+                        ( config.getIdActionCancel(  ) > 0 ) &&
+                        ( config.getIdActionCancel(  ) != appointment.getIdActionCancel(  ) ) )
+                {
+                    appointment.setIdActionCancel( config.getIdActionCancel(  ) );
+                    AppointmentHome.update( appointment );
+                }
             }
         }
     }
@@ -96,7 +109,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     @Override
     public void doRemoveConfig(  )
     {
-        _taskNotifyAppointmentConfigService.remove( this.getId(  ) );
+        _taskNotifyAppointmentAdminConfigService.remove( this.getId(  ) );
     }
 
     /**
@@ -105,7 +118,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     @Override
     public String getTitle( Locale locale )
     {
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId(  ) );
 
         if ( config != null )
         {
@@ -119,13 +132,18 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO,
-        Appointment appointment, AppointmentSlot appointmentSlot )
+    public Map<String, Object> fillModel( HttpServletRequest request,
+        TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, Appointment appointment, AppointmentSlot appointmentSlot )
     {
         Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot );
         model.put( MARK_URL_CANCEL,
             ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionCancel(  ), 0, appointment.getIdAppointment(  ) ) );
+                notifyAppointmentDTO.getIdActionCancel(  ), notifyAppointmentDTO.getIdAdminUser(  ),
+                appointment.getIdAppointment(  ) ) );
+        model.put( MARK_URL_VALIDATE,
+            ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
+                notifyAppointmentDTO.getIdActionValidate(  ), notifyAppointmentDTO.getIdAdminUser(  ),
+                appointment.getIdAppointment(  ) ) );
 
         return model;
     }

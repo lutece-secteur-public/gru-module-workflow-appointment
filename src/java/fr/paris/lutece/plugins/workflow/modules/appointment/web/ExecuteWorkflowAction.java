@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -44,16 +45,20 @@ import fr.paris.lutece.portal.service.admin.AdminAuthenticationService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.util.CryptoService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -68,11 +73,18 @@ public class ExecuteWorkflowAction
     private static final String PARAMETER_TIMESTAMP = "timestamp";
     private static final String PARAMETER_KEY = "key";
 
+    // Properties
+    private static final String PROPERTY_LINKS_LIMIT_VALIDITY = "workflow-appointment.executeWorkflowAction.links_limit_validity";
+
     // JSP URL
     private static final String JSP_URL_EXECUTE_WORKFLOW_ACTION = "jsp/site/plugins/workflow/modules/appointment/DoExecuteWorkflowAction.jsp";
 
+    // Error
+    private static final String ERROR_MESSAGE_TIMESTAMP_EXPIRED = "ExecuteWorkflowAction : Timestamp expired ";
+
     // Constants
     private static final String DEFAULT_ENCRYPTION_ALGO = "SHA-256";
+    private static final int DEFAULT_LIMIT_TIME_VALIDITY = 30;
 
     /**
      * Do execute a workflow action. If the id of the admin user is specified in
@@ -84,42 +96,57 @@ public class ExecuteWorkflowAction
      *             this feature
      */
     public static String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response )
-            throws AccessDeniedException
+        throws AccessDeniedException
     {
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
         String strIdResource = request.getParameter( PARAMETER_ID_RESOURCE );
         String strTimestamp = request.getParameter( PARAMETER_TIMESTAMP );
         String strKey = request.getParameter( PARAMETER_KEY );
-        if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction )
-                && StringUtils.isNotEmpty( strTimestamp ) && StringUtils.isNumeric( strTimestamp )
-                && StringUtils.isNotEmpty( strIdResource ) && StringUtils.isNumeric( strIdResource )
-                && StringUtils.isNotEmpty( strKey ) )
+
+        if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction ) &&
+                StringUtils.isNotEmpty( strTimestamp ) && StringUtils.isNumeric( strTimestamp ) &&
+                StringUtils.isNotEmpty( strIdResource ) && StringUtils.isNumeric( strIdResource ) &&
+                StringUtils.isNotEmpty( strKey ) )
         {
             int nIdAction = Integer.parseInt( strIdAction );
 
-            long nTimestamp = Long.parseLong( strTimestamp );
+            long lTimestamp = Long.parseLong( strTimestamp );
             int nIdResource = Integer.parseInt( strIdResource );
 
             AdminUser user = null;
             int nIdAdminUser = 0;
+
             if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
             {
                 nIdAdminUser = Integer.parseInt( strIdAdminUser );
+
                 if ( nIdAdminUser > 0 )
                 {
                     user = AdminUserHome.findByPrimaryKey( nIdAdminUser );
                 }
             }
 
-            Date timestamp = new Date( nTimestamp );
+            Date timestamp = new Date( lTimestamp );
+            int nLinkLimitValidity = AppPropertiesService.getPropertyInt( PROPERTY_LINKS_LIMIT_VALIDITY,
+                    DEFAULT_LIMIT_TIME_VALIDITY );
 
-            // TODO : check timestamp validity
+            if ( nLinkLimitValidity > 0 )
+            {
+                Calendar calendar = GregorianCalendar.getInstance( WorkflowAppointmentPlugin.getPluginLocale( 
+                            Locale.getDefault(  ) ) );
+                calendar.add( Calendar.DAY_OF_WEEK, -1 * nLinkLimitValidity );
+
+                if ( calendar.getTimeInMillis(  ) > lTimestamp )
+                {
+                    throw new AccessDeniedException( ERROR_MESSAGE_TIMESTAMP_EXPIRED + timestamp.toString(  ) );
+                }
+            }
 
             Appointment appointment = AppointmentHome.findByPrimaryKey( nIdResource );
-            AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot( ) );
+            AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
 
-            String strComputedKey = computeAuthenticationKey( nIdAction, nIdAdminUser, nTimestamp, nIdResource );
+            String strComputedKey = computeAuthenticationKey( nIdAction, nIdAdminUser, lTimestamp, nIdResource );
 
             if ( !StringUtils.equals( strComputedKey, strKey ) )
             {
@@ -130,22 +157,25 @@ public class ExecuteWorkflowAction
             {
                 try
                 {
-                    AdminAuthenticationService.getInstance( ).registerUser( request, user );
+                    AdminAuthenticationService.getInstance(  ).registerUser( request, user );
                 }
                 catch ( AccessDeniedException e )
                 {
-                    AppLogService.error( e.getMessage( ), e );
+                    AppLogService.error( e.getMessage(  ), e );
                 }
                 catch ( UserNotSignedException e )
                 {
-                    AppLogService.error( e.getMessage( ), e );
+                    AppLogService.error( e.getMessage(  ), e );
                 }
             }
 
-            WorkflowService.getInstance( ).doProcessAction( nIdResource, Appointment.APPOINTMENT_RESOURCE_TYPE,
-                    nIdAction, slot.getIdForm( ), request, AdminUserService.getLocale( request ), false );
+            WorkflowService.getInstance(  )
+                           .doProcessAction( nIdResource, Appointment.APPOINTMENT_RESOURCE_TYPE, nIdAction,
+                slot.getIdForm(  ), request, AdminUserService.getLocale( request ), false );
+
             // TODO : redirect the user
         }
+
         return null;
     }
 
@@ -160,17 +190,18 @@ public class ExecuteWorkflowAction
      * @return The URL
      */
     public static String getExecuteWorkflowActionUrl( String strBaseURL, int nIdWorkflowAction, int nIdAdminUser,
-            int nIdResource )
+        int nIdResource )
     {
-        long lTimestamp = System.currentTimeMillis( );
+        long lTimestamp = System.currentTimeMillis(  );
         UrlItem urlItem = new UrlItem( strBaseURL + JSP_URL_EXECUTE_WORKFLOW_ACTION );
         urlItem.addParameter( PARAMETER_ID_ACTION, nIdWorkflowAction );
         urlItem.addParameter( PARAMETER_ID_RESOURCE, nIdResource );
         urlItem.addParameter( PARAMETER_ID_ADMIN_USER, nIdAdminUser );
         urlItem.addParameter( PARAMETER_TIMESTAMP, Long.toString( lTimestamp ) );
         urlItem.addParameter( PARAMETER_KEY,
-                computeAuthenticationKey( nIdWorkflowAction, nIdAdminUser, lTimestamp, nIdResource ) );
-        return urlItem.getUrl( );
+            computeAuthenticationKey( nIdWorkflowAction, nIdAdminUser, lTimestamp, nIdResource ) );
+
+        return urlItem.getUrl(  );
     }
 
     /**
@@ -184,8 +215,9 @@ public class ExecuteWorkflowAction
      */
     private static String computeAuthenticationKey( int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource )
     {
-        String strPrivateKey = CryptoService.getCryptoKey( );
+        String strPrivateKey = CryptoService.getCryptoKey(  );
+
         return CryptoService.encrypt( nIdAction + nIdAdminUser + nTimestamp + nIdResource + strPrivateKey,
-                DEFAULT_ENCRYPTION_ALGO );
+            DEFAULT_ENCRYPTION_ALGO );
     }
 }

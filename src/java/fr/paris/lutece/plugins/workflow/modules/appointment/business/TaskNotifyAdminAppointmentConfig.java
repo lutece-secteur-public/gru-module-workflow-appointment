@@ -31,54 +31,53 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.appointment.service;
-
-import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
-import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
-
-import org.springframework.stereotype.Service;
-
-import org.springframework.transaction.annotation.Transactional;
+package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
 
 /**
- * TaskNotifyAppointmentConfigService
+ *
+ * TaskNotifyAppointmentConfig
+ *
  */
-@Service
-public class TaskNotifyAppointmentConfigService extends TaskConfigService
+public class TaskNotifyAdminAppointmentConfig extends TaskNotifyAppointmentConfig
 {
-    /**
-     * Name of the bean of this service
-     */
-    public static final String BEAN_SERVICE = "workflow-appointment.taskNotifyAppointmentConfigService";
+    private int _nIdAdminUser;
+    private int _nIdActionValidate;
 
     /**
-     * {@inheritDoc}
+     * Get the id of the admin user to notify
+     * @return The id of the admin user to notify
      */
-    @Override
-    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
-    public void create( ITaskConfig config )
+    public int getIdAdminUser(  )
     {
-        super.create( config );
+        return _nIdAdminUser;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the id of the admin user to notify
+     * @param nIdAdminUser The id of the admin user to notify
      */
-    @Override
-    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
-    public void update( ITaskConfig config )
+    public void setIdAdminUser( int nIdAdminUser )
     {
-        super.update( config );
+        this._nIdAdminUser = nIdAdminUser;
     }
 
     /**
-     * {@inheritDoc}
+     * Get the id of the workflow action to validate the appointment
+     * @return The id of the workflow action to validate the appointment
      */
-    @Override
-    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
-    public void remove( int nIdTask )
+    public int getIdActionValidate(  )
     {
-        super.remove( nIdTask );
+        return _nIdActionValidate;
+    }
+
+    /**
+     * Set the id of the workflow action to validate the appointment
+     * @param nIdActionValidate The id of the workflow action to validate the
+     *            appointment
+     */
+    public void setIdActionValidate( int nIdActionValidate )
+    {
+        this._nIdActionValidate = nIdActionValidate;
     }
 }

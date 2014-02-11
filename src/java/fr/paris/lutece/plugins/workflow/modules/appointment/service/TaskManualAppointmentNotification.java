@@ -35,34 +35,27 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
-import fr.paris.lutece.plugins.appointment.service.AppointmentService;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+
+import java.util.Locale;
+
+import javax.inject.Inject;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * TaskNotifyAppointment
  */
-public class TaskManualAppointmentNotification extends SimpleTask
+public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppointment<NotifyAppointmentDTO>
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFY_MAIL = "admin/plugins/workflow/modules/appointment/task_notify_appointment_mail.html";
@@ -98,62 +91,38 @@ public class TaskManualAppointmentNotification extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-
-        if ( ( resourceHistory == null ) ||
-                !Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
-        {
-            return;
-        }
-
-        // Record
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
-        if ( appointment != null )
+        String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
+        String strCc = request.getParameter( PARAMETER_CC );
+        String strBcc = request.getParameter( PARAMETER_BCC );
+        String strMessage = request.getParameter( PARAMETER_MESSAGE );
+        String strSubject = request.getParameter( PARAMETER_SUBJECT );
+
+        if ( StringUtils.isBlank( strSenderName ) )
         {
-            AppointmentSlot appointmentSlot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
+            strSenderName = MailService.getNoReplyEmail(  );
+        }
 
-            String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
-            String strCc = request.getParameter( PARAMETER_CC );
-            String strBcc = request.getParameter( PARAMETER_BCC );
-            String strMessage = request.getParameter( PARAMETER_MESSAGE );
-            String strSubject = request.getParameter( PARAMETER_SUBJECT );
+        NotifyAppointmentDTO notifyAppointmentDTO = new NotifyAppointmentDTO(  );
+        notifyAppointmentDTO.setMessage( strMessage );
+        notifyAppointmentDTO.setRecipientsCc( strCc );
+        notifyAppointmentDTO.setRecipientsBcc( strBcc );
+        notifyAppointmentDTO.setSubject( strSubject );
+        notifyAppointmentDTO.setSenderName( strSenderName );
 
-            if ( StringUtils.isBlank( strSenderName ) )
-            {
-                strSenderName = MailService.getNoReplyEmail(  );
-            }
+        String strContent = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO,
+                appointment.getEmail(  ) );
 
-            if ( ( appointmentSlot != null ) && StringUtils.isNotBlank( strSubject ) &&
-                    StringUtils.isNotBlank( strMessage ) )
-            {
-                Map<String, Object> model = fillModel( strMessage, appointment, appointmentSlot );
-
-                strSubject = AppTemplateService.getTemplateFromStringFtl( strSubject, locale, model ).getHtml(  );
-
-                boolean bHasRecipients = ( StringUtils.isNotBlank( strBcc ) || StringUtils.isNotBlank( strCc ) );
-
-                String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( 
-                            TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ), locale, model ).getHtml(  );
-
-                if ( bHasRecipients )
-                {
-                    MailService.sendMailHtml( appointment.getEmail(  ), strCc, strBcc, strSenderName,
-                        MailService.getNoReplyEmail(  ), strSubject, strContent );
-                }
-                else
-                {
-                    MailService.sendMailHtml( appointment.getEmail(  ), strSenderName, MailService.getNoReplyEmail(  ),
-                        strSubject, strContent );
-                }
-
-                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
-                history.setIdHistory( resourceHistory.getId(  ) );
-                history.setIdAppointment( resourceHistory.getIdResource(  ) );
-                history.setEmailTo( appointment.getEmail(  ) );
-                history.setEmailSubject( strSubject );
-                history.setEmailMessage( strContent );
-                ManualAppointmentNotificationHistoryHome.create( history );
-            }
+        if ( strContent != null )
+        {
+            ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
+            history.setIdHistory( resourceHistory.getId(  ) );
+            history.setIdAppointment( resourceHistory.getIdResource(  ) );
+            history.setEmailTo( appointment.getEmail(  ) );
+            history.setEmailSubject( strSubject );
+            history.setEmailMessage( strContent );
+            ManualAppointmentNotificationHistoryHome.create( history );
         }
     }
 
@@ -164,35 +133,5 @@ public class TaskManualAppointmentNotification extends SimpleTask
     public String getTitle( Locale locale )
     {
         return I18nService.getLocalizedString( MESSAGE_TASK_TITLE, locale );
-    }
-
-    /**
-     * Get a model to generate email content for a given appointment and a given
-     * task.
-     * @param config The configuration of the task.
-     * @param appointment The appointment to get data from
-     * @param appointmentSlot The slot associated with the appointment
-     * @return The model with data
-     */
-    private Map<String, Object> fillModel( String strMessage, Appointment appointment, AppointmentSlot appointmentSlot )
-    {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-
-        model.put( MARK_FIRSTNAME, appointment.getFirstName(  ) );
-        model.put( MARK_LASTNAME, appointment.getLastName(  ) );
-        model.put( MARK_EMAIL, appointment.getEmail(  ) );
-        model.put( MARK_REFERENCE, AppointmentService.getService(  ).computeRefAppointment( appointment ) );
-        model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
-
-        String strStartingTime = AppointmentService.getService(  )
-                                                   .getFormatedStringTime( appointmentSlot.getStartingHour(  ),
-                appointmentSlot.getEndingHour(  ) );
-        model.put( MARK_TIME_APPOINTMENT, strStartingTime );
-        model.put( MARK_MESSAGE, strMessage );
-
-        List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
-        model.put( MARK_LIST_RESPONSE, listResponse );
-
-        return model;
     }
 }

@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
-import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointmentConfigService;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAdminAppointmentConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -52,14 +52,15 @@ import javax.servlet.http.HttpServletRequest;
  * NotifyAppointmentTaskComponent
  *
  */
-public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
+public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
 {
+    // MESSAGES
     private static final String MESSAGE_EMAIL_SENT_TO_USER = "module.workflow.appointment.message.emailSentToUser";
 
     // SERVICES
     @Inject
-    @Named( TaskNotifyAppointmentConfigService.BEAN_SERVICE )
-    private ITaskConfigService _taskNotifyAppointmentConfigService;
+    @Named( TaskNotifyAdminAppointmentConfigService.BEAN_SERVICE )
+    private ITaskConfigService _taskNotifyAdminAppointmentConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
@@ -70,7 +71,7 @@ public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTas
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        return getDisplayConfigForm( request, locale, task, _taskNotifyAppointmentConfigService, true );
+        return getDisplayConfigForm( request, locale, task, _taskNotifyAdminAppointmentConfigService, true );
     }
 
     /**
@@ -79,7 +80,7 @@ public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTas
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        return doSaveConfig( request, locale, task, _taskNotifyAppointmentConfigService, true );
+        return doSaveConfig( request, locale, task, _taskNotifyAdminAppointmentConfigService, true );
     }
 
     /**

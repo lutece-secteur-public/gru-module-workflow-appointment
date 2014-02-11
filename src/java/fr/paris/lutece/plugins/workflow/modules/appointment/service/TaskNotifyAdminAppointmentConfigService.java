@@ -45,12 +45,12 @@ import org.springframework.transaction.annotation.Transactional;
  * TaskNotifyAppointmentConfigService
  */
 @Service
-public class TaskNotifyAppointmentConfigService extends TaskConfigService
+public class TaskNotifyAdminAppointmentConfigService extends TaskConfigService
 {
     /**
      * Name of the bean of this service
      */
-    public static final String BEAN_SERVICE = "workflow-appointment.taskNotifyAppointmentConfigService";
+    public static final String BEAN_SERVICE = "workflow-appointment.taskNotifyAdminAppointmentConfigService";
 
     /**
      * {@inheritDoc}

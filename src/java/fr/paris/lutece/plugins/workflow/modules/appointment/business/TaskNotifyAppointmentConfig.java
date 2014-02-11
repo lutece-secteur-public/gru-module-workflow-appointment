@@ -33,118 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
-
 
 /**
- * 
  * TaskNotifyAppointmentConfig
- * 
  */
-public class TaskNotifyAppointmentConfig extends TaskConfig
+public class TaskNotifyAppointmentConfig extends NotifyAppointmentDTO
 {
-    private String _strSubject;
-    private String _strMessage;
-    private String _strSenderName;
-    private String _strRecipientsCc;
-    private String _strRecipientsBcc;
     private int _nIdActionCancel;
-
-    /**
-     * Get the subject
-     * @return the subject of the message
-     */
-    public String getSubject( )
-    {
-        return _strSubject;
-    }
-
-    /**
-     * Set the subject of the message
-     * @param subject the subject of the message
-     */
-    public void setSubject( String subject )
-    {
-        _strSubject = subject;
-    }
-
-    /**
-     * Get the message
-     * @return the message of the notification
-     */
-    public String getMessage( )
-    {
-        return _strMessage;
-    }
-
-    /**
-     * Set the message of the notification
-     * @param message the message of the notification
-     */
-    public void setMessage( String message )
-    {
-        _strMessage = message;
-    }
-
-    /**
-     * Get the sender name
-     * @return the sender name
-     */
-    public String getSenderName( )
-    {
-        return _strSenderName;
-    }
-
-    /**
-     * Set the sender name
-     * @param senderName the sender name
-     */
-    public void setSenderName( String senderName )
-    {
-        _strSenderName = senderName;
-    }
-
-    /**
-     * Returns the Recipient
-     * @return The Recipient
-     */
-    public String getRecipientsCc( )
-    {
-        return _strRecipientsCc;
-    }
-
-    /**
-     * Sets the Recipient
-     * @param strRecipient The Recipient
-     */
-    public void setRecipientsCc( String strRecipient )
-    {
-        _strRecipientsCc = strRecipient;
-    }
-
-    /**
-     * Returns the Recipient
-     * @return The Recipient
-     */
-    public String getRecipientsBcc( )
-    {
-        return _strRecipientsBcc;
-    }
-
-    /**
-     * Sets the Recipient
-     * @param strRecipient The Recipient
-     */
-    public void setRecipientsBcc( String strRecipient )
-    {
-        _strRecipientsBcc = strRecipient;
-    }
 
     /**
      * Get the id of the workflow action to cancel the appointment
      * @return The id of the workflow action to cancel the appointment
      */
-    public int getIdActionCancel( )
+    public int getIdActionCancel(  )
     {
         return _nIdActionCancel;
     }
