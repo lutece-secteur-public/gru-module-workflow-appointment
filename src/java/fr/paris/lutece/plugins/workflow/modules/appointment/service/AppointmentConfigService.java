@@ -42,16 +42,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- * TaskChangeAppointmentStatusConfigService
+ * Default implementation of the config service of tasks of module workflow
+ * appointment.
  */
 @Service
-public class TaskChangeAppointmentStatusConfigService extends TaskConfigService
+public class AppointmentConfigService extends TaskConfigService
 {
-    /**
-     * Name of the bean of this service
-     */
-    public static final String BEAN_SERVICE = "workflow-appointment.taskChangeAppointmentStatusConfigService";
-
     /**
      * {@inheritDoc}
      */

@@ -1,0 +1,14 @@
+<fieldset>
+	<legend>#i18n{module.workflow.appointment.task_update_appointment_cancel_action_config.title}</legend>
+	<div class="control-group">
+		<label class="control-label" for="status">#i18n{module.workflow.appointment.task_notify_appointment_config.label_action} </label>
+		<div class="controls">
+			<#if (config.idActionCancel)??>
+				<#assign default_value = config.idActionCancel?string>
+			<#else>
+				<#assign default_value = ''>
+			</#if>
+			<@combo name="id_action_cancel" items=list_actions default_value=default_value />
+		</div>
+	</div>
+</fieldset>

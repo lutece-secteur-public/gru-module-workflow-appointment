@@ -36,12 +36,11 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
+import fr.paris.lutece.plugins.appointment.web.AppointmentApp;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
-import fr.paris.lutece.plugins.workflow.modules.appointment.web.ExecuteWorkflowAction;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -59,6 +58,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAppointmentConfig>
 {
+    /**
+     * Name of the bean of the config service of this task
+     */
+    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskNotifyAppointmentConfigService";
+
     // TEMPLATES
     private static final String MARK_URL_CANCEL = "url_cancel";
 
@@ -66,7 +70,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
-    @Named( TaskNotifyAppointmentConfigService.BEAN_SERVICE )
+    @Named( CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskNotifyAppointmentConfigService;
 
     /**
@@ -120,12 +124,10 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
      */
     @Override
     public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO,
-        Appointment appointment, AppointmentSlot appointmentSlot )
+        Appointment appointment, AppointmentSlot appointmentSlot, Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot );
-        model.put( MARK_URL_CANCEL,
-            ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionCancel(  ), 0, appointment.getIdAppointment(  ) ) );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
+        model.put( MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
 
         return model;
     }

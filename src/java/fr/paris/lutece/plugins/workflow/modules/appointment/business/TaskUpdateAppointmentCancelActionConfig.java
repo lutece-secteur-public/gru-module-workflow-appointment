@@ -31,54 +31,34 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.appointment.service;
+package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
-import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
-
-import org.springframework.stereotype.Service;
-
-import org.springframework.transaction.annotation.Transactional;
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 
 /**
- * TaskNotifyAppointmentConfigService
+ * TaskUpdateAppointmentCancelActionConfig
  */
-@Service
-public class TaskNotifyAppointmentConfigService extends TaskConfigService
+public class TaskUpdateAppointmentCancelActionConfig extends TaskConfig
 {
-    /**
-     * Name of the bean of this service
-     */
-    public static final String BEAN_SERVICE = "workflow-appointment.taskNotifyAppointmentConfigService";
+    private int _nIdActionCancel;
 
     /**
-     * {@inheritDoc}
+     * Get the id of the workflow action to cancel the appointment
+     * @return The id of the workflow action to cancel the appointment
      */
-    @Override
-    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
-    public void create( ITaskConfig config )
+    public int getIdActionCancel(  )
     {
-        super.create( config );
+        return _nIdActionCancel;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the id of the workflow action to cancel the appointment
+     * @param nIdActionCancel The id of the workflow action to cancel the
+     *            appointment
      */
-    @Override
-    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
-    public void update( ITaskConfig config )
+    public void setIdActionCancel( int nIdActionCancel )
     {
-        super.update( config );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
-    public void remove( int nIdTask )
-    {
-        super.remove( nIdTask );
+        this._nIdActionCancel = nIdActionCancel;
     }
 }

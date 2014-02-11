@@ -50,7 +50,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_notify_admin_appointment_cf( " +
         "id_task,id_admin_user,sender_name,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate) " +
         "VALUES (?,?,?,?,?,?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_appointment_cf " +
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_admin_appointment_cf " +
         " SET id_admin_user = ?, sender_name = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, id_action_validate = ?" +
         " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notify_admin_appointment_cf WHERE id_task = ? ";
@@ -88,13 +88,14 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin(  ) );
 
         int nIndex = 1;
-
+        daoUtil.setInt( nIndex++, config.getIdAdminUser(  ) );
         daoUtil.setString( nIndex++, config.getSenderName(  ) );
         daoUtil.setString( nIndex++, config.getSubject(  ) );
         daoUtil.setString( nIndex++, config.getMessage(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsCc(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsBcc(  ) );
         daoUtil.setInt( nIndex++, config.getIdActionCancel(  ) );
+        daoUtil.setInt( nIndex++, config.getIdActionValidate(  ) );
 
         daoUtil.setInt( nIndex, config.getIdTask(  ) );
         daoUtil.executeUpdate(  );
@@ -120,12 +121,14 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         {
             config = new TaskNotifyAdminAppointmentConfig(  );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
+            config.setIdAdminUser( daoUtil.getInt( nIndex++ ) );
             config.setSenderName( daoUtil.getString( nIndex++ ) );
             config.setSubject( daoUtil.getString( nIndex++ ) );
             config.setMessage( daoUtil.getString( nIndex++ ) );
             config.setRecipientsCc( daoUtil.getString( nIndex++ ) );
             config.setRecipientsBcc( daoUtil.getString( nIndex++ ) );
             config.setIdActionCancel( daoUtil.getInt( nIndex++ ) );
+            config.setIdActionValidate( daoUtil.getInt( nIndex ) );
         }
 
         daoUtil.free(  );

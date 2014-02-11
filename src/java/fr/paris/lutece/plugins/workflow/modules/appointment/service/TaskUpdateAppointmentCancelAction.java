@@ -35,14 +35,12 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
-import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.Locale;
 
@@ -53,25 +51,24 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * TaskNotifyAppointment
+ * TaskUpdateAppointmentCancelAction
  */
-public class TaskChangeAppointmentStatus extends SimpleTask
+public class TaskUpdateAppointmentCancelAction extends SimpleTask
 {
     /**
      * Name of the bean of the config service of this task
      */
-    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskChangeAppointmentStatusConfigService";
+    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskUpdateAppointmentCancelActionConfigService";
 
-    // Messages
-    private static final String MESSAGE_ACTIVATE_APPOINTMENT = "module.workflow.appointment.task_change_appointment_status.labelEnableAppointment";
-    private static final String MESSAGE_DEACTIVATE_APPOINTMENT = "module.workflow.appointment.task_change_appointment_status.labelDisableAppointment";
+    // MESSAGES
+    private static final String MESSAGE_UPDATE_APPOINTMENT_CANCEL_ACTION = "module.workflow.appointment.task_update_appointment_cancel_action_config.title";
 
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
     @Named( CONFIG_SERVICE_BEAN_NAME )
-    private ITaskConfigService _taskChangeAppointmentStatusConfigService;
+    private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
 
     /**
      * {@inheritDoc}
@@ -80,20 +77,10 @@ public class TaskChangeAppointmentStatus extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this.getId(  ) );
-
-        if ( ( config != null ) && ( resourceHistory != null ) &&
-                Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
-        {
-            // We get the appointment to update
-            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-
-            if ( appointment != null )
-            {
-                appointment.setStatus( config.getAppointmentStatus(  ) );
-                AppointmentHome.update( appointment );
-            }
-        }
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId(  ) );
+        Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+        appointment.setIdActionCancel( config.getIdActionCancel(  ) );
+        AppointmentHome.update( appointment );
     }
 
     /**
@@ -102,7 +89,7 @@ public class TaskChangeAppointmentStatus extends SimpleTask
     @Override
     public void doRemoveConfig(  )
     {
-        _taskChangeAppointmentStatusConfigService.remove( this.getId(  ) );
+        _taskUpdateAppointmentCancelActionConfigService.remove( this.getId(  ) );
     }
 
     /**
@@ -111,14 +98,6 @@ public class TaskChangeAppointmentStatus extends SimpleTask
     @Override
     public String getTitle( Locale locale )
     {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this.getId(  ) );
-
-        if ( config != null )
-        {
-            return I18nService.getLocalizedString( ( config.getAppointmentStatus(  ) > 0 )
-                ? MESSAGE_ACTIVATE_APPOINTMENT : MESSAGE_DEACTIVATE_APPOINTMENT, locale );
-        }
-
-        return StringUtils.EMPTY;
+        return I18nService.getLocalizedString( MESSAGE_UPDATE_APPOINTMENT_CANCEL_ACTION, locale );
     }
 }

@@ -44,11 +44,19 @@ import java.util.List;
 /**
  * Home for manual appointment notification history
  */
-public class ManualAppointmentNotificationHistoryHome
+public final class ManualAppointmentNotificationHistoryHome
 {
     private static IManualAppointmentNotificationHistoryDAO _dao = SpringContextService.getBean( 
             "workflow-appointment.manualAppointmentNotificationHistoryDAO" );
     private static Plugin _plugin = PluginService.getPlugin( WorkflowAppointmentPlugin.PLUGIN_NAME );
+
+    /**
+     * Private default constructor
+     */
+    private ManualAppointmentNotificationHistoryHome(  )
+    {
+        // Nothing to do
+    }
 
     /**
      * Create a new manual appointment notification history

@@ -62,6 +62,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAdminAppointmentConfig>
 {
+    /**
+     * Name of the bean of the config service of this task
+     */
+    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskNotifyAdminAppointmentConfigService";
+
     // TEMPLATES
     private static final String MARK_URL_CANCEL = "url_cancel";
     private static final String MARK_URL_VALIDATE = "url_validate";
@@ -70,7 +75,7 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
     @Inject
     private IResourceHistoryService _resourceHistoryService;
     @Inject
-    @Named( TaskNotifyAdminAppointmentConfigService.BEAN_SERVICE )
+    @Named( CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskNotifyAppointmentAdminConfigService;
 
     /**
@@ -82,23 +87,14 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAdminAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId(  ) );
 
-        if ( config.getIdAdminUser(  ) > 0 )
+        if ( ( config != null ) && ( config.getIdAdminUser(  ) > 0 ) )
         {
             AdminUser adminUser = AdminUserHome.findByPrimaryKey( config.getIdAdminUser(  ) );
 
             if ( adminUser != null )
             {
-                Appointment appointment = AppointmentHome.findByPrimaryKey( nIdResourceHistory );
-                String strContent = this.sendEmail( appointment, resourceHistory, request, locale, config,
-                        adminUser.getEmail(  ) );
-
-                if ( ( strContent != null ) && ( appointment.getIdActionCancel(  ) == 0 ) &&
-                        ( config.getIdActionCancel(  ) > 0 ) &&
-                        ( config.getIdActionCancel(  ) != appointment.getIdActionCancel(  ) ) )
-                {
-                    appointment.setIdActionCancel( config.getIdActionCancel(  ) );
-                    AppointmentHome.update( appointment );
-                }
+                Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+                this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail(  ) );
             }
         }
     }
@@ -133,9 +129,10 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
      */
     @Override
     public Map<String, Object> fillModel( HttpServletRequest request,
-        TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, Appointment appointment, AppointmentSlot appointmentSlot )
+        TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, Appointment appointment,
+        AppointmentSlot appointmentSlot, Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
         model.put( MARK_URL_CANCEL,
             ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
                 notifyAppointmentDTO.getIdActionCancel(  ), notifyAppointmentDTO.getIdAdminUser(  ),

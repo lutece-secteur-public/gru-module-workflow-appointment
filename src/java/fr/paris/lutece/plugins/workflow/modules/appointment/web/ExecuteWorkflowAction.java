@@ -33,32 +33,29 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
+import fr.paris.lutece.plugins.appointment.web.AppointmentJspBean;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminAuthenticationService;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.message.SiteMessage;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.util.CryptoService;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -79,24 +76,26 @@ public class ExecuteWorkflowAction
     // JSP URL
     private static final String JSP_URL_EXECUTE_WORKFLOW_ACTION = "jsp/site/plugins/workflow/modules/appointment/DoExecuteWorkflowAction.jsp";
 
+    // Messages
+    private static final String MESSAGE_ACTION_PERFORMED = "module.workflow.appointment.message.actionPerformed";
+
     // Error
-    private static final String ERROR_MESSAGE_TIMESTAMP_EXPIRED = "ExecuteWorkflowAction : Timestamp expired ";
+    private static final String ERROR_MESSAGE_ACCESS_DENIED = "portal.site.message.pageAccessDenied";
 
     // Constants
     private static final String DEFAULT_ENCRYPTION_ALGO = "SHA-256";
     private static final int DEFAULT_LIMIT_TIME_VALIDITY = 30;
 
     /**
-     * Do execute a workflow action. If the id of the admin user is specified in
-     * parameter, and if the key is correct, then the admin user is logged in.
+     * Do check if the given key is valid. If it is valid, then the user is
+     * redirected to a page to execute a workflow action.
      * @param request The request
      * @param response The response
      * @return The next URL to redirect to
-     * @throws AccessDeniedException If the user is not authorized to access
-     *             this feature
+     * @throws SiteMessageException If a site message needs to be displayed
      */
-    public static String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response )
-        throws AccessDeniedException
+    public String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response )
+        throws SiteMessageException
     {
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
@@ -107,7 +106,8 @@ public class ExecuteWorkflowAction
         if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction ) &&
                 StringUtils.isNotEmpty( strTimestamp ) && StringUtils.isNumeric( strTimestamp ) &&
                 StringUtils.isNotEmpty( strIdResource ) && StringUtils.isNumeric( strIdResource ) &&
-                StringUtils.isNotEmpty( strKey ) )
+                StringUtils.isNotEmpty( strKey ) && StringUtils.isNotEmpty( strIdAdminUser ) &&
+                StringUtils.isNumeric( strIdAdminUser ) )
         {
             int nIdAction = Integer.parseInt( strIdAction );
 
@@ -115,19 +115,13 @@ public class ExecuteWorkflowAction
             int nIdResource = Integer.parseInt( strIdResource );
 
             AdminUser user = null;
-            int nIdAdminUser = 0;
+            int nIdAdminUser = Integer.parseInt( strIdAdminUser );
 
-            if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
+            if ( nIdAdminUser > 0 )
             {
-                nIdAdminUser = Integer.parseInt( strIdAdminUser );
-
-                if ( nIdAdminUser > 0 )
-                {
-                    user = AdminUserHome.findByPrimaryKey( nIdAdminUser );
-                }
+                user = AdminUserHome.findByPrimaryKey( nIdAdminUser );
             }
 
-            Date timestamp = new Date( lTimestamp );
             int nLinkLimitValidity = AppPropertiesService.getPropertyInt( PROPERTY_LINKS_LIMIT_VALIDITY,
                     DEFAULT_LIMIT_TIME_VALIDITY );
 
@@ -139,42 +133,38 @@ public class ExecuteWorkflowAction
 
                 if ( calendar.getTimeInMillis(  ) > lTimestamp )
                 {
-                    throw new AccessDeniedException( ERROR_MESSAGE_TIMESTAMP_EXPIRED + timestamp.toString(  ) );
+                    SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
+
+                    return null;
                 }
             }
-
-            Appointment appointment = AppointmentHome.findByPrimaryKey( nIdResource );
-            AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
 
             String strComputedKey = computeAuthenticationKey( nIdAction, nIdAdminUser, lTimestamp, nIdResource );
 
-            if ( !StringUtils.equals( strComputedKey, strKey ) )
+            if ( ( user == null ) || !StringUtils.equals( strComputedKey, strKey ) )
             {
-                throw new AccessDeniedException( "doExecuteWorkflowAction" );
+                SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
+
+                return null;
             }
 
-            if ( user != null )
+            try
             {
-                try
-                {
-                    AdminAuthenticationService.getInstance(  ).registerUser( request, user );
-                }
-                catch ( AccessDeniedException e )
-                {
-                    AppLogService.error( e.getMessage(  ), e );
-                }
-                catch ( UserNotSignedException e )
-                {
-                    AppLogService.error( e.getMessage(  ), e );
-                }
+                AdminAuthenticationService.getInstance(  ).registerUser( request, user );
+            }
+            catch ( AccessDeniedException e )
+            {
+                AppLogService.error( e.getMessage(  ), e );
+            }
+            catch ( UserNotSignedException e )
+            {
+                AppLogService.error( e.getMessage(  ), e );
             }
 
-            WorkflowService.getInstance(  )
-                           .doProcessAction( nIdResource, Appointment.APPOINTMENT_RESOURCE_TYPE, nIdAction,
-                slot.getIdForm(  ), request, AdminUserService.getLocale( request ), false );
-
-            // TODO : redirect the user
+            return AppointmentJspBean.getUrlExecuteWorkflowAction( request, strIdResource, strIdAction );
         }
+
+        SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
 
         return null;
     }
@@ -183,8 +173,7 @@ public class ExecuteWorkflowAction
      * Get the URL to execute a workflow action on an appointment
      * @param strBaseURL The base URL to use
      * @param nIdWorkflowAction The id of the workflow action to execute
-     * @param nIdAdminUser The id of the action user that execute the action, or
-     *            0 if there is no admin user.
+     * @param nIdAdminUser The id of the action user that execute the action
      * @param nIdResource The id of the appointment to execute the workflow
      *            action on
      * @return The URL
@@ -207,8 +196,7 @@ public class ExecuteWorkflowAction
     /**
      * Compute the authentication key to execute a workflow action
      * @param nIdAction The id of the action to execute
-     * @param nIdAdminUser The id of the admin user that will execute the
-     *            action, or 0 if the action won't be executed by an admin user
+     * @param nIdAdminUser The id of the admin user that will execute the action
      * @param nTimestamp The timestamp used when the link was created
      * @param nIdResource The id of the workflow resource
      * @return The authentication key

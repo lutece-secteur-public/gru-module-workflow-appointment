@@ -44,6 +44,9 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +54,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -63,6 +64,9 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFY_MAIL = "admin/plugins/workflow/modules/appointment/task_notify_appointment_mail.html";
+    private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP = "admin/plugins/workflow/modules/appointment/task_notify_appointment_recap.html";
+
+    // MARKS
     private static final String MARK_MESSAGE = "message";
     private static final String MARK_LIST_RESPONSE = "listResponse";
     private static final String MARK_FIRSTNAME = "firstName";
@@ -71,6 +75,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     private static final String MARK_REFERENCE = "reference";
     private static final String MARK_DATE_APPOINTMENT = "date_appointment";
     private static final String MARK_TIME_APPOINTMENT = "time_appointment";
+    private static final String MARK_RECAP = "recap";
 
     /**
      * Send an email to a user
@@ -93,7 +98,8 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
 
             if ( appointmentSlot != null )
             {
-                Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot );
+                Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot,
+                        locale );
 
                 String strSubject = AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject(  ),
                         locale, model ).getHtml(  );
@@ -130,10 +136,11 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      * @param notifyAppointmentDTO The configuration of the task.
      * @param appointment The appointment to get data from
      * @param appointmentSlot The slot associated with the appointment
+     * @param locale The locale
      * @return The model with data
      */
     public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, Appointment appointment,
-        AppointmentSlot appointmentSlot )
+        AppointmentSlot appointmentSlot, Locale locale )
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
 
@@ -145,12 +152,15 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
 
         String strStartingTime = AppointmentService.getService(  )
                                                    .getFormatedStringTime( appointmentSlot.getStartingHour(  ),
-                appointmentSlot.getEndingHour(  ) );
+                appointmentSlot.getStartingMinute(  ) );
         model.put( MARK_TIME_APPOINTMENT, strStartingTime );
         model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage(  ) );
 
         List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
         model.put( MARK_LIST_RESPONSE, listResponse );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP, locale, model );
+        model.put( MARK_RECAP, template.getHtml(  ) );
 
         return model;
     }

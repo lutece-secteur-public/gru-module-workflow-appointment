@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
-import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAdminAppointmentConfigService;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAdminAppointment;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -55,11 +55,11 @@ import javax.servlet.http.HttpServletRequest;
 public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
 {
     // MESSAGES
-    private static final String MESSAGE_EMAIL_SENT_TO_USER = "module.workflow.appointment.message.emailSentToUser";
+    private static final String MESSAGE_EMAIL_SENT_TO_ADMIN_USER = "module.workflow.appointment.message.emailSentToAdminUser";
 
     // SERVICES
     @Inject
-    @Named( TaskNotifyAdminAppointmentConfigService.BEAN_SERVICE )
+    @Named( TaskNotifyAdminAppointment.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskNotifyAdminAppointmentConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
@@ -89,7 +89,7 @@ public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointme
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        return I18nService.getLocalizedString( MESSAGE_EMAIL_SENT_TO_USER, locale );
+        return I18nService.getLocalizedString( MESSAGE_EMAIL_SENT_TO_ADMIN_USER, locale );
     }
 
     /**

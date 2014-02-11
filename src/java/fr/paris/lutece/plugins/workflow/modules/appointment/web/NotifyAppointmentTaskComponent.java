@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
-import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointmentConfigService;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointment;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -58,7 +58,7 @@ public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTas
 
     // SERVICES
     @Inject
-    @Named( TaskNotifyAppointmentConfigService.BEAN_SERVICE )
+    @Named( TaskNotifyAppointment.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskNotifyAppointmentConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
@@ -70,7 +70,7 @@ public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTas
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        return getDisplayConfigForm( request, locale, task, _taskNotifyAppointmentConfigService, true );
+        return getDisplayConfigForm( request, locale, task, _taskNotifyAppointmentConfigService, false );
     }
 
     /**
@@ -79,7 +79,7 @@ public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTas
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        return doSaveConfig( request, locale, task, _taskNotifyAppointmentConfigService, true );
+        return doSaveConfig( request, locale, task, _taskNotifyAppointmentConfigService, false );
     }
 
     /**

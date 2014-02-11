@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
-import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatusConfigService;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatus;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -61,9 +61,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- *
  * ChangeAppointmentStatusTaskComponent
- *
  */
 public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
 {
@@ -90,7 +88,7 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
 
     // SERVICES
     @Inject
-    @Named( TaskChangeAppointmentStatusConfigService.BEAN_SERVICE )
+    @Named( TaskChangeAppointmentStatus.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskChangeAppointmentStatusConfigService;
 
     /**

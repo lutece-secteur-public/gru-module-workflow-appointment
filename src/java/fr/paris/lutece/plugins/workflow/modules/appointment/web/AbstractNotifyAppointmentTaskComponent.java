@@ -54,6 +54,8 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +64,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -91,6 +92,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     private static final String MARK_LIST_ACTIONS = "list_actions";
     private static final String MARK_NOTIFY_ADMIN = "notify_admin";
     private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
+    private static final String MARK_RECAP = "recap";
 
     // PARAMETERS
     private static final String PARAMETER_APPLY = "apply";
@@ -159,13 +161,15 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
         if ( bNotifyAdmin )
         {
-            Collection<AdminUser> listAdminUser = AdminUserHome.findUserList( );
-            ReferenceList refListAdmins = new ReferenceList( );
+            Collection<AdminUser> listAdminUser = AdminUserHome.findUserList(  );
+            ReferenceList refListAdmins = new ReferenceList(  );
+
             for ( AdminUser adminUser : listAdminUser )
             {
-                refListAdmins.addItem( adminUser.getUserId( ),
-                        adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( ) );
+                refListAdmins.addItem( adminUser.getUserId(  ),
+                    adminUser.getFirstName(  ) + CONSTANT_SPACE + adminUser.getLastName(  ) );
             }
+
             model.put( MARK_LIST_ADMIN_USERS, refListAdmins );
         }
 
@@ -273,7 +277,9 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
             }
 
             configAdmin.setIdActionValidate( nIdActionValidate );
+
             String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
+
             if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
             {
                 int nIdAdminUser = Integer.parseInt( strIdAdminUser );
