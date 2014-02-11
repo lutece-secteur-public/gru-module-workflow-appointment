@@ -45,14 +45,14 @@ import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -126,6 +126,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     /**
      * Get a model to generate email content for a given appointment and a given
      * task.
+     * @param request The request
      * @param notifyAppointmentDTO The configuration of the task.
      * @param appointment The appointment to get data from
      * @param appointmentSlot The slot associated with the appointment

@@ -50,8 +50,6 @@ import fr.paris.lutece.portal.service.util.CryptoService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -59,6 +57,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -210,8 +210,8 @@ public class ExecuteWorkflowAction
      * @param nIdAdminUser The id of the admin user that will execute the
      *            action, or 0 if the action won't be executed by an admin user
      * @param nTimestamp The timestamp used when the link was created
-     * @param nIdResource
-     * @return
+     * @param nIdResource The id of the workflow resource
+     * @return The authentication key
      */
     private static String computeAuthenticationKey( int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource )
     {

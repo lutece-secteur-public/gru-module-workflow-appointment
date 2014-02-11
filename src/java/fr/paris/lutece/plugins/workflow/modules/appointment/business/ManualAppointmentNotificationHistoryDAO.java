@@ -55,6 +55,11 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
     private static final String SQL_QUERY_DELETE_BY_ID_APPOINTMENT = "DELETE FROM workflow_task_manual_app_notify WHERE id_appointment = ? ";
     private static final String SQL_QUEERY_NEW_PRIMARY_KEY = "SELECT MAX(id_notif) FROM workflow_task_manual_app_notify";
 
+    /**
+     * Get a new primary key
+     * @param plugin The plugin
+     * @return The new value of the primary key
+     */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUEERY_NEW_PRIMARY_KEY, plugin );
