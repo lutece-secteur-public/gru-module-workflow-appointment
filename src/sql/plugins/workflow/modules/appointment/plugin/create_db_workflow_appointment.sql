@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS workflow_task_change_appointment_status_cf;
 DROP TABLE IF EXISTS workflow_task_manual_app_notify;
 DROP TABLE IF EXISTS workflow_task_notify_admin_appointment_cf;
 DROP TABLE IF EXISTS workflow_task_update_appointment_cancel_cf;
-
+DROP TABLE IF EXISTS workflow_task_update_admin_appointment;
 
 CREATE TABLE workflow_task_notify_appointment_cf(
   id_task INT NOT NULL,
@@ -31,6 +31,7 @@ CREATE TABLE workflow_task_manual_app_notify(
   message long VARCHAR DEFAULT NULL,
   PRIMARY KEY  (id_notif)
 );
+CREATE INDEX idx_wf_task_manual_app_notify ON workflow_task_manual_app_notify (id_appointment);
 
 CREATE TABLE workflow_task_notify_admin_appointment_cf(
   id_task INT NOT NULL,
@@ -50,3 +51,12 @@ CREATE TABLE workflow_task_update_appointment_cancel_cf(
   id_action_cancel INT DEFAULT NULL,
   PRIMARY KEY  (id_task)
 );
+
+CREATE TABLE workflow_task_update_admin_appointment(
+  id_update INT NOT NULL,
+  id_history INT DEFAULT NULL,
+  id_appointment INT DEFAULT NULL,
+  id_admin_user INT DEFAULT NULL,
+  PRIMARY KEY  (id_update)
+);
+CREATE INDEX idx_wf_task_update_admin_app ON workflow_task_update_admin_appointment (id_appointment);

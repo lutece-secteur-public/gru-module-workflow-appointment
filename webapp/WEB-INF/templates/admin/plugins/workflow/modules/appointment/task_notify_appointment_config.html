@@ -3,7 +3,7 @@
 	<legend> #i18n{module.workflow.appointment.task_notify_appointment_config.title}</legend>
 	<#if notify_admin>
 		<div class="control-group">
-			<label class="control-label" for="sender_name">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name} * </label>
+			<label class="control-label" for="id_admin_user">#i18n{module.workflow.appointment.task_notify_admin_appointment_config.label_admin_user} </label>
 			<div class="controls">
 				<#if (config.idAdminUser)??>
 					<#assign default_value = config.idAdminUser?string>
@@ -11,6 +11,7 @@
 					<#assign default_value = ''>
 				</#if>
 				<@combo items=list_admin_users name="id_admin_user" default_value=default_value />
+				<span class="help-block">#i18n{module.workflow.appointment.task_notify_admin_appointment_config.label_admin_user_comment}</span>
 			</div>
 		</div>
 	</#if>

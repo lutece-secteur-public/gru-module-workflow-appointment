@@ -58,7 +58,10 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * TaskNotifyAppointment
+ * Workflow task to notify an admin user associated to an appointment. <br />
+ * The admin user is the admin user specified in the configuration of the task,
+ * or the admin user associated with the appointment if no admin user is
+ * associated to the configuration.
  */
 public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAdminAppointmentConfig>
 {
@@ -87,14 +90,22 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAdminAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId(  ) );
 
-        if ( ( config != null ) && ( config.getIdAdminUser(  ) > 0 ) )
+        if ( config != null )
         {
-            AdminUser adminUser = AdminUserHome.findByPrimaryKey( config.getIdAdminUser(  ) );
+            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            AdminUser adminUser = AdminUserHome.findByPrimaryKey( ( config.getIdAdminUser(  ) > 0 )
+                    ? config.getIdAdminUser(  ) : appointment.getIdAdminUser(  ) );
 
             if ( adminUser != null )
             {
-                Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
                 this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail(  ) );
+
+                if ( ( config.getIdAdminUser(  ) > 0 ) &&
+                        ( config.getIdAdminUser(  ) != appointment.getIdAdminUser(  ) ) )
+                {
+                    appointment.setIdAdminUser( config.getIdAdminUser(  ) );
+                    AppointmentHome.update( appointment );
+                }
             }
         }
     }

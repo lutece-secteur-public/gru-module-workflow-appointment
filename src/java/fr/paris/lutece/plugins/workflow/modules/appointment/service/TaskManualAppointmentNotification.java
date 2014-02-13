@@ -53,25 +53,12 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * TaskNotifyAppointment
+ * Workflow task to manually notify a user of an appointment
  */
 public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppointment<NotifyAppointmentDTO>
 {
-    // TEMPLATES
-    private static final String TEMPLATE_TASK_NOTIFY_MAIL = "admin/plugins/workflow/modules/appointment/task_notify_appointment_mail.html";
-
     // Messages
     private static final String MESSAGE_TASK_TITLE = "module.workflow.appointment.taskManualAppointmentNotification.title";
-
-    // Marks
-    private static final String MARK_MESSAGE = "message";
-    private static final String MARK_LIST_RESPONSE = "listResponse";
-    private static final String MARK_FIRSTNAME = "firstName";
-    private static final String MARK_LASTNAME = "lastName";
-    private static final String MARK_EMAIL = "email";
-    private static final String MARK_REFERENCE = "reference";
-    private static final String MARK_DATE_APPOINTMENT = "date_appointment";
-    private static final String MARK_TIME_APPOINTMENT = "time_appointment";
 
     // Parameters
     private static final String PARAMETER_SENDER_NAME = "sender_name";

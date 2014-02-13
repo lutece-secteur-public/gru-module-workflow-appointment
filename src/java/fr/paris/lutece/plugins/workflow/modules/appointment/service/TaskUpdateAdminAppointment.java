@@ -35,43 +35,34 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
-import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistory;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
-import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * Workflow task to change the status of an appointment
+ * Workflow task to update the admin user associated to an appointment
  */
-public class TaskChangeAppointmentStatus extends SimpleTask
+public class TaskUpdateAdminAppointment extends SimpleTask
 {
-    /**
-     * Name of the bean of the config service of this task
-     */
-    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskChangeAppointmentStatusConfigService";
-
-    // Messages
-    private static final String MESSAGE_ACTIVATE_APPOINTMENT = "module.workflow.appointment.task_change_appointment_status.labelEnableAppointment";
-    private static final String MESSAGE_DEACTIVATE_APPOINTMENT = "module.workflow.appointment.task_change_appointment_status.labelDisableAppointment";
+    // TEMPLATES
+    private static final String PARAMETER_ID_ADMIN_USER = "url_cancel";
 
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
-    @Inject
-    @Named( CONFIG_SERVICE_BEAN_NAME )
-    private ITaskConfigService _taskChangeAppointmentStatusConfigService;
 
     /**
      * {@inheritDoc}
@@ -80,18 +71,28 @@ public class TaskChangeAppointmentStatus extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this.getId(  ) );
+        String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
 
-        if ( ( config != null ) && ( resourceHistory != null ) &&
-                Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
         {
-            // We get the appointment to update
-            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            int nIdAdminUser = Integer.parseInt( strIdAdminUser );
+            AdminUser adminUser = AdminUserHome.findByPrimaryKey( nIdAdminUser );
 
-            if ( appointment != null )
+            if ( adminUser != null )
             {
-                appointment.setStatus( config.getAppointmentStatus(  ) );
-                AppointmentHome.update( appointment );
+                Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+
+                if ( appointment.getIdAdminUser(  ) != nIdAdminUser )
+                {
+                    appointment.setIdAdminUser( nIdAdminUser );
+                    AppointmentHome.update( appointment );
+
+                    UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory(  );
+                    history.setIdHistory( resourceHistory.getId(  ) );
+                    history.setIdAppointment( resourceHistory.getIdResource(  ) );
+                    history.setIdAdminUser( nIdAdminUser );
+                    UpdateAdminAppointmentHistoryHome.create( history );
+                }
             }
         }
     }
@@ -100,25 +101,8 @@ public class TaskChangeAppointmentStatus extends SimpleTask
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
-    {
-        _taskChangeAppointmentStatusConfigService.remove( this.getId(  ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getTitle( Locale locale )
     {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( this.getId(  ) );
-
-        if ( config != null )
-        {
-            return I18nService.getLocalizedString( ( config.getAppointmentStatus(  ) > 0 )
-                ? MESSAGE_ACTIVATE_APPOINTMENT : MESSAGE_DEACTIVATE_APPOINTMENT, locale );
-        }
-
         return StringUtils.EMPTY;
     }
 }

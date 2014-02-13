@@ -76,9 +76,6 @@ public class ExecuteWorkflowAction
     // JSP URL
     private static final String JSP_URL_EXECUTE_WORKFLOW_ACTION = "jsp/site/plugins/workflow/modules/appointment/DoExecuteWorkflowAction.jsp";
 
-    // Messages
-    private static final String MESSAGE_ACTION_PERFORMED = "module.workflow.appointment.message.actionPerformed";
-
     // Error
     private static final String ERROR_MESSAGE_ACCESS_DENIED = "portal.site.message.pageAccessDenied";
 

@@ -20,9 +20,9 @@
 	<bean id="workflow-appointment.taskNotifyAppointmentConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfigDAO"/>
 	<bean id="workflow-appointment.taskNotifyAppointment" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointment" scope="prototype" />
  	<bean id="workflow-appointment.taskNotifyAppointmentConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig" scope="prototype" />
-   	<bean id="workflow-appointment.taskNotifyAppointmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
-   		p:taskConfigDAO-ref="workflow-appointment.taskNotifyAppointmentConfigDAO" />
-   	<bean id="workflow-appointment.taskTypeNotifyAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+	<bean id="workflow-appointment.taskNotifyAppointmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
+		p:taskConfigDAO-ref="workflow-appointment.taskNotifyAppointmentConfigDAO" />
+	<bean id="workflow-appointment.taskTypeNotifyAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
  		p:key="taskNotifyAppointment"
  		p:titleI18nKey="module.workflow.appointment.task_notify_appointment_config.title"
  		p:beanName="workflow-appointment.taskNotifyAppointment"
@@ -30,18 +30,18 @@
  		p:configRequired="true"
  		p:taskForAutomaticAction="true" />
  	<bean id="workflow-appointment.notifyAppointmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.NotifyAppointmentTaskComponent"
-   		p:taskType-ref="workflow-appointment.taskTypeNotifyAppointment"
-   		p:taskConfigService-ref="workflow-appointment.taskNotifyAppointmentConfigService" />
-   	
-   	
-   	
-   	<!-- Task change appointment status -->
-   	<bean id="workflow-appointment.taskChangeAppointmentStatusConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfigDAO"/>
+		p:taskType-ref="workflow-appointment.taskTypeNotifyAppointment"
+		p:taskConfigService-ref="workflow-appointment.taskNotifyAppointmentConfigService" />
+	
+	
+	
+	<!-- Task change appointment status -->
+	<bean id="workflow-appointment.taskChangeAppointmentStatusConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfigDAO"/>
 	<bean id="workflow-appointment.taskChangeAppointmentStatus" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatus" scope="prototype" />
  	<bean id="workflow-appointment.taskChangeAppointmentStatusConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig" scope="prototype" />
-   	<bean id="workflow-appointment.taskChangeAppointmentStatusConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
-   		p:taskConfigDAO-ref="workflow-appointment.taskChangeAppointmentStatusConfigDAO" />
-   	<bean id="workflow-appointment.taskTypeChangeAppointmentStatus" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+	<bean id="workflow-appointment.taskChangeAppointmentStatusConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
+		p:taskConfigDAO-ref="workflow-appointment.taskChangeAppointmentStatusConfigDAO" />
+	<bean id="workflow-appointment.taskTypeChangeAppointmentStatus" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
  		p:key="taskChangeAppointmentStatus"
  		p:titleI18nKey="module.workflow.appointment.task_change_appointment_status.title"
  		p:beanName="workflow-appointment.taskChangeAppointmentStatus"
@@ -49,13 +49,13 @@
  		p:configRequired="true"
  		p:taskForAutomaticAction="true" />
  	<bean id="workflow-appointment.changeAppointmentStatusTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.ChangeAppointmentStatusTaskComponent"
-   		p:taskType-ref="workflow-appointment.taskTypeChangeAppointmentStatus"
-   		p:taskConfigService-ref="workflow-appointment.taskChangeAppointmentStatusConfigService" />
-   	
-   	
-   	
-   	<!-- Task manual appointment notification -->
-   	<bean id="workflow-appointment.manualAppointmentNotificationHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryDAO"/>
+		p:taskType-ref="workflow-appointment.taskTypeChangeAppointmentStatus"
+		p:taskConfigService-ref="workflow-appointment.taskChangeAppointmentStatusConfigService" />
+	
+	
+	
+	<!-- Task manual appointment notification -->
+	<bean id="workflow-appointment.manualAppointmentNotificationHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryDAO"/>
 	<bean id="workflow-appointment.taskManualAppointmentNotification" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskManualAppointmentNotification" scope="prototype" />
  	<bean id="workflow-appointment.taskTypeManualAppointmentNotification" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
  		p:key="taskManualAppointmentNotification"
@@ -64,17 +64,17 @@
  		p:configRequired="false"
  		p:taskForAutomaticAction="false"
  		p:formTaskRequired="true" />
-   	<bean id="workflow-appointment.manualAppointmentNotificationTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.ManualAppointmentNotificationTaskComponent"
-   		p:taskType-ref="workflow-appointment.taskTypeManualAppointmentNotification" />
-   	
-   	
-   	<!-- Task notify admin appointment -->
+	<bean id="workflow-appointment.manualAppointmentNotificationTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.ManualAppointmentNotificationTaskComponent"
+		p:taskType-ref="workflow-appointment.taskTypeManualAppointmentNotification" />
+	
+	
+	<!-- Task notify admin appointment -->
 	<bean id="workflow-appointment.taskNotifyAdminAppointmentConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfigDAO"/>
 	<bean id="workflow-appointment.taskNotifyAdminAppointment" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAdminAppointment" scope="prototype" />
  	<bean id="workflow-appointment.taskNotifyAdminAppointmentConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig" scope="prototype" />
-   	<bean id="workflow-appointment.taskNotifyAdminAppointmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
-   		p:taskConfigDAO-ref="workflow-appointment.taskNotifyAdminAppointmentConfigDAO" />
-   	<bean id="workflow-appointment.taskTypeNotifyAdminAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+	<bean id="workflow-appointment.taskNotifyAdminAppointmentConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
+		p:taskConfigDAO-ref="workflow-appointment.taskNotifyAdminAppointmentConfigDAO" />
+	<bean id="workflow-appointment.taskTypeNotifyAdminAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
  		p:key="taskNotifyAdminAppointment"
  		p:titleI18nKey="module.workflow.appointment.task_notify_admin_appointment_config.title"
  		p:beanName="workflow-appointment.taskNotifyAdminAppointment"
@@ -82,17 +82,17 @@
  		p:configRequired="true"
  		p:taskForAutomaticAction="true" />
  	<bean id="workflow-appointment.notifyAdminAppointmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.NotifyAdminAppointmentTaskComponent"
-   		p:taskType-ref="workflow-appointment.taskTypeNotifyAdminAppointment"
-   		p:taskConfigService-ref="workflow-appointment.taskNotifyAdminAppointmentConfigService" />
-   	
-   	
-   	<!-- Task update appointment cancel action -->
+		p:taskType-ref="workflow-appointment.taskTypeNotifyAdminAppointment"
+		p:taskConfigService-ref="workflow-appointment.taskNotifyAdminAppointmentConfigService" />
+	
+	
+	<!-- Task update appointment cancel action -->
 	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfigDAO"/>
 	<bean id="workflow-appointment.taskUpdateAppointmentCancelAction" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointmentCancelAction" scope="prototype" />
  	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfig" scope="prototype" />
-   	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
-   		p:taskConfigDAO-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigDAO" />
-   	<bean id="workflow-appointment.taskTypeUpdateAppointmentCancelAction" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
+		p:taskConfigDAO-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigDAO" />
+	<bean id="workflow-appointment.taskTypeUpdateAppointmentCancelAction" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
  		p:key="taskUpdateAppointmentCancelAction"
  		p:titleI18nKey="module.workflow.appointment.task_update_appointment_cancel_action_config.title"
  		p:beanName="workflow-appointment.taskUpdateAppointmentCancelAction"
@@ -100,6 +100,19 @@
  		p:configRequired="true"
  		p:taskForAutomaticAction="true" />
  	<bean id="workflow-appointment.updateAppointmentCancelActionTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.UpdateAppointmentCancelActionTaskComponent"
-   		p:taskType-ref="workflow-appointment.taskTypeUpdateAppointmentCancelAction"
-   		p:taskConfigService-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" />
+		p:taskType-ref="workflow-appointment.taskTypeUpdateAppointmentCancelAction"
+		p:taskConfigService-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" />
+		
+	<!-- Task update administrator appointment -->
+	<bean id="workflow-appointment.manualUpdateAdminAppointmentHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryDAO" />
+	<bean id="workflow-appointment.taskUpdateAdminAppointment" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAdminAppointment" scope="prototype" />
+	<bean id="workflow-appointment.taskTypeUpdateAdminAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskUpdateAdminAppointment"
+		p:titleI18nKey="module.workflow.appointment.task_update_admin_appointment_config.title"
+		p:beanName="workflow-appointment.taskUpdateAdminAppointment"
+		p:configRequired="false"
+ 		p:taskForAutomaticAction="false"
+		p:formTaskRequired="true" />
+	<bean id="workflow-appointment.UpdateAdminAppointmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.UpdateAdminAppointmentTaskComponent"
+		p:taskType-ref="workflow-appointment.taskTypeUpdateAdminAppointment" />
 </beans>

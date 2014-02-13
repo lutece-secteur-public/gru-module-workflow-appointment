@@ -54,7 +54,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * TaskNotifyAppointment
+ * Workflow task to notify a user of an appointment
  */
 public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAppointmentConfig>
 {

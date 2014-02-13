@@ -31,25 +31,52 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.appointment.service.listeners;
+package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.plugins.appointment.service.listeners.IAppointmentRemovalListener;
-import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
-import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+
+import java.util.List;
 
 
 /**
- * Appointment removal listener for module workflow appointment
+ * Interface for update admin appointment history
  */
-public class WorkflowAppointmentRemovalListener implements IAppointmentRemovalListener
+public interface IUpdateAdminAppointmentHistoryDAO
 {
     /**
-     * {@inheritDoc}
+     * Create a new update admin appointment history
+     * @param history The history to insert into the database
+     * @param plugin The plugin
      */
-    @Override
-    public void notifyAppointmentRemoval( int nIdAppointment )
-    {
-        ManualAppointmentNotificationHistoryHome.deleteByIdAppointment( nIdAppointment );
-        UpdateAdminAppointmentHistoryHome.deleteByIdAppointment( nIdAppointment );
-    }
+    void create( UpdateAdminAppointmentHistory history, Plugin plugin );
+
+    /**
+     * Get an update admin appointment history from its primary key
+     * @param nIdUpdate The id of the history to get
+     * @param plugin The plugin
+     * @return The history
+     */
+    UpdateAdminAppointmentHistory findByPrimaryKey( int nIdUpdate, Plugin plugin );
+
+    /**
+     * Get the list of history associated with a given history id
+     * @param nIdHistory The history id
+     * @param plugin The plugin
+     * @return the list of history, or an empty list if none was found
+     */
+    List<UpdateAdminAppointmentHistory> findByIdHistory( int nIdHistory, Plugin plugin );
+
+    /**
+     * Remove an history from its primary key
+     * @param nIdUpdate The id of the history
+     * @param plugin the plugin
+     */
+    void delete( int nIdUpdate, Plugin plugin );
+
+    /**
+     * Remove every history associated with a given appointment
+     * @param nIdAppointment The id of the appointment
+     * @param plugin the plugin
+     */
+    void deleteByIdAppointment( int nIdAppointment, Plugin plugin );
 }

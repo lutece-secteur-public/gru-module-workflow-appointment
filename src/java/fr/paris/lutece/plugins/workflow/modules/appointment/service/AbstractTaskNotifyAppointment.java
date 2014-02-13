@@ -57,7 +57,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * Abstract task to notify a user of an appointment
+ * Abstract task to notify a user of an appointment.
  * @param <T> The type of the DTO to use to send the email
  */
 public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentDTO> extends SimpleTask
