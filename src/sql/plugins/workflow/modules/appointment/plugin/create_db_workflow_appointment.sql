@@ -13,6 +13,8 @@ CREATE TABLE workflow_task_notify_appointment_cf(
   recipients_cc VARCHAR(255) DEFAULT '' NOT NULL,
   recipients_bcc VARCHAR(255) DEFAULT '' NOT NULL,
   id_action_cancel INT DEFAULT NULL,
+  ical_notification SMALLINT DEFAULT 0,
+  location VARCHAR(255) DEFAULT '' NOT NULL,
   PRIMARY KEY  (id_task)
 );
   
@@ -43,6 +45,8 @@ CREATE TABLE workflow_task_notify_admin_appointment_cf(
   recipients_bcc VARCHAR(255) DEFAULT '' NOT NULL,
   id_action_cancel INT DEFAULT NULL,
   id_action_validate INT DEFAULT NULL,
+  ical_notification SMALLINT DEFAULT 0,
+  location VARCHAR(255) DEFAULT '' NOT NULL,
   PRIMARY KEY  (id_task)
 );
 

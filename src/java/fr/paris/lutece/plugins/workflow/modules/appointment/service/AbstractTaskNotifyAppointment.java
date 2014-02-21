@@ -46,14 +46,14 @@ import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -110,16 +110,25 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                 String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( 
                             TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ), locale, model ).getHtml(  );
 
-                if ( bHasRecipients )
+                if ( notifyAppointmentDTO.getSendICalNotif( ) )
                 {
-                    MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getRecipientsCc(  ),
-                        notifyAppointmentDTO.getRecipientsBcc(  ), notifyAppointmentDTO.getSenderName(  ),
-                        MailService.getNoReplyEmail(  ), strSubject, strContent );
+                    ICalService.sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject,
+                            strContent, notifyAppointmentDTO.getLocation( ), appointment,
+                            appointment.getStatus( ) != Appointment.STATUS_REJECTED );
                 }
                 else
                 {
-                    MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName(  ),
-                        MailService.getNoReplyEmail(  ), strSubject, strContent );
+                    if ( bHasRecipients )
+                    {
+                        MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getRecipientsCc( ),
+                                notifyAppointmentDTO.getRecipientsBcc( ), notifyAppointmentDTO.getSenderName( ),
+                                MailService.getNoReplyEmail( ), strSubject, strContent );
+                    }
+                    else
+                    {
+                        MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName( ),
+                                MailService.getNoReplyEmail( ), strSubject, strContent );
+                    }
                 }
 
                 return strContent;

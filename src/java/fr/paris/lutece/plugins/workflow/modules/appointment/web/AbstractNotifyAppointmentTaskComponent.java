@@ -54,8 +54,6 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +62,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -73,6 +72,32 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskComponent
 {
+
+    // CONSTANTS
+    private static final String CONSTANT_SPACE = " ";
+
+    // MARKS
+    private static final String MARK_CONFIG = "config";
+    private static final String MARK_LOCALE = "locale";
+    private static final String MARK_WEBAPP_URL = "webapp_url";
+    private static final String MARK_LIST_ACTIONS = "list_actions";
+    private static final String MARK_NOTIFY_ADMIN = "notify_admin";
+    private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
+    private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
+
+    // PARAMETERS
+    private static final String PARAMETER_APPLY = "apply";
+    private static final String PARAMETER_SUBJECT = "subject";
+    private static final String PARAMETER_MESSAGE = "message";
+    private static final String PARAMETER_LOCATION = "location";
+    private static final String PARAMETER_SENDER_NAME = "sender_name";
+    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
+    private static final String PARAMETER_RECIPIENTS_CC = "recipients_cc";
+    private static final String PARAMETER_RECIPIENTS_BCC = "recipients_bcc";
+    private static final String PARAMETER_SEND_ICAL_NOTIF = "send_ical_notif";
+    private static final String PARAMETER_ID_ACTION_CANCEL = "id_action_cancel";
+    private static final String PARAMETER_ID_ACTION_VALIDATE = "id_action_validate";
+
     // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG = "admin/plugins/workflow/modules/appointment/task_notify_appointment_config.html";
 
@@ -83,29 +108,6 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
-
-    // MARKS
-    private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
-    private static final String MARK_CONFIG = "config";
-    private static final String MARK_WEBAPP_URL = "webapp_url";
-    private static final String MARK_LOCALE = "locale";
-    private static final String MARK_LIST_ACTIONS = "list_actions";
-    private static final String MARK_NOTIFY_ADMIN = "notify_admin";
-    private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
-
-    // PARAMETERS
-    private static final String PARAMETER_APPLY = "apply";
-    private static final String PARAMETER_SUBJECT = "subject";
-    private static final String PARAMETER_MESSAGE = "message";
-    private static final String PARAMETER_SENDER_NAME = "sender_name";
-    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
-    private static final String PARAMETER_RECIPIENTS_CC = "recipients_cc";
-    private static final String PARAMETER_RECIPIENTS_BCC = "recipients_bcc";
-    private static final String PARAMETER_ID_ACTION_CANCEL = "id_action_cancel";
-    private static final String PARAMETER_ID_ACTION_VALIDATE = "id_action_validate";
-
-    // CONSTANTS
-    private static final String CONSTANT_SPACE = " ";
 
     // SERVICES
     @Inject
@@ -205,6 +207,8 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         String strRecipientsCc = request.getParameter( PARAMETER_RECIPIENTS_CC );
         String strRecipientsBcc = request.getParameter( PARAMETER_RECIPIENTS_BCC );
         String strApply = request.getParameter( PARAMETER_APPLY );
+        boolean bSendICalNotif = Boolean.valueOf( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
+        String strLocation = request.getParameter( PARAMETER_LOCATION );
         String strError = StringUtils.EMPTY;
 
         if ( StringUtils.isBlank( strApply ) )
@@ -254,6 +258,8 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         config.setSubject( strSubject );
         config.setRecipientsCc( StringUtils.isNotEmpty( strRecipientsCc ) ? strRecipientsCc : StringUtils.EMPTY );
         config.setRecipientsBcc( StringUtils.isNotEmpty( strRecipientsBcc ) ? strRecipientsBcc : StringUtils.EMPTY );
+        config.setSendICalNotif( bSendICalNotif );
+        config.setLocation( strLocation );
 
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION_CANCEL );
         int nIdAction = 0;

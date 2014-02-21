@@ -47,6 +47,8 @@ public class NotifyAppointmentDTO extends TaskConfig
     private String _strSenderName;
     private String _strRecipientsCc;
     private String _strRecipientsBcc;
+    private boolean _bSendICalNotif;
+    private String _strLocation;
 
     /**
      * Get the subject
@@ -136,5 +138,43 @@ public class NotifyAppointmentDTO extends TaskConfig
     public void setRecipientsBcc( String strRecipient )
     {
         _strRecipientsBcc = strRecipient;
+    }
+
+    /**
+     * Check if the notification should include an iCal event
+     * @return True if the notification should include an iCal event, false
+     *         otherwise
+     */
+    public boolean getSendICalNotif( )
+    {
+        return _bSendICalNotif;
+    }
+
+    /**
+     * Set whether this notification should include an iCal event
+     * @param bSendICalNotif True if this notification should include an
+     *            iCal event, false otherwise
+     */
+    public void setSendICalNotif( boolean bSendICalNotif )
+    {
+        this._bSendICalNotif = bSendICalNotif;
+    }
+
+    /**
+     * Get the localization of the appointment
+     * @return The localization of the appointment
+     */
+    public String getLocation( )
+    {
+        return _strLocation;
+    }
+
+    /**
+     * Set the localization of the appointment
+     * @param strLocation The localization of the appointment
+     */
+    public void setLocation( String strLocation )
+    {
+        this._strLocation = strLocation;
     }
 }

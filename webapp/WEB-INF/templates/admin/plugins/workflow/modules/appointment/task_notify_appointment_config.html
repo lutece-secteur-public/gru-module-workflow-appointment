@@ -16,6 +16,20 @@
 		</div>
 	</#if>
 	<div class="control-group">
+		<label class="control-label" for="send_ical_notif">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}</label>
+		<div class="controls">
+			<input type="checkbox" name="send_ical_notif" onClick="javascript:$('#location').toggle();" value="true" <#if config?exists && config.sendICalNotif>checked="checked"</#if> />
+			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}</span>
+		</div>
+	</div>
+	<div id="location" class="control-group">
+		<label class="control-label" for="location">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}</label>
+		<div class="controls">
+			<input type="text" name="location" value="${(config.location)!}" maxlength="255" />
+			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}</span>
+		</div>
+	</div>
+	<div class="control-group">
 		<label class="control-label" for="sender_name">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name} * </label>
 		<div class="controls">
 			<input type="text" name="sender_name" id="" class="input-xxlarge" value="<#if config?exists && config.senderName?has_content>${config.senderName}<#else>${default_sender_name}</#if>" maxlength="255"/>
@@ -90,3 +104,10 @@
 	</div>
 </fieldset>
 <@initEditor />
+<#if !config?exists || !config.sendICalNotif>
+<script type="text/javascript">
+	$(document).ready( function () {
+		$("#location").toggle();
+		}); 
+</script>
+</#if>
