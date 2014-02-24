@@ -145,7 +145,7 @@ public class NotifyAppointmentDTO extends TaskConfig
      * @return True if the notification should include an iCal event, false
      *         otherwise
      */
-    public boolean getSendICalNotif( )
+    public boolean getSendICalNotif(  )
     {
         return _bSendICalNotif;
     }
@@ -164,7 +164,7 @@ public class NotifyAppointmentDTO extends TaskConfig
      * Get the localization of the appointment
      * @return The localization of the appointment
      */
-    public String getLocation( )
+    public String getLocation(  )
     {
         return _strLocation;
     }

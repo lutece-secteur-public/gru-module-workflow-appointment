@@ -54,6 +54,8 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +64,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -72,7 +73,6 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskComponent
 {
-
     // CONSTANTS
     private static final String CONSTANT_SPACE = " ";
 
