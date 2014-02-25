@@ -44,11 +44,14 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Rsvp;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.Organizer;
@@ -102,7 +105,8 @@ public class ICalService
      *            notify its removal
      */
     public void sendAppointment( String strEmailAttendee, String strEmailOptionnal, String strSubject,
-        String strBodyContent, String strLocation, Appointment appointment, boolean bCreate )
+        String strBodyContent, String strLocation, String strSenderName, String strSenderEmail,
+        Appointment appointment, boolean bCreate )
     {
         AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
         Calendar calendarStart = new GregorianCalendar(  );
@@ -111,10 +115,10 @@ public class ICalService
         calendarStart.add( Calendar.HOUR, slot.getStartingHour(  ) );
         calendarStart.add( Calendar.MINUTE, slot.getStartingMinute(  ) );
 
-        int nDurationAppointmentMinutes = ( ( slot.getEndingHour(  ) - slot.getStartingHour(  ) ) * 60 ) +
+        int nAppDurationMinutes = ( ( slot.getEndingHour(  ) - slot.getStartingHour(  ) ) * 60 ) +
             ( slot.getEndingMinute(  ) - slot.getStartingMinute(  ) );
-        int nDurationAppointmentHours = nDurationAppointmentMinutes / 60;
-        nDurationAppointmentMinutes %= 60;
+        int nDurationAppointmentHours = nAppDurationMinutes / 60;
+        int nDurationAppointmentMinutes = nAppDurationMinutes % 60;
 
         int nDurationAppointmentDays = nDurationAppointmentHours / 24;
         nDurationAppointmentHours %= 24;
@@ -123,6 +127,8 @@ public class ICalService
 
         VEvent event = new VEvent( new DateTime( calendarStart.getTimeInMillis(  ) ), duration,
                 ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
+        calendarStart.add( Calendar.MINUTE, nAppDurationMinutes );
+        event.getProperties(  ).add( new DtEnd( new DateTime( calendarStart.getTimeInMillis(  ) ) ) );
 
         try
         {
@@ -151,8 +157,11 @@ public class ICalService
                 }
             }
 
-            event.getProperties(  ).add( new Organizer( MailService.getNoReplyEmail(  ) ) );
+            Organizer organizer = new Organizer( strSenderEmail );
+            organizer.getParameters(  ).add( new Cn( strSenderName ) );
+            event.getProperties(  ).add( organizer );
             event.getProperties(  ).add( new Location( strLocation ) );
+            event.getProperties(  ).add( new Description( strBodyContent ) );
         }
         catch ( URISyntaxException e )
         {
@@ -166,9 +175,8 @@ public class ICalService
         iCalendar.getProperties(  ).add( CalScale.GREGORIAN );
         iCalendar.getComponents(  ).add( event );
 
-        MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, MailService.getNoReplyEmail(  ),
-            MailService.getNoReplyEmail(  ), ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent,
-            iCalendar.toString(  ) );
+        MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
+            ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent, iCalendar.toString(  ), bCreate );
     }
 
     /**

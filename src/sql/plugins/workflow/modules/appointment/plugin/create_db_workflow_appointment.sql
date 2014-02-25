@@ -7,13 +7,15 @@ DROP TABLE IF EXISTS workflow_task_update_admin_appointment;
 
 CREATE TABLE workflow_task_notify_appointment_cf(
   id_task INT NOT NULL,
-  sender_name VARCHAR(255) DEFAULT NULL, 
-  subject VARCHAR(255) DEFAULT NULL, 
+  sender_name VARCHAR(255) DEFAULT NULL,
+  sender_email VARCHAR(255) DEFAULT NULL,
+  subject VARCHAR(255) DEFAULT NULL,
   message long VARCHAR DEFAULT NULL,
   recipients_cc VARCHAR(255) DEFAULT '' NOT NULL,
   recipients_bcc VARCHAR(255) DEFAULT '' NOT NULL,
   id_action_cancel INT DEFAULT NULL,
   ical_notification SMALLINT DEFAULT 0,
+  create_notif SMALLINT DEFAULT 0,
   location VARCHAR(255) DEFAULT '' NOT NULL,
   PRIMARY KEY  (id_task)
 );
@@ -38,14 +40,16 @@ CREATE INDEX idx_wf_task_manual_app_notify ON workflow_task_manual_app_notify (i
 CREATE TABLE workflow_task_notify_admin_appointment_cf(
   id_task INT NOT NULL,
   id_admin_user INT DEFAULT NULL,
-  sender_name VARCHAR(255) DEFAULT NULL, 
-  subject VARCHAR(255) DEFAULT NULL, 
+  sender_name VARCHAR(255) DEFAULT NULL,
+  sender_email VARCHAR(255) DEFAULT NULL,
+  subject VARCHAR(255) DEFAULT NULL,
   message long VARCHAR DEFAULT NULL,
   recipients_cc VARCHAR(255) DEFAULT '' NOT NULL,
   recipients_bcc VARCHAR(255) DEFAULT '' NOT NULL,
   id_action_cancel INT DEFAULT NULL,
   id_action_validate INT DEFAULT NULL,
   ical_notification SMALLINT DEFAULT 0,
+  create_notif SMALLINT DEFAULT 0,
   location VARCHAR(255) DEFAULT '' NOT NULL,
   PRIMARY KEY  (id_task)
 );

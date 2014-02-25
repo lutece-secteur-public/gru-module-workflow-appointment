@@ -53,6 +53,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.string.StringUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -86,11 +87,12 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
 
     // PARAMETERS
-    private static final String PARAMETER_APPLY = "apply";
     private static final String PARAMETER_SUBJECT = "subject";
     private static final String PARAMETER_MESSAGE = "message";
     private static final String PARAMETER_LOCATION = "location";
     private static final String PARAMETER_SENDER_NAME = "sender_name";
+    private static final String PARAMETER_SENDER_EMAIL = "sender_email";
+    private static final String PARAMETER_CREATE_NOTIF = "create_notif";
     private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
     private static final String PARAMETER_RECIPIENTS_CC = "recipients_cc";
     private static final String PARAMETER_RECIPIENTS_BCC = "recipients_bcc";
@@ -105,6 +107,8 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     private static final String FIELD_SUBJECT = "module.workflow.appointment.task_notify_appointment_config.label_subject";
     private static final String FIELD_MESSAGE = "module.workflow.appointment.task_notify_appointment_config.label_message";
     private static final String FIELD_SENDER_NAME = "module.workflow.appointment.task_notify_appointment_config.label_sender_name";
+    private static final String FIELD_SENDER_EMAIL = "module.workflow.appointment.task_notify_appointment_config.label_sender_email";
+    private static final String FIELD_SENDER_EMAIL_NOT_VALID = "module.workflow.appointment.task_notify_appointment_config.sender_email_not_valid";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
@@ -202,29 +206,36 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         ITaskConfigService taskConfigService, boolean bNotifyAdmin )
     {
         String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
+        String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
         String strMessage = request.getParameter( PARAMETER_MESSAGE );
         String strRecipientsCc = request.getParameter( PARAMETER_RECIPIENTS_CC );
         String strRecipientsBcc = request.getParameter( PARAMETER_RECIPIENTS_BCC );
-        String strApply = request.getParameter( PARAMETER_APPLY );
         boolean bSendICalNotif = Boolean.valueOf( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
         String strLocation = request.getParameter( PARAMETER_LOCATION );
         String strError = StringUtils.EMPTY;
 
-        if ( StringUtils.isBlank( strApply ) )
+        if ( StringUtils.isBlank( strSenderName ) )
         {
-            if ( StringUtils.isBlank( strSenderName ) )
-            {
-                strError = FIELD_SENDER_NAME;
-            }
-            else if ( StringUtils.isBlank( strSubject ) )
-            {
-                strError = FIELD_SUBJECT;
-            }
-            else if ( StringUtils.isBlank( strMessage ) )
-            {
-                strError = FIELD_MESSAGE;
-            }
+            strError = FIELD_SENDER_NAME;
+        }
+
+        if ( StringUtils.isBlank( strSenderEmail ) )
+        {
+            strError = FIELD_SENDER_EMAIL;
+        }
+        else if ( StringUtils.isBlank( strSubject ) )
+        {
+            strError = FIELD_SUBJECT;
+        }
+        else if ( StringUtils.isBlank( strMessage ) )
+        {
+            strError = FIELD_MESSAGE;
+        }
+
+        if ( !StringUtil.checkEmail( strSenderEmail ) )
+        {
+            strError = FIELD_SENDER_EMAIL_NOT_VALID;
         }
 
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
@@ -260,6 +271,11 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         config.setRecipientsBcc( StringUtils.isNotEmpty( strRecipientsBcc ) ? strRecipientsBcc : StringUtils.EMPTY );
         config.setSendICalNotif( bSendICalNotif );
         config.setLocation( strLocation );
+
+        if ( bSendICalNotif )
+        {
+            config.setCreateNotif( Boolean.parseBoolean( request.getParameter( PARAMETER_CREATE_NOTIF ) ) );
+        }
 
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION_CANCEL );
         int nIdAction = 0;

@@ -11,7 +11,8 @@
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 	
 	<bean id="workflow-appointment.workflowAppointmentRemovalListener" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.listeners.WorkflowAppointmentRemovalListener" />
-
+	<bean id="workflow-appointment.iCalService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.ICalService" scope="prototype" />
+	
 	<!-- Transaction Manager -->
 	<bean id="workflow-appointment.transactionManager" class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
 		p:pluginName="workflow-appointment" />

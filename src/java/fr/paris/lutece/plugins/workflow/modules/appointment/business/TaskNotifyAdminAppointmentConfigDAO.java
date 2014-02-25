@@ -45,12 +45,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskNotifyAdminAppointmentConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_admin_user,sender_name,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification,location FROM workflow_task_notify_admin_appointment_cf WHERE id_task=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_admin_user,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification,create_notif,location FROM workflow_task_notify_admin_appointment_cf WHERE id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_notify_admin_appointment_cf( " +
-        "id_task,id_admin_user,sender_name,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification, location) " +
-        "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        "id_task,id_admin_user,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification, create_notif, location) " +
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_admin_appointment_cf " +
-        " SET id_admin_user = ?, sender_name = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, id_action_validate = ?, ical_notification = ?, location = ? WHERE id_task = ? ";
+        " SET id_admin_user = ?, sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, id_action_validate = ?, ical_notification = ?, create_notif = ?, location = ? WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notify_admin_appointment_cf WHERE id_task = ? ";
 
     /**
@@ -66,6 +66,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         daoUtil.setInt( nIndex++, config.getIdTask(  ) );
         daoUtil.setInt( nIndex++, config.getIdAdminUser(  ) );
         daoUtil.setString( nIndex++, config.getSenderName(  ) );
+        daoUtil.setString( nIndex++, config.getSenderEmail(  ) );
         daoUtil.setString( nIndex++, config.getSubject(  ) );
         daoUtil.setString( nIndex++, config.getMessage(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsCc(  ) );
@@ -73,6 +74,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         daoUtil.setInt( nIndex++, config.getIdActionCancel(  ) );
         daoUtil.setInt( nIndex++, config.getIdActionValidate(  ) );
         daoUtil.setBoolean( nIndex++, config.getSendICalNotif(  ) );
+        daoUtil.setBoolean( nIndex++, config.getCreateNotif(  ) );
         daoUtil.setString( nIndex, config.getLocation(  ) );
 
         daoUtil.executeUpdate(  );
@@ -90,6 +92,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         int nIndex = 1;
         daoUtil.setInt( nIndex++, config.getIdAdminUser(  ) );
         daoUtil.setString( nIndex++, config.getSenderName(  ) );
+        daoUtil.setString( nIndex++, config.getSenderEmail(  ) );
         daoUtil.setString( nIndex++, config.getSubject(  ) );
         daoUtil.setString( nIndex++, config.getMessage(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsCc(  ) );
@@ -97,6 +100,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         daoUtil.setInt( nIndex++, config.getIdActionCancel(  ) );
         daoUtil.setInt( nIndex++, config.getIdActionValidate(  ) );
         daoUtil.setBoolean( nIndex++, config.getSendICalNotif(  ) );
+        daoUtil.setBoolean( nIndex++, config.getCreateNotif(  ) );
         daoUtil.setString( nIndex++, config.getLocation(  ) );
 
         daoUtil.setInt( nIndex, config.getIdTask(  ) );
@@ -125,6 +129,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
             config.setIdAdminUser( daoUtil.getInt( nIndex++ ) );
             config.setSenderName( daoUtil.getString( nIndex++ ) );
+            config.setSenderEmail( daoUtil.getString( nIndex++ ) );
             config.setSubject( daoUtil.getString( nIndex++ ) );
             config.setMessage( daoUtil.getString( nIndex++ ) );
             config.setRecipientsCc( daoUtil.getString( nIndex++ ) );
@@ -132,6 +137,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
             config.setIdActionCancel( daoUtil.getInt( nIndex++ ) );
             config.setIdActionValidate( daoUtil.getInt( nIndex++ ) );
             config.setSendICalNotif( daoUtil.getBoolean( nIndex++ ) );
+            config.setCreateNotif( daoUtil.getBoolean( nIndex++ ) );
             config.setLocation( daoUtil.getString( nIndex ) );
         }
 

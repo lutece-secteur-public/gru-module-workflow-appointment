@@ -2,10 +2,45 @@
 <fieldset>
 	<legend> #i18n{module.workflow.appointment.task_notify_appointment_config.title}</legend>
 	<div class="control-group">
+		<label class="control-label" for="send_ical_notif">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}</label>
+		<div class="controls">
+			<input type="checkbox" name="send_ical_notif" onClick="javascript:$('#ical').toggle();" value="true" <#if config?exists && config.sendICalNotif>checked="checked"</#if> />
+			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}</span>
+		</div>
+	</div>
+	<div id="ical">
+		<div class="control-group">
+			<div class="controls">
+				<label class="radio inline" for="create_notif">
+					<input type="radio" name="create_notif" value="true" <#if !(config?exists) || config.createNotif>checked="checked"</#if> />
+					#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}
+				</label>
+				<label class="radio inline" for="create_notif">
+					<input type="radio" name="create_notif" value="false" <#if config?exists && !(config.createNotif)>checked="checked"</#if> />
+					#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}
+				</label>
+				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}</span>
+			</div>
+		</div>
+		<div id="location" class="control-group">
+			<label class="control-label" for="location">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}</label>
+			<div class="controls">
+				<input type="text" name="location" value="${(config.location)!}" maxlength="255" />
+				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}</span>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
 		<label class="control-label" for="sender_name">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name} * </label>
 		<div class="controls">
 			<input type="text" name="sender_name" id="" class="input-xxlarge" value="${default_sender_name!}" maxlength="255"/>
 			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name_comment}</span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="sender_email">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_email} * </label>
+		<div class="controls">
+			<input type="text" name="sender_email" id="" class="input-xxlarge" value="${default_sender_name!}" maxlength="255"/>
 		</div>
 	</div>
 	<div class="control-group">
@@ -32,18 +67,23 @@
 		<label class="control-label" for="message">#i18n{module.workflow.appointment.task_notify_appointment_config.label_message} * </label>
 		<div class="controls">
 			<textarea class="richtext" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
-			<span class="help-block">
-				#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :
-				<ul>
-					<li>${r"${firstName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
-					<li>${r"${lastName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_lastname}</li>
-					<li>${r"${email}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_email}</li>
-					<li>${r"${date_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
-					<li>${r"${time_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
-					<li>${r"${reference}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
-				</ul>
-			</span>
+			#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :
+			<ul>
+				<li>${r"${firstName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
+				<li>${r"${lastName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_lastname}</li>
+				<li>${r"${email}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_email}</li>
+				<li>${r"${date_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
+				<li>${r"${time_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
+				<li>${r"${reference}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
+			</ul>
 		</div>
 	</div>
 </fieldset>
 <@initEditor />
+<#if !config?exists || !config.sendICalNotif>
+	<script type="text/javascript">
+		$(document).ready( function () {
+			$("#ical").toggle();
+			}); 
+	</script>
+</#if>

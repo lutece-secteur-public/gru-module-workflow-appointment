@@ -45,13 +45,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotifyAppointmentConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,sender_name,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,location " +
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location " +
         "FROM workflow_task_notify_appointment_cf WHERE id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_notify_appointment_cf( " +
-        "id_task,sender_name,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,location)" +
-        "VALUES (?,?,?,?,?,?,?,?,?)";
+        "id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location)" +
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_appointment_cf " +
-        " SET sender_name = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, ical_notification = ?, location = ?" +
+        " SET sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, ical_notification = ?, create_notif = ?, location = ?" +
         " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notify_appointment_cf WHERE id_task = ? ";
 
@@ -67,12 +67,14 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
 
         daoUtil.setInt( nIndex++, config.getIdTask(  ) );
         daoUtil.setString( nIndex++, config.getSenderName(  ) );
+        daoUtil.setString( nIndex++, config.getSenderEmail(  ) );
         daoUtil.setString( nIndex++, config.getSubject(  ) );
         daoUtil.setString( nIndex++, config.getMessage(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsCc(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsBcc(  ) );
         daoUtil.setInt( nIndex++, config.getIdActionCancel(  ) );
         daoUtil.setBoolean( nIndex++, config.getSendICalNotif(  ) );
+        daoUtil.setBoolean( nIndex++, config.getCreateNotif(  ) );
         daoUtil.setString( nIndex, config.getLocation(  ) );
 
         daoUtil.executeUpdate(  );
@@ -90,12 +92,14 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
         int nIndex = 1;
 
         daoUtil.setString( nIndex++, config.getSenderName(  ) );
+        daoUtil.setString( nIndex++, config.getSenderEmail(  ) );
         daoUtil.setString( nIndex++, config.getSubject(  ) );
         daoUtil.setString( nIndex++, config.getMessage(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsCc(  ) );
         daoUtil.setString( nIndex++, config.getRecipientsBcc(  ) );
         daoUtil.setInt( nIndex++, config.getIdActionCancel(  ) );
         daoUtil.setBoolean( nIndex++, config.getSendICalNotif(  ) );
+        daoUtil.setBoolean( nIndex++, config.getCreateNotif(  ) );
         daoUtil.setString( nIndex++, config.getLocation(  ) );
 
         daoUtil.setInt( nIndex, config.getIdTask(  ) );
@@ -123,12 +127,14 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
             config = new TaskNotifyAppointmentConfig(  );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
             config.setSenderName( daoUtil.getString( nIndex++ ) );
+            config.setSenderEmail( daoUtil.getString( nIndex++ ) );
             config.setSubject( daoUtil.getString( nIndex++ ) );
             config.setMessage( daoUtil.getString( nIndex++ ) );
             config.setRecipientsCc( daoUtil.getString( nIndex++ ) );
             config.setRecipientsBcc( daoUtil.getString( nIndex++ ) );
             config.setIdActionCancel( daoUtil.getInt( nIndex++ ) );
             config.setSendICalNotif( daoUtil.getBoolean( nIndex++ ) );
+            config.setCreateNotif( daoUtil.getBoolean( nIndex++ ) );
             config.setLocation( daoUtil.getString( nIndex ) );
         }
 

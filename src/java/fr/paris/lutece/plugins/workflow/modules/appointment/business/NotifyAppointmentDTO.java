@@ -45,9 +45,11 @@ public class NotifyAppointmentDTO extends TaskConfig
     private String _strSubject;
     private String _strMessage;
     private String _strSenderName;
+    private String _strSenderEmail;
     private String _strRecipientsCc;
     private String _strRecipientsBcc;
     private boolean _bSendICalNotif;
+    private boolean _bCreateNotif;
     private String _strLocation;
 
     /**
@@ -61,11 +63,11 @@ public class NotifyAppointmentDTO extends TaskConfig
 
     /**
      * Set the subject of the message
-     * @param subject the subject of the message
+     * @param strSubject the subject of the message
      */
-    public void setSubject( String subject )
+    public void setSubject( String strSubject )
     {
-        _strSubject = subject;
+        _strSubject = strSubject;
     }
 
     /**
@@ -79,11 +81,11 @@ public class NotifyAppointmentDTO extends TaskConfig
 
     /**
      * Set the message of the notification
-     * @param message the message of the notification
+     * @param strMessage the message of the notification
      */
-    public void setMessage( String message )
+    public void setMessage( String strMessage )
     {
-        _strMessage = message;
+        _strMessage = strMessage;
     }
 
     /**
@@ -97,11 +99,29 @@ public class NotifyAppointmentDTO extends TaskConfig
 
     /**
      * Set the sender name
-     * @param senderName the sender name
+     * @param strSenderName the sender name
      */
-    public void setSenderName( String senderName )
+    public void setSenderName( String strSenderName )
     {
-        _strSenderName = senderName;
+        _strSenderName = strSenderName;
+    }
+
+    /**
+     * Get the sender email
+     * @return the sender email
+     */
+    public String getSenderEmail(  )
+    {
+        return _strSenderEmail;
+    }
+
+    /**
+     * Set the sender email
+     * @param strSenderEmail the sender email
+     */
+    public void setSenderEmail( String strSenderEmail )
+    {
+        _strSenderEmail = strSenderEmail;
     }
 
     /**
@@ -158,6 +178,27 @@ public class NotifyAppointmentDTO extends TaskConfig
     public void setSendICalNotif( boolean bSendICalNotif )
     {
         this._bSendICalNotif = bSendICalNotif;
+    }
+
+    /**
+     * Check if the notification should be created or updated in the calendar of
+     * the user, or if it should be removed
+     * @return True to create or update the notification, false to
+     *         remove it
+     */
+    public boolean getCreateNotif(  )
+    {
+        return _bCreateNotif;
+    }
+
+    /**
+     * Create a notification in a user calendar, or remove it
+     * @param bCreateNotif True to create or update the notification, false to
+     *            remove it
+     */
+    public void setCreateNotif( boolean bCreateNotif )
+    {
+        this._bCreateNotif = bCreateNotif;
     }
 
     /**

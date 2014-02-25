@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
@@ -62,10 +63,14 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
 
     // Parameters
     private static final String PARAMETER_SENDER_NAME = "sender_name";
+    private static final String PARAMETER_SENDER_EMAIL = "sender_email";
     private static final String PARAMETER_CC = "receipient_cc";
     private static final String PARAMETER_BCC = "receipient_bcc";
     private static final String PARAMETER_MESSAGE = "message";
     private static final String PARAMETER_SUBJECT = "subject";
+    private static final String PARAMETER_SEND_ICAL_NOTIF = "send_ical_notif";
+    private static final String PARAMETER_LOCATION = "location";
+    private static final String PARAMETER_CREATE_NOTIF = "create_notif";
 
     // SERVICES
     @Inject
@@ -81,10 +86,12 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
         String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
+        String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
         String strCc = request.getParameter( PARAMETER_CC );
         String strBcc = request.getParameter( PARAMETER_BCC );
         String strMessage = request.getParameter( PARAMETER_MESSAGE );
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
+        boolean bSendICalNotif = Boolean.valueOf( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
 
         if ( StringUtils.isBlank( strSenderName ) )
         {
@@ -97,18 +104,28 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
         notifyAppointmentDTO.setRecipientsBcc( strBcc );
         notifyAppointmentDTO.setSubject( strSubject );
         notifyAppointmentDTO.setSenderName( strSenderName );
+        // We do not check the email nor the sender name since it's done by the sendEmail( ... ) method.
+        notifyAppointmentDTO.setSenderEmail( strSenderEmail );
+        notifyAppointmentDTO.setSendICalNotif( bSendICalNotif );
 
-        String strContent = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO,
+        if ( bSendICalNotif )
+        {
+            String strLocation = request.getParameter( PARAMETER_LOCATION );
+            notifyAppointmentDTO.setLocation( strLocation );
+            notifyAppointmentDTO.setCreateNotif( Boolean.parseBoolean( request.getParameter( PARAMETER_CREATE_NOTIF ) ) );
+        }
+
+        EmailDTO emailDTO = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO,
                 appointment.getEmail(  ) );
 
-        if ( strContent != null )
+        if ( emailDTO != null )
         {
             ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
             history.setIdHistory( resourceHistory.getId(  ) );
             history.setIdAppointment( resourceHistory.getIdResource(  ) );
             history.setEmailTo( appointment.getEmail(  ) );
-            history.setEmailSubject( strSubject );
-            history.setEmailMessage( strContent );
+            history.setEmailSubject( emailDTO.getSubject(  ) );
+            history.setEmailMessage( emailDTO.getContent(  ) );
             ManualAppointmentNotificationHistoryHome.create( history );
         }
     }

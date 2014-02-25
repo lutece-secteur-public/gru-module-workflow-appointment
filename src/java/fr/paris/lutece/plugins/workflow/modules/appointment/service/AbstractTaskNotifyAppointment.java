@@ -39,12 +39,14 @@ import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.string.StringUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -88,7 +90,8 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      * @param strEmail The address to send the email to
      * @return The content sent, or null if no email was sent
      */
-    public String sendEmail( Appointment appointment, ResourceHistory resourceHistory, HttpServletRequest request,
+    @SuppressWarnings( "deprecation" )
+    public EmailDTO sendEmail( Appointment appointment, ResourceHistory resourceHistory, HttpServletRequest request,
         Locale locale, T notifyAppointmentDTO, String strEmail )
     {
         if ( ( notifyAppointmentDTO != null ) && ( resourceHistory != null ) &&
@@ -99,6 +102,17 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
 
             if ( appointmentSlot != null )
             {
+                if ( StringUtils.isEmpty( notifyAppointmentDTO.getSenderEmail(  ) ) ||
+                        !StringUtil.checkEmail( notifyAppointmentDTO.getSenderEmail(  ) ) )
+                {
+                    notifyAppointmentDTO.setSenderEmail( MailService.getNoReplyEmail(  ) );
+                }
+
+                if ( StringUtils.isBlank( notifyAppointmentDTO.getSenderName(  ) ) )
+                {
+                    notifyAppointmentDTO.setSenderName( notifyAppointmentDTO.getSenderEmail(  ) );
+                }
+
                 Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot,
                         locale );
 
@@ -115,8 +129,8 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                 {
                     getICalService(  )
                         .sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc(  ), strSubject, strContent,
-                        notifyAppointmentDTO.getLocation(  ), appointment,
-                        appointment.getStatus(  ) != Appointment.STATUS_REJECTED );
+                        notifyAppointmentDTO.getLocation(  ), notifyAppointmentDTO.getSenderName(  ),
+                        notifyAppointmentDTO.getSenderEmail(  ), appointment, notifyAppointmentDTO.getCreateNotif(  ) );
                 }
                 else
                 {
@@ -133,7 +147,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                     }
                 }
 
-                return strContent;
+                return new EmailDTO( strSubject, strContent );
             }
         }
 
