@@ -53,7 +53,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -99,13 +98,6 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
             if ( adminUser != null )
             {
                 this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail(  ) );
-
-                if ( ( config.getIdAdminUser(  ) > 0 ) &&
-                        ( config.getIdAdminUser(  ) != appointment.getIdAdminUser(  ) ) )
-                {
-                    appointment.setIdAdminUser( config.getIdAdminUser(  ) );
-                    AppointmentHome.update( appointment );
-                }
             }
         }
     }
