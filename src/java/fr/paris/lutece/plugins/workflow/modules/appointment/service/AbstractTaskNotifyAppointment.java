@@ -138,12 +138,12 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                     {
                         MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getRecipientsCc(  ),
                             notifyAppointmentDTO.getRecipientsBcc(  ), notifyAppointmentDTO.getSenderName(  ),
-                            MailService.getNoReplyEmail(  ), strSubject, strContent );
+                            notifyAppointmentDTO.getSenderEmail(  ), strSubject, strContent );
                     }
                     else
                     {
                         MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName(  ),
-                            MailService.getNoReplyEmail(  ), strSubject, strContent );
+                            notifyAppointmentDTO.getSenderEmail(  ), strSubject, strContent );
                     }
                 }
 
