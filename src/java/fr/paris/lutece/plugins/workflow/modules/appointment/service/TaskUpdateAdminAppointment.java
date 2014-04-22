@@ -58,7 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskUpdateAdminAppointment extends SimpleTask
 {
     // TEMPLATES
-    private static final String PARAMETER_ID_ADMIN_USER = "url_cancel";
+    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
 
     // SERVICES
     @Inject
