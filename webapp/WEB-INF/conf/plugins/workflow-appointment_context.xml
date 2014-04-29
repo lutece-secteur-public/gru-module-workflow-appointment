@@ -104,16 +104,4 @@
 		p:taskType-ref="workflow-appointment.taskTypeUpdateAppointmentCancelAction"
 		p:taskConfigService-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" />
 		
-	<!-- Task update administrator appointment -->
-	<bean id="workflow-appointment.manualUpdateAdminAppointmentHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryDAO" />
-	<bean id="workflow-appointment.taskUpdateAdminAppointment" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAdminAppointment" scope="prototype" />
-	<bean id="workflow-appointment.taskTypeUpdateAdminAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-		p:key="taskUpdateAdminAppointment"
-		p:titleI18nKey="module.workflow.appointment.task_update_admin_appointment_config.title"
-		p:beanName="workflow-appointment.taskUpdateAdminAppointment"
-		p:configRequired="false"
- 		p:taskForAutomaticAction="false"
-		p:formTaskRequired="true" />
-	<bean id="workflow-appointment.UpdateAdminAppointmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.UpdateAdminAppointmentTaskComponent"
-		p:taskType-ref="workflow-appointment.taskTypeUpdateAdminAppointment" />
 </beans>
