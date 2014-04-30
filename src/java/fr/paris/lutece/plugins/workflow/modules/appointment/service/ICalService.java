@@ -63,7 +63,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
@@ -100,6 +99,8 @@ public class ICalService
      * @param strSubject The subject of the appointment.
      * @param strBodyContent The body content that describes the appointment
      * @param strLocation The location of the appointment
+     * @param strSenderName The name of the sender
+     * @param strSenderEmail The email of the sender
      * @param appointment The appointment
      * @param bCreate True to notify the creation of the appointment, false to
      *            notify its removal

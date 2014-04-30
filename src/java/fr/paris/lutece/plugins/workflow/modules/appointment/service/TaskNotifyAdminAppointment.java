@@ -53,7 +53,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -88,17 +87,18 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskNotifyAdminAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskNotifyAdminAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this
+                .getId( ) );
 
         if ( config != null )
         {
-            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-            AdminUser adminUser = AdminUserHome.findByPrimaryKey( ( config.getIdAdminUser(  ) > 0 )
-                    ? config.getIdAdminUser(  ) : appointment.getIdAdminUser(  ) );
+            Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
+            AdminUser adminUser = AdminUserHome.findByPrimaryKey( ( config.getIdAdminUser( ) > 0 ) ? config
+                    .getIdAdminUser( ) : appointment.getIdAdminUser( ) );
 
             if ( adminUser != null )
             {
-                this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail(  ) );
+                this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail( ) );
             }
         }
     }
@@ -107,9 +107,9 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskNotifyAppointmentAdminConfigService.remove( this.getId(  ) );
+        _taskNotifyAppointmentAdminConfigService.remove( this.getId( ) );
     }
 
     /**
@@ -118,11 +118,11 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
     @Override
     public String getTitle( Locale locale )
     {
-        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            return config.getSubject(  );
+            return config.getSubject( );
         }
 
         return StringUtils.EMPTY;
@@ -133,18 +133,17 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
      */
     @Override
     public Map<String, Object> fillModel( HttpServletRequest request,
-        TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, Appointment appointment,
-        AppointmentSlot appointmentSlot, Locale locale )
+            TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, Appointment appointment,
+            AppointmentSlot appointmentSlot, Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
-        model.put( MARK_URL_CANCEL,
-            ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionCancel(  ), notifyAppointmentDTO.getIdAdminUser(  ),
-                appointment.getIdAppointment(  ) ) );
-        model.put( MARK_URL_VALIDATE,
-            ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionValidate(  ), notifyAppointmentDTO.getIdAdminUser(  ),
-                appointment.getIdAppointment(  ) ) );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot,
+                locale );
+        model.put( MARK_URL_CANCEL, ExecuteWorkflowAction.getExecuteWorkflowActionUrl(
+                AppPathService.getBaseUrl( request ), notifyAppointmentDTO.getIdActionCancel( ),
+                notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
+        model.put( MARK_URL_VALIDATE, ExecuteWorkflowAction.getExecuteWorkflowActionUrl(
+                AppPathService.getBaseUrl( request ), notifyAppointmentDTO.getIdActionValidate( ),
+                notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
 
         return model;
     }

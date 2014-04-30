@@ -113,6 +113,13 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                     notifyAppointmentDTO.setSenderName( notifyAppointmentDTO.getSenderEmail(  ) );
                 }
 
+                if ( StringUtils.isEmpty( notifyAppointmentDTO.getLocation( ) ) )
+                {
+                    notifyAppointmentDTO
+                            .setLocation( StringUtils.isNotEmpty( appointment.getLocation( ) ) ? appointment
+                                    .getLocation( ) : StringUtils.EMPTY );
+                }
+
                 Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot,
                         locale );
 
