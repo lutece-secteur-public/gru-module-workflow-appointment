@@ -33,15 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service.listeners;
 
-import fr.paris.lutece.plugins.appointment.service.listeners.IAppointmentRemovalListener;
+import fr.paris.lutece.plugins.appointment.service.listeners.IAppointmentListener;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
 
+import java.util.Locale;
+
 
 /**
- * Appointment removal listener for module workflow appointment
+ * Appointment listener for module workflow appointment
  */
-public class WorkflowAppointmentRemovalListener implements IAppointmentRemovalListener
+public class WorkflowAppointmentListener implements IAppointmentListener
 {
     /**
      * {@inheritDoc}
@@ -51,5 +53,15 @@ public class WorkflowAppointmentRemovalListener implements IAppointmentRemovalLi
     {
         ManualAppointmentNotificationHistoryHome.deleteByIdAppointment( nIdAppointment );
         UpdateAdminAppointmentHistoryHome.deleteByIdAppointment( nIdAppointment );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String appointmentDateChanged( int nIdAppointment, int nIdSlot, Locale locale )
+    {
+        // Do nothing
+        return null;
     }
 }
