@@ -113,11 +113,10 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                     notifyAppointmentDTO.setSenderName( notifyAppointmentDTO.getSenderEmail(  ) );
                 }
 
-                if ( StringUtils.isEmpty( notifyAppointmentDTO.getLocation( ) ) )
+                if ( StringUtils.isEmpty( notifyAppointmentDTO.getLocation(  ) ) )
                 {
-                    notifyAppointmentDTO
-                            .setLocation( StringUtils.isNotEmpty( appointment.getLocation( ) ) ? appointment
-                                    .getLocation( ) : StringUtils.EMPTY );
+                    notifyAppointmentDTO.setLocation( StringUtils.isNotEmpty( appointment.getLocation(  ) )
+                        ? appointment.getLocation(  ) : StringUtils.EMPTY );
                 }
 
                 Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot,
@@ -197,6 +196,10 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         return model;
     }
 
+    /**
+     * Get the ICal service
+     * @return The ICal service
+     */
     private ICalService getICalService(  )
     {
         if ( _iCalService == null )
