@@ -35,10 +35,13 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
+import fr.paris.lutece.plugins.appointment.business.ResponseRecapDTO;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
@@ -50,6 +53,7 @@ import fr.paris.lutece.util.string.StringUtil;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -188,7 +192,16 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage(  ) );
 
         List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
-        model.put( MARK_LIST_RESPONSE, listResponse );
+
+        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<ResponseRecapDTO>( listResponse.size( ) );
+        for ( Response response : listResponse )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
+            listResponseRecapDTO.add( new ResponseRecapDTO( response, entryTypeService.getResponseValueForRecap(
+                    response.getEntry( ), request, response, locale ) ) );
+        }
+
+        model.put( MARK_LIST_RESPONSE, listResponseRecapDTO );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP, locale, model );
         model.put( MARK_RECAP, template.getHtml(  ) );
