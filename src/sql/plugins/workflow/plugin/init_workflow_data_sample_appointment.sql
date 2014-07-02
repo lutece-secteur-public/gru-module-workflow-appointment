@@ -62,9 +62,9 @@ INSERT INTO workflow_task_notify_appointment_cf VALUES (121,'L\'équipe Lutèce'
 
 INSERT INTO workflow_task_update_appointment_cancel_cf VALUES (105,106);
 
-INSERT INTO appointment_form VALUES (1,'Formulaire de demande de rendez-vous','demande de RDV','09h00','17h00',30,1,0,1,1,1,0,0,'2014-02-09',NULL,1,1,8,1,101,0,1,4);
+INSERT INTO appointment_form VALUES (1,'Formulaire de demande de rendez-vous','demande de RDV','09h00','17h00',30,1,0,1,1,1,0,0,'2014-02-09',NULL,1,1,8,1,101,0,1,4,0);
 
-INSERT INTO appointment_form_messages VALUES (1,'Choisir une date','Prénom','','Nom','','Email','','Votre demande de rendez-vous a bien été créée avec la reference <b>%%REF%%</b>','jsp/site/Portal.jsp','Votre demande de rendez-vous a bien été annulée','Terminer');
+INSERT INTO appointment_form_messages VALUES (1,'Choisir une date','Prénom','','Nom','','Email','','Votre demande de rendez-vous a bien été créée avec la reference <b>%%REF%%</b>','jsp/site/Portal.jsp','Votre demande de rendez-vous a bien été annulée','Terminer', 'Aucun créneau disponible na été trouvé. Veuillez réessayer ultérieurement.', '', 'Reserver', 'Complet' );
 
 INSERT INTO appointment_slot VALUES (1,1,0,1,1,9,0,9,30,1);
 INSERT INTO appointment_slot VALUES(2,1,0,1,1,9,30,10,0,1);
