@@ -115,18 +115,32 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
             notifyAppointmentDTO.setCreateNotif( Boolean.parseBoolean( request.getParameter( PARAMETER_CREATE_NOTIF ) ) );
         }
 
-        EmailDTO emailDTO = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO,
-                appointment.getEmail(  ) );
+        String strEmail = null;
 
-        if ( emailDTO != null )
+        if ( notifyAppointmentDTO.getIsSms(  ) )
         {
-            ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
-            history.setIdHistory( resourceHistory.getId(  ) );
-            history.setIdAppointment( resourceHistory.getIdResource(  ) );
-            history.setEmailTo( appointment.getEmail(  ) );
-            history.setEmailSubject( emailDTO.getSubject(  ) );
-            history.setEmailMessage( emailDTO.getContent(  ) );
-            ManualAppointmentNotificationHistoryHome.create( history );
+            strEmail = getEmailForSmsFromAppointment( appointment );
+        }
+        else
+        {
+            strEmail = appointment.getEmail(  );
+        }
+
+        if ( StringUtils.isNotBlank( strEmail ) )
+        {
+            EmailDTO emailDTO = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO,
+                    strEmail );
+
+            if ( emailDTO != null )
+            {
+                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
+                history.setIdHistory( resourceHistory.getId(  ) );
+                history.setIdAppointment( resourceHistory.getIdResource(  ) );
+                history.setEmailTo( appointment.getEmail(  ) );
+                history.setEmailSubject( emailDTO.getSubject(  ) );
+                history.setEmailMessage( emailDTO.getContent(  ) );
+                ManualAppointmentNotificationHistoryHome.create( history );
+            }
         }
     }
 

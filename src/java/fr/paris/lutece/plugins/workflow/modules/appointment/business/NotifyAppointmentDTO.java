@@ -51,6 +51,7 @@ public class NotifyAppointmentDTO extends TaskConfig
     private boolean _bSendICalNotif;
     private boolean _bCreateNotif;
     private String _strLocation;
+    private boolean _bIsSms;
 
     /**
      * Get the subject
@@ -217,5 +218,26 @@ public class NotifyAppointmentDTO extends TaskConfig
     public void setLocation( String strLocation )
     {
         this._strLocation = strLocation;
+    }
+
+    /**
+     * Check if the notification is an SMS notification or an email notification
+     * @return True if the notification is an SMS notification, false if it is
+     *         an email notification
+     */
+    public boolean getIsSms(  )
+    {
+        return _bIsSms;
+    }
+
+    /**
+     * Set whether the notification is an SMS notification or an email
+     * notification
+     * @param bIsSms True if the notification is an SMS notification, false if
+     *            it is an email notification
+     */
+    public void setIsSms( boolean bIsSms )
+    {
+        this._bIsSms = bIsSms;
     }
 }

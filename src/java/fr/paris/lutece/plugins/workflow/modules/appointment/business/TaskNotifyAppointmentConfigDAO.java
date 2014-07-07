@@ -45,13 +45,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotifyAppointmentConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location " +
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location,is_sms " +
         "FROM workflow_task_notify_appointment_cf WHERE id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_notify_appointment_cf( " +
-        "id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location)" +
-        "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        "id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location,is_sms)" +
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_appointment_cf " +
-        " SET sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, ical_notification = ?, create_notif = ?, location = ?" +
+        " SET sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, ical_notification = ?, create_notif = ?, location = ?, is_sms = ?" +
         " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notify_appointment_cf WHERE id_task = ? ";
 
@@ -75,7 +75,8 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
         daoUtil.setInt( nIndex++, config.getIdActionCancel(  ) );
         daoUtil.setBoolean( nIndex++, config.getSendICalNotif(  ) );
         daoUtil.setBoolean( nIndex++, config.getCreateNotif(  ) );
-        daoUtil.setString( nIndex, config.getLocation(  ) );
+        daoUtil.setString( nIndex++, config.getLocation(  ) );
+        daoUtil.setBoolean( nIndex, config.getIsSms(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -101,6 +102,7 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
         daoUtil.setBoolean( nIndex++, config.getSendICalNotif(  ) );
         daoUtil.setBoolean( nIndex++, config.getCreateNotif(  ) );
         daoUtil.setString( nIndex++, config.getLocation(  ) );
+        daoUtil.setBoolean( nIndex++, config.getIsSms(  ) );
 
         daoUtil.setInt( nIndex, config.getIdTask(  ) );
         daoUtil.executeUpdate(  );
@@ -135,7 +137,8 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
             config.setIdActionCancel( daoUtil.getInt( nIndex++ ) );
             config.setSendICalNotif( daoUtil.getBoolean( nIndex++ ) );
             config.setCreateNotif( daoUtil.getBoolean( nIndex++ ) );
-            config.setLocation( daoUtil.getString( nIndex ) );
+            config.setLocation( daoUtil.getString( nIndex++ ) );
+            config.setIsSms( daoUtil.getBoolean( nIndex ) );
         }
 
         daoUtil.free(  );

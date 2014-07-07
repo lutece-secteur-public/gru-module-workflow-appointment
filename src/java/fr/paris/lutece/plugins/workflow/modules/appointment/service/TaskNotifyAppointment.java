@@ -83,13 +83,27 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
-        if ( this.sendEmail( appointment, resourceHistory, request, locale, config, appointment.getEmail(  ) ) != null )
+        String strEmail;
+
+        if ( config.getIsSms(  ) )
         {
-            if ( ( config.getIdActionCancel(  ) > 0 ) &&
-                    ( config.getIdActionCancel(  ) != appointment.getIdActionCancel(  ) ) )
+            strEmail = getEmailForSmsFromAppointment( appointment );
+        }
+        else
+        {
+            strEmail = appointment.getEmail(  );
+        }
+
+        if ( StringUtils.isNotBlank( strEmail ) )
+        {
+            if ( this.sendEmail( appointment, resourceHistory, request, locale, config, strEmail ) != null )
             {
-                appointment.setIdActionCancel( config.getIdActionCancel(  ) );
-                AppointmentHome.update( appointment );
+                if ( ( config.getIdActionCancel(  ) > 0 ) &&
+                        ( config.getIdActionCancel(  ) != appointment.getIdActionCancel(  ) ) )
+                {
+                    appointment.setIdActionCancel( config.getIdActionCancel(  ) );
+                    AppointmentHome.update( appointment );
+                }
             }
         }
     }

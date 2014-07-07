@@ -17,6 +17,7 @@ CREATE TABLE workflow_task_notify_appointment_cf(
   ical_notification SMALLINT DEFAULT 0,
   create_notif SMALLINT DEFAULT 0,
   location VARCHAR(255) DEFAULT '' NOT NULL,
+  is_sms SMALLINT DEFAULT 0,
   PRIMARY KEY  (id_task)
 );
   

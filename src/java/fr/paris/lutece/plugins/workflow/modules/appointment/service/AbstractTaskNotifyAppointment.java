@@ -34,12 +34,18 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
+import fr.paris.lutece.plugins.appointment.business.AppointmentForm;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.ResponseRecapDTO;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
+import fr.paris.lutece.plugins.appointment.service.entrytype.EntryTypePhone;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
@@ -48,6 +54,7 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 
@@ -68,8 +75,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentDTO> extends SimpleTask
 {
+    /**
+     * Property that contains the address of the SMS server
+     */
+    private static final String PROPERTY_SMS_SERVER = "workflow-appointment.sms.server";
+
     // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFY_MAIL = "admin/plugins/workflow/modules/appointment/task_notify_appointment_mail.html";
+    private static final String TEMPLATE_TASK_NOTIFY_SMS = "admin/plugins/workflow/modules/appointment/task_notify_appointment_sms.html";
     private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP = "admin/plugins/workflow/modules/appointment/task_notify_appointment_recap.html";
 
     // MARKS
@@ -132,8 +145,9 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                 boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc(  ) ) ||
                     StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsCc(  ) ) );
 
-                String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( 
-                            TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ), locale, model ).getHtml(  );
+                String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( notifyAppointmentDTO.getIsSms(  )
+                            ? TEMPLATE_TASK_NOTIFY_SMS : TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ),
+                        locale, model ).getHtml(  );
 
                 if ( notifyAppointmentDTO.getSendICalNotif(  ) )
                 {
@@ -193,12 +207,13 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
 
         List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
 
-        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<ResponseRecapDTO>( listResponse.size( ) );
+        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<ResponseRecapDTO>( listResponse.size(  ) );
+
         for ( Response response : listResponse )
         {
-            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
-            listResponseRecapDTO.add( new ResponseRecapDTO( response, entryTypeService.getResponseValueForRecap(
-                    response.getEntry( ), request, response, locale ) ) );
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry(  ) );
+            listResponseRecapDTO.add( new ResponseRecapDTO( response,
+                    entryTypeService.getResponseValueForRecap( response.getEntry(  ), request, response, locale ) ) );
         }
 
         model.put( MARK_LIST_RESPONSE, listResponseRecapDTO );
@@ -207,6 +222,63 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_RECAP, template.getHtml(  ) );
 
         return model;
+    }
+
+    /**
+     * Get the email address to use to send an SMS to the user of an appointment
+     * @param appointment The appointment
+     * @return The email address, or null if no phone number was found.
+     */
+    protected String getEmailForSmsFromAppointment( Appointment appointment )
+    {
+        String strPhoneNumber = null;
+        AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
+        EntryFilter entryFilter = new EntryFilter(  );
+        entryFilter.setIdResource( slot.getIdForm(  ) );
+        entryFilter.setResourceType( AppointmentForm.RESOURCE_TYPE );
+        entryFilter.setFieldDependNull( EntryFilter.FILTER_TRUE );
+
+        List<Integer> listIdResponse = AppointmentHome.findListIdResponse( appointment.getIdAppointment(  ) );
+
+        List<Response> listResponses = new ArrayList<Response>( listIdResponse.size(  ) );
+
+        for ( int nIdResponse : listIdResponse )
+        {
+            listResponses.add( ResponseHome.findByPrimaryKey( nIdResponse ) );
+        }
+
+        List<Entry> listEntries = EntryHome.getEntryList( entryFilter );
+
+        for ( Entry entry : listEntries )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+
+            if ( entryTypeService instanceof EntryTypePhone )
+            {
+                for ( Response response : listResponses )
+                {
+                    if ( ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) ) &&
+                            StringUtils.isNotBlank( response.getResponseValue(  ) ) )
+                    {
+                        strPhoneNumber = response.getResponseValue(  );
+
+                        break;
+                    }
+                }
+
+                if ( StringUtils.isNotEmpty( strPhoneNumber ) )
+                {
+                    break;
+                }
+            }
+        }
+
+        if ( StringUtils.isNotBlank( strPhoneNumber ) )
+        {
+            strPhoneNumber = strPhoneNumber + AppPropertiesService.getProperty( PROPERTY_SMS_SERVER );
+        }
+
+        return strPhoneNumber;
     }
 
     /**

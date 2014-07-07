@@ -15,32 +15,42 @@
 			</div>
 		</div>
 	</#if>
+	<#if !notify_admin>
 	<div class="control-group">
-		<label class="control-label" for="send_ical_notif">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}</label>
+		<label class="control-label" for="send_sms">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_sms}</label>
 		<div class="controls">
-			<input type="checkbox" name="send_ical_notif" onClick="javascript:$('#ical').toggle();" value="true" <#if config?exists && config.sendICalNotif>checked="checked"</#if> />
-			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}</span>
+			<input type="checkbox" name="send_sms" id="send_sms" onClick="javascript:doSendSmsCheck( );" value="true" <#if config?exists && config.isSms>checked="checked"</#if> />
 		</div>
 	</div>
-	<div id="ical">
+	</#if>
+	<div id="ical-block">
 		<div class="control-group">
+			<label class="control-label" for="send_ical_notif">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}</label>
 			<div class="controls">
-				<label class="radio inline" for="create_notif">
-					<input type="radio" name="create_notif" value="true" <#if !(config?exists) || config.createNotif>checked="checked"</#if> />
-					#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}
-				</label>
-				<label class="radio inline" for="create_notif">
-					<input type="radio" name="create_notif" value="false" <#if config?exists && !(config.createNotif)>checked="checked"</#if> />
-					#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}
-				</label>
-				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}</span>
+				<input type="checkbox" name="send_ical_notif" onClick="javascript:$('#ical').toggle();" value="true" <#if config?exists && config.sendICalNotif>checked="checked"</#if> />
+				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}</span>
 			</div>
 		</div>
-		<div id="location" class="control-group">
-			<label class="control-label" for="location">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}</label>
-			<div class="controls">
-				<input type="text" name="location" value="${(config.location)!}" maxlength="255" />
-				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}</span>
+		<div id="ical">
+			<div class="control-group">
+				<div class="controls">
+					<label class="radio inline" for="create_notif">
+						<input type="radio" name="create_notif" value="true" <#if !(config?exists) || config.createNotif>checked="checked"</#if> />
+						#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}
+					</label>
+					<label class="radio inline" for="create_notif">
+						<input type="radio" name="create_notif" value="false" <#if config?exists && !(config.createNotif)>checked="checked"</#if> />
+						#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}
+					</label>
+					<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}</span>
+				</div>
+			</div>
+			<div id="location" class="control-group">
+				<label class="control-label" for="location">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}</label>
+				<div class="controls">
+					<input type="text" name="location" value="${(config.location)!}" maxlength="255" />
+					<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}</span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -107,7 +117,7 @@
 	<div class="control-group">
 		<label class="control-label" for="message">#i18n{module.workflow.appointment.task_notify_appointment_config.label_message} * </label>
 		<div class="controls">
-			<textarea class="richtext" id="message" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
+			<textarea <#if notify_admin || !config?exists || !config.isSms>class="richtext"</#if> id="message" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
 			#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :
 			<ul>
 				<li>${r"${firstName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
@@ -131,5 +141,27 @@
 		$(document).ready( function () {
 			$("#ical").toggle();
 			}); 
+	</script>
+</#if>
+<#if !notify_admin>
+	<script type="text/javascript">
+		<#if config?exists && config.isSms>
+		$(document).ready( function () {
+			$("#ical-block").toggle();
+			}); 
+		</#if>
+		
+		function doSendSmsCheck( )
+		{
+			$('#ical-block').toggle();
+			if ( $('#send_sms').is(':checked') )
+			{
+				tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'message');
+			}
+			else
+			{
+				tinymce.EditorManager.execCommand('mceAddEditor', true, 'message');
+			}
+		}
 	</script>
 </#if>

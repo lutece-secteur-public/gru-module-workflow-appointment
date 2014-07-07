@@ -89,6 +89,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     // PARAMETERS
     private static final String PARAMETER_SUBJECT = "subject";
     private static final String PARAMETER_MESSAGE = "message";
+    private static final String PARAMETER_SEND_SMS = "send_sms";
     private static final String PARAMETER_LOCATION = "location";
     private static final String PARAMETER_SENDER_NAME = "sender_name";
     private static final String PARAMETER_SENDER_EMAIL = "sender_email";
@@ -314,6 +315,14 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         }
         else
         {
+            boolean bNotifySms = Boolean.parseBoolean( request.getParameter( PARAMETER_SEND_SMS ) );
+            config.setIsSms( bNotifySms );
+
+            if ( bNotifySms )
+            {
+                config.setSendICalNotif( false );
+            }
+
             ( (TaskNotifyAppointmentConfig) config ).setIdActionCancel( nIdAction );
         }
 
