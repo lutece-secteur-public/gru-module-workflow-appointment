@@ -36,6 +36,7 @@ CREATE TABLE workflow_task_manual_app_notify(
   message long VARCHAR DEFAULT NULL,
   PRIMARY KEY  (id_notif)
 );
+
 CREATE INDEX idx_wf_task_manual_app_notify ON workflow_task_manual_app_notify (id_appointment);
 ALTER TABLE workflow_task_manual_app_notify ADD CONSTRAINT fk_wf_appoint_man_ap_notif_hist FOREIGN KEY (id_appointment)
       REFERENCES appointment_appointment (id_appointment) ON DELETE RESTRICT ON UPDATE RESTRICT ;
@@ -56,16 +57,12 @@ CREATE TABLE workflow_task_notify_admin_appointment_cf(
   location VARCHAR(255) DEFAULT '' NOT NULL,
   PRIMARY KEY  (id_task)
 );
-ALTER TABLE workflow_task_notify_admin_appointment_cf ADD CONSTRAINT fk_wf_appoint_notif_admin_cf FOREIGN KEY (id_admin_user)
-      REFERENCES core_admin_user (id_user) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
 CREATE TABLE workflow_task_update_appointment_cancel_cf(
   id_task INT NOT NULL,
   id_action_cancel INT DEFAULT NULL,
   PRIMARY KEY  (id_task)
 );
-ALTER TABLE workflow_task_update_appointment_cancel_cf ADD CONSTRAINT fk_wf_task_update_app_cancel_cf FOREIGN KEY (id_action_cancel)
-      REFERENCES workflow_action (id_action) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
 CREATE TABLE workflow_task_update_admin_appointment(
   id_update INT NOT NULL,
