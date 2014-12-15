@@ -41,6 +41,7 @@ import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyA
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -49,7 +50,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -65,6 +65,9 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
     // TEMPLATES
     private static final String MARK_URL_CANCEL = "url_cancel";
+    
+    private static final String PROPERTY_MAIL_LANG_SERVER = "workflow-appointment.server.mail.lang";
+
 
     // SERVICES
     @Inject
@@ -79,7 +82,12 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+    	String sServerMailLang = AppPropertiesService.getProperty( PROPERTY_MAIL_LANG_SERVER );
+    	if (!sServerMailLang.isEmpty())
+    	{
+    		Locale.setDefault(new Locale(sServerMailLang.split("_")[0], sServerMailLang.split("_")[1]));
+    	}
+    	ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
 
