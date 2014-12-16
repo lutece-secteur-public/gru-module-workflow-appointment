@@ -83,10 +83,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
     	String sServerMailLang = AppPropertiesService.getProperty( PROPERTY_MAIL_LANG_SERVER );
-    	if (!sServerMailLang.isEmpty())
-    	{
-    		Locale.setDefault(new Locale(sServerMailLang.split("_")[0], sServerMailLang.split("_")[1]));
-    	}
+
     	ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
@@ -104,7 +101,17 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
         if ( StringUtils.isNotBlank( strEmail ) )
         {
-            if ( this.sendEmail( appointment, resourceHistory, request, locale, config, strEmail ) != null )
+        	Locale lEmailLocale = null;
+        	if (!sServerMailLang.isEmpty())
+        	{
+        		lEmailLocale = new Locale(sServerMailLang.split("_")[0], sServerMailLang.split("_")[1]);
+        	}
+        	else
+        	{
+        		lEmailLocale = locale;
+        	}
+        	
+            if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale , config, strEmail ) != null )
             {
                 if ( ( config.getIdActionCancel(  ) > 0 ) &&
                         ( config.getIdActionCancel(  ) != appointment.getIdActionCancel(  ) ) )
