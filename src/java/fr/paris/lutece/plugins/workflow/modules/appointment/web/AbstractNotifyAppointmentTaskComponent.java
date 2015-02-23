@@ -266,6 +266,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         }
 
         config.setMessage( strMessage );
+        config.setSenderEmail( strSenderEmail );
         config.setSenderName( strSenderName );
         config.setSubject( strSubject );
         config.setRecipientsCc( StringUtils.isNotEmpty( strRecipientsCc ) ? strRecipientsCc : StringUtils.EMPTY );
