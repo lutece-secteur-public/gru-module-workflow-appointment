@@ -148,7 +148,7 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
 
             for ( Appointment appointmentFound : listAppointments )
             {
-                if ( ( appointmentFound.getStatus(  ) != Appointment.STATUS_REJECTED ) &&
+                if ( ( appointmentFound.getStatus(  ) != Appointment.Status.STATUS_REJECTED.getValeur() ) &&
                         ( appointment.getIdAppointment(  ) != appointmentFound.getIdAppointment(  ) ) )
                 {
                     if ( appointment.getIdSlot(  ) == appointmentFound.getIdSlot(  ) )
