@@ -33,23 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.service.AppointmentService;
-import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
-import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatus;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
-import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
-import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.message.AdminMessage;
-import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +42,31 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.appointment.business.Appointment;
+import fr.paris.lutece.plugins.appointment.service.AppointmentService;
+import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatus;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
+import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
+import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 
 /**
@@ -91,7 +99,12 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     @Inject
     @Named( TaskChangeAppointmentStatus.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskChangeAppointmentStatusConfigService;
-
+    @Inject
+    @Named( ActionService.BEAN_SERVICE)
+    private IActionService  _taskActionService;
+    @Inject
+    @Named( StateService.BEAN_SERVICE)
+    private IStateService _taskStateService;
     /**
      * {@inheritDoc}
      */
@@ -145,35 +158,37 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
-    {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+	{
+	    TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
+	
+	    ReferenceList refListStatus = new ReferenceList(  );
+	    refListStatus.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
+	    Action tmpAction = _taskActionService.findByPrimaryKey( task.getAction().getId() );
+	    int nIdWorkflow = tmpAction.getWorkflow().getId();
+        
+	    StateFilter stateFilter = new StateFilter(  );
+	    stateFilter.setIdWorkflow( nIdWorkflow );	    
 
-        ReferenceList refListStatus = new ReferenceList(  );
-        refListStatus.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
-        List<Appointment.Status> listStats = Arrays.asList(Appointment.Status.values());
-        for (Appointment.Status tmpStat : listStats)
+        List<State> listAction = _taskStateService.getListStateByFilter( stateFilter );
+
+        for (State tmpStat : listAction )
         {
-        	refListStatus.addItem( tmpStat.getValeur(), I18nService.getLocalizedString( tmpStat.getLibelle(), locale ) );
+        	refListStatus.addItem( tmpStat.getId(), tmpStat.getName() );
         }
-    /*    refListStatus.addItem( Appointment.STATUS_VALIDATED,
-            I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_VALIDATED, locale ) );
-        refListStatus.addItem( Appointment.STATUS_REJECTED,
-            I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_REJECTED, locale ) );
-	*/
-        Map<String, Object> model = new HashMap<String, Object>(  );
-
-        model.put( MARK_CONFIG, config );
-        model.put( MARK_REF_LIST_STATUS, refListStatus );
-
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale,
-                model );
-
-        return template.getHtml(  );
-    }
+	    Map<String, Object> model = new HashMap<String, Object>(  );
+	
+	    model.put( MARK_CONFIG, config );
+	    model.put( MARK_REF_LIST_STATUS, refListStatus );
+	
+	    HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale,
+	            model );
+	
+	    return template.getHtml(  );
+	}
 
     /**
      * {@inheritDoc}
