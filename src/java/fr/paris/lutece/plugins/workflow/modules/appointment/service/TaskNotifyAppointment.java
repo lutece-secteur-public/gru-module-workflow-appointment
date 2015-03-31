@@ -90,7 +90,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
         String strEmail;
 
-        if ( config.getIsSms(  ) )
+        if ( config!= null && config.getIsSms(  ) )
         {
             strEmail = getEmailForSmsFromAppointment( appointment );
         }
