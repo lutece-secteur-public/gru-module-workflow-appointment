@@ -40,10 +40,14 @@ import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+//import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
@@ -63,10 +67,11 @@ import org.apache.commons.lang.StringUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.StringTokenizer;
+//import java.util.TimeZone;
 
 
 /**
@@ -110,8 +115,9 @@ public class ICalService
         String strBodyContent, String strLocation, String strSenderName, String strSenderEmail,
         Appointment appointment, boolean bCreate )
     {
+                
         AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
-        Calendar calendarStart = new GregorianCalendar(  );
+        Calendar calendarStart = new GregorianCalendar( Locale.FRENCH );
 
         calendarStart.setTime( appointment.getDateAppointment(  ) );
         calendarStart.add( Calendar.HOUR, slot.getStartingHour(  ) );
@@ -125,13 +131,28 @@ public class ICalService
         int nDurationAppointmentDays = nDurationAppointmentHours / 24;
         nDurationAppointmentHours %= 24;
 
-        Dur duration = new Dur( nDurationAppointmentDays, nDurationAppointmentHours, nDurationAppointmentMinutes, 0 );
+ //       Dur duration = new Dur( nDurationAppointmentDays, nDurationAppointmentHours, nDurationAppointmentMinutes, 0 );
 
-        VEvent event = new VEvent( new DateTime( calendarStart.getTimeInMillis(  ) ), duration,
-                ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
+//        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+//        TimeZone timezone = registry.getTimeZone("Europe/Paris");
+        
+        DateTime beginningDateTime = new DateTime(calendarStart.getTimeInMillis(  ));
+        beginningDateTime.setTimeZone(getParisZone ( ));
+        
+        Calendar endCal = new GregorianCalendar();
+        endCal.setTimeInMillis(calendarStart.getTimeInMillis(  ));
+        endCal.add(  Calendar.MINUTE, nAppDurationMinutes );
+        
+        DateTime endingDateTime = new DateTime(endCal.getTimeInMillis(  ));
+        endingDateTime.setTimeZone( getParisZone ( ) );
+        
+        VEvent event = new VEvent( beginningDateTime, endingDateTime, ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
+        
+        
         calendarStart.add( Calendar.MINUTE, nAppDurationMinutes );
-        event.getProperties(  ).add( new DtEnd( new DateTime( calendarStart.getTimeInMillis(  ) ) ) );
 
+      //  event.getProperties(  ).add( new DtEnd( endingDateTime ) );
+ 
         try
         {
             event.getProperties(  )
@@ -175,6 +196,7 @@ public class ICalService
         iCalendar.getProperties(  ).add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
         iCalendar.getProperties(  ).add( Version.VERSION_2_0 );
         iCalendar.getProperties(  ).add( CalScale.GREGORIAN );
+        iCalendar.getComponents(  ).add( getTimeZone() );
         iCalendar.getComponents(  ).add( event );
 
         MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
@@ -195,5 +217,26 @@ public class ICalService
         attendee.getParameters(  ).add( PartStat.NEEDS_ACTION );
         attendee.getParameters(  ).add( Rsvp.FALSE );
         event.getProperties(  ).add( attendee );
+    }
+    
+    /**
+     * Get Europe Paris TimeZone
+     * @return Paris TimeZone
+     */
+    private static TimeZone getParisZone ( )
+    {
+    	TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+    	TimeZone timezone = registry.getTimeZone("Europe/Paris");
+    	return timezone;
+    }
+    
+    /**
+     * Get infos from TimeZone
+     * @return VtimeZone
+     */
+    private static VTimeZone getTimeZone( )
+    {
+    	VTimeZone tz = getParisZone ( ).getVTimeZone();
+    	return tz;
     }
 }
