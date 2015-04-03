@@ -85,6 +85,7 @@ public class ICalService
     public static final String BEAN_NAME = "workflow-appointment.iCalService";
     private static final String PROPERTY_MAIL_LIST_SEPARATOR = "mail.list.separator";
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
+    private static final String PROPERTY_TIMEZONE = "workflow-appointment.server.timezone";
     private static final String CONSTANT_MAILTO = "MAILTO:";
 
     /**
@@ -220,13 +221,17 @@ public class ICalService
     }
     
     /**
-     * Get Europe Paris TimeZone
+     * Get  TimeZone
      * @return Paris TimeZone
      */
     private static TimeZone getParisZone ( )
     {
     	TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-    	TimeZone timezone = registry.getTimeZone("Europe/Paris");
+    	String strZone = "Europe/Paris";
+    	if ( AppPropertiesService.getProperty( PROPERTY_TIMEZONE ) != null &&
+    		 AppPropertiesService.getProperty( PROPERTY_TIMEZONE ).trim().length() > 0)
+    		strZone = AppPropertiesService.getProperty( PROPERTY_TIMEZONE ).trim();
+    	TimeZone timezone =  registry.getTimeZone(strZone) ;
     	return timezone;
     }
     
