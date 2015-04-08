@@ -40,11 +40,16 @@ import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
+import net.fortuna.ical4j.model.Parameter;
+import net.fortuna.ical4j.model.ParameterFactoryRegistry;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.component.Observance;
 //import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
@@ -52,6 +57,7 @@ import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Rsvp;
+import net.fortuna.ical4j.model.parameter.XParameter;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
@@ -60,15 +66,22 @@ import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.TzName;
+import net.fortuna.ical4j.model.property.TzOffsetFrom;
+import net.fortuna.ical4j.model.property.TzOffsetTo;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.TzNameFactory;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 //import java.util.TimeZone;
@@ -146,7 +159,7 @@ public class ICalService
         
         DateTime endingDateTime = new DateTime(endCal.getTimeInMillis(  ));
         endingDateTime.setTimeZone( getParisZone ( ) );
-        
+       
         VEvent event = new VEvent( beginningDateTime, endingDateTime, ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
         
         
@@ -160,7 +173,6 @@ public class ICalService
                  .add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment(  ) ) );
 
             String strEmailSeparator = AppPropertiesService.getProperty( PROPERTY_MAIL_LIST_SEPARATOR, ";" );
-
             if ( StringUtils.isNotEmpty( strEmailAttendee ) )
             {
                 StringTokenizer st = new StringTokenizer( strEmailAttendee, strEmailSeparator );
@@ -180,7 +192,7 @@ public class ICalService
                     addAttendee( event, st.nextToken(  ), false );
                 }
             }
-
+            
             Organizer organizer = new Organizer( strSenderEmail );
             organizer.getParameters(  ).add( new Cn( strSenderName ) );
             event.getProperties(  ).add( organizer );
@@ -197,8 +209,8 @@ public class ICalService
         iCalendar.getProperties(  ).add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
         iCalendar.getProperties(  ).add( Version.VERSION_2_0 );
         iCalendar.getProperties(  ).add( CalScale.GREGORIAN );
-        iCalendar.getComponents(  ).add( getTimeZone() );
-        iCalendar.getComponents(  ).add( event );
+
+         iCalendar.getComponents(  ).add( event );
 
         MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
             ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent, iCalendar.toString(  ), bCreate );
@@ -242,6 +254,14 @@ public class ICalService
     private static VTimeZone getTimeZone( )
     {
     	VTimeZone tz = getParisZone ( ).getVTimeZone();
-    	return tz;
+   
+    	Observance tmpobs = tz.getApplicableObservance( (new net.fortuna.ical4j.model.Date(GregorianCalendar.getInstance().getTimeInMillis()) ));
+    	if (tmpobs != null)
+    	{
+    		tz.getObservances().clear();
+    		tz.getObservances().add( tmpobs );
+    	}
+    	
+     	return tz;
     }
 }
