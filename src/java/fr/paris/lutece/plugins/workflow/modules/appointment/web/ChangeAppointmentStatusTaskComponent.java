@@ -46,14 +46,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
+import fr.paris.lutece.plugins.appointment.business.Appointment.Status;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatus;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
-import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
@@ -84,8 +83,8 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
     private static final String MESSAGE_APPOINTMENT_VALIDATED = "module.workflow.appointment.message.appointmentValidated";
     private static final String MESSAGE_APPOINTMENT_CANCELED = "module.workflow.appointment.message.appointmentCanceled";
-    private static final String MESSAGE_LABEL_STATUS_VALIDATED = "appointment.message.labelStatusValidated";
-    private static final String MESSAGE_LABEL_STATUS_REJECTED = "appointment.message.labelStatusRejected";
+    private static final String MESSAGE_LABEL_STATUS_RESERVED = "appointment.message.labelStatusReserved";
+    private static final String MESSAGE_LABEL_STATUS_UNRESERVED = "appointment.message.labelStatusUnreserved";
 
     // MARKS
     private static final String MARK_CONFIG = "config";
@@ -172,13 +171,21 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         
 	    StateFilter stateFilter = new StateFilter(  );
 	    stateFilter.setIdWorkflow( nIdWorkflow );	    
-
-        List<State> listAction = _taskStateService.getListStateByFilter( stateFilter );
+ 
+        /* List<State> listAction = _taskStateService.getListStateByFilter( stateFilter );
 
         for (State tmpStat : listAction )
         {
         	refListStatus.addItem( tmpStat.getId(), tmpStat.getName() );
-        }
+        }*/
+	    
+	    Status [] listStat =Appointment.Status.values();
+	    for (Status tmpState : listStat ){
+	    	
+	    	refListStatus.addItem(  tmpState.getValeur(	) , I18nService.getLocalizedString(tmpState.getLibelle( ), locale) );
+	   
+		}
+          
 	    Map<String, Object> model = new HashMap<String, Object>(  );
 	
 	    model.put( MARK_CONFIG, config );
