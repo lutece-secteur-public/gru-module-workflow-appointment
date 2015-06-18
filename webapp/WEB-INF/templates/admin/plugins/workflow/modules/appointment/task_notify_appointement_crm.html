@@ -1,0 +1,59 @@
+
+<legend> Notifier automatiquement un guichet</legend>
+<div id="location" class="control-group">
+	<label class="control-label" for="demandeType">Type de la demande</label>
+	<div class="controls">
+		<input type="text" name="demandeType" value="${(config.demandeType)!}" maxlength="255" required />
+		<span class="help-block">#i18n{}</span>
+	</div>
+</div>	
+<div id="location" class="control-group">
+	<label class="control-label" for="data">Data</label>
+	<div class="controls">
+		<input type="text" name="data" value="${(config.data)!}" maxlength="255" />
+		<span class="help-block">#i18n{}</span>
+	</div>
+</div>
+<div id="location" class="control-group">
+	<label class="control-label" for="da">Status Text</label>
+	<div class="controls">
+		<input type="text" name="statusText" value="${(config.statusText)!}" maxlength="255" required />
+		<span class="help-block">#i18n{}</span>
+	</div>
+</div>
+<div id="location" class="control-group">
+	<label class="control-label" for="idStatusCRM">Ident Status CRM</label>
+	<div class="controls">
+		<input type="text" name="idStatusCRM" value="${(config.idStatusCRM)!}" maxlength="255" required />
+		<span class="help-block">#i18n{}</span>
+	</div>
+</div>
+<div id="location" class="control-group">
+	<label class="control-label" for="sender">Sender</label>
+	<div class="controls">
+		<input type="text" name="sender" value="${(config.sender)!}" maxlength="255" required />
+		<span class="help-block">#i18n{}</span>
+	</div>
+</div>
+<div id="location" class="control-group">
+	<label class="control-label" for="object">Objet</label>
+	<div class="controls">
+		<input type="text" name="object" value="${(config.object)!}" maxlength="255" required />
+		<span class="help-block">#i18n{}</span>
+	</div>
+</div>
+<div id="location" class="control-group">
+	<label class="control-label" for="message">Message</label>
+	<div class="controls">
+		<TEXTAREA  name="message" value="" rows=10 COLS=40 required >${(config.message)!}</TEXTAREA>
+		
+	</div>
+<span class="help-block"> 
+<div>{firstName}:</div> 
+<div>{lastName}:</div>                   
+<div>{reference}:</div>
+<div>{date_appointment}:</div>          
+                                   
+       </span>
+</div>
+	

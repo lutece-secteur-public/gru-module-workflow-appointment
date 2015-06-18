@@ -103,5 +103,23 @@
  	<bean id="workflow-appointment.updateAppointmentCancelActionTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.UpdateAppointmentCancelActionTaskComponent"
 		p:taskType-ref="workflow-appointment.taskTypeUpdateAppointmentCancelAction"
 		p:taskConfigService-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" />
-		
+	
+	<!-- Task noify crm -->
+	
+	<bean id="workflow-appointment.taskNotifyCrmConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyCrmConfigDAO"/>
+	<bean id="workflow-appointment.taskNotifyAppointementCrm" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointementCrm" scope="prototype" />
+ 	<bean id="workflow-appointment.taskNotifyCrmConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyCrmConfig" scope="prototype" />
+	<bean id="workflow-appointment.taskNotifyCrmConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
+		p:taskConfigDAO-ref="workflow-appointment.taskNotifyCrmConfigDAO" />
+	<bean id="workflow-appointment.taskTypeNotifyAppointementCrm" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+ 		p:key="taskNotifyAppointementCrm"
+ 		p:titleI18nKey="module.workflow.appointment.taskNotifyAppointmentCrm.title"
+ 		p:beanName="workflow-appointment.taskNotifyAppointementCrm"
+ 		p:configBeanName="workflow-appointment.taskNotifyCrmConfig"
+ 		p:configRequired="true"
+ 		p:taskForAutomaticAction="true" />
+ 	<bean id="workflow-appointment.notifyCrmTaskTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.NotifyCrmTaskComponent"
+		p:taskType-ref="workflow-appointment.taskTypeNotifyAppointementCrm"
+		p:taskConfigService-ref="workflow-appointment.taskNotifyCrmConfigService" />
+	
 </beans>
