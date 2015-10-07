@@ -239,7 +239,7 @@ public class ICalService
     private static TimeZone getParisZone ( )
     {
     	TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-    	String strZone = "Europe/Paris";
+    	String strZone = "\"Romance Standard Time\"";
     	if ( AppPropertiesService.getProperty( PROPERTY_TIMEZONE ) != null &&
     		 AppPropertiesService.getProperty( PROPERTY_TIMEZONE ).trim().length() > 0)
     		strZone = AppPropertiesService.getProperty( PROPERTY_TIMEZONE ).trim();
