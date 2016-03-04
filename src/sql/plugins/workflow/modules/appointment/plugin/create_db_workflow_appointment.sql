@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS workflow_task_manual_app_notify;
 DROP TABLE IF EXISTS workflow_task_notify_admin_appointment_cf;
 DROP TABLE IF EXISTS workflow_task_update_appointment_cancel_cf;
 DROP TABLE IF EXISTS workflow_task_update_admin_appointment;
+DROP TABLE IF EXISTS workflow_task_notify_appointment_crm;
+
 
 CREATE TABLE workflow_task_notify_appointment_cf(
   id_task INT NOT NULL,
