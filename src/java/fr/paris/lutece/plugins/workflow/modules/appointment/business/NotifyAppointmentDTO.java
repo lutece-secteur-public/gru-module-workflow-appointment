@@ -51,9 +51,20 @@ public class NotifyAppointmentDTO extends TaskConfig
     private boolean _bSendICalNotif;
     private boolean _bCreateNotif;
     private String _strLocation;
+    private String _strCancelMotif;
     private boolean _bIsSms;
+    
+    
 
-    /**
+    public String getCancelMotif() {
+		return _strCancelMotif;
+	}
+
+	public void setCancelMotif(String strCancelMotif) {
+		this._strCancelMotif = strCancelMotif;
+	}
+
+	/**
      * Get the subject
      * @return the subject of the message
      */

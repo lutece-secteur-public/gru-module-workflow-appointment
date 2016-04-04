@@ -95,6 +95,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     private static final String MARK_DATE_APPOINTMENT = "date_appointment";
     private static final String MARK_TIME_APPOINTMENT = "time_appointment";
     private static final String MARK_RECAP = "recap";
+    private static final String MARK_CANCEL_MOTIF = "cancelMotif";
     private ICalService _iCalService;
 
     /**
@@ -198,6 +199,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_EMAIL, appointment.getEmail(  ) );
         model.put( MARK_REFERENCE, AppointmentService.getService(  ).computeRefAppointment( appointment ) );
         model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
+        model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif() );
 
         String strStartingTime = AppointmentService.getService(  )
                                                    .getFormatedStringTime( appointmentSlot.getStartingHour(  ),

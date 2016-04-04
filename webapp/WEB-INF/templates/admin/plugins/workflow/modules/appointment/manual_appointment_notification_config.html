@@ -69,12 +69,13 @@
 			<textarea class="richtext" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
 			#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :
 			<ul>
-				<li>${r"${firstName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
-				<li>${r"${lastName}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_lastname}</li>
-				<li>${r"${email}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_email}</li>
-				<li>${r"${date_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
-				<li>${r"${time_appointment}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
-				<li>${r"${reference}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
+				<li>${r"${firstName!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
+				<li>${r"${lastName!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_lastname}</li>
+				<li>${r"${email!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_email}</li>
+				<li>${r"${date_appointment!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
+				<li>${r"${time_appointment!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
+				<li>${r"${reference!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
+				<li>${r"${cancelMotif!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_cancelmotif}</li>
 			</ul>
 		</div>
 	</div>

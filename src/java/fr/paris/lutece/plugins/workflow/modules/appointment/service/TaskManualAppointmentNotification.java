@@ -45,11 +45,13 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hdf.model.hdftypes.definitions.FIBAbstractType;
 
+import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -84,7 +86,17 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-
+       
+        Map<String, String[]> parameters = request.getParameterMap(); 
+        String strCancelMotif = null;
+        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {  
+        	if (entry.getKey().startsWith("comment_value_")) {       
+        		 String[] tabAllParamsStartedWithCommentValue = entry.getValue();
+        		 strCancelMotif = tabAllParamsStartedWithCommentValue[0];
+        		 break;
+        	}
+        }
+         
         String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
         String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
         String strCc = request.getParameter( PARAMETER_CC );
@@ -104,6 +116,7 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
         notifyAppointmentDTO.setRecipientsBcc( strBcc );
         notifyAppointmentDTO.setSubject( strSubject );
         notifyAppointmentDTO.setSenderName( strSenderName );
+        notifyAppointmentDTO.setCancelMotif( strCancelMotif );
         // We do not check the email nor the sender name since it's done by the sendEmail( ... ) method.
         notifyAppointmentDTO.setSenderEmail( strSenderEmail );
         notifyAppointmentDTO.setSendICalNotif( bSendICalNotif );
