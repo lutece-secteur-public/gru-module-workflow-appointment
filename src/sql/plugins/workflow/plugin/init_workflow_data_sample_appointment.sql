@@ -43,8 +43,8 @@ INSERT INTO workflow_task_change_appointment_status_cf VALUES (109,-10);
 INSERT INTO workflow_task_change_appointment_status_cf VALUES (111,-10);
 INSERT INTO workflow_task_change_appointment_status_cf VALUES (115,-10);
 
-INSERT INTO workflow_task_comment_config VALUES (113,'Veuillez saisir le motif de l\'annulation',1);
-INSERT INTO workflow_task_comment_config VALUES (114,'Veuillez saisir le motif de l\'annulation',1);
+INSERT INTO workflow_task_comment_config(id_task, title, is_mandatory, is_richtext) VALUES (113,'Veuillez saisir le motif de l\'annulation',1,0);
+INSERT INTO workflow_task_comment_config(id_task, title, is_mandatory, is_richtext) VALUES (114,'Veuillez saisir le motif de l\'annulation',1,0);
 
 INSERT INTO workflow_task_notify_admin_appointment_cf VALUES (104,1,'L\'équipe Lutèce','no-reply@mydomain.com','Une demande de rendez-vous a été créée pour le ${date_appointment} à ${time_appointment}','<p>Bonjour,</p>\r\n<p>&nbsp;</p>\r\n<p>un nouveau rendez-vous a &eacute;t&eacute; cr&eacute;&eacute; le ${date_appointment} &agrave; ${time_appointment}.</p>\r\n<p>Les informations soumises par l\'utilisateur sont les suivantes :</p>\r\n<p>${recap}</p>\r\n<p>Merci de bien vouloir valider ou annuler ce rendez vous :</p>\r\n<p><a title=\"Valider le rendez-vous\" href=\"${url_validate}\">Valider le rendez-vous</a></p>\r\n<p><a title=\"Annuler le rendez-vous\" href=\"${url_cancel}\">Annuler le rendez-vous</a></p>\r\n<p>&nbsp;</p>\r\n<p>Cordialement,</p>\r\n<p>l\'&eacute;quipe Lut&egrave;ce</p>','','',105,101,0,0,'Salle 216');
 INSERT INTO workflow_task_notify_admin_appointment_cf VALUES (116,1,'L\'équipe Lutèce','no-reply@mydomain.com','Annulation d\'un rendez-vous par l\'utilisateur','<p>Bonjour,</p>\r\n<p>&nbsp;</p>\r\n<p>${firstName} ${lastName} a annul&eacute; le rendez-vous du ${date_appointment} &agrave; ${time_appointment}.</p>\r\n<p>&nbsp;</p>\r\n<p>Cordialement,</p>\r\n<p>&nbsp;</p>\r\n<p>l\'&eacute;quipe Lut&egrave;ce.</p>','','',0,0,1,0,'');
