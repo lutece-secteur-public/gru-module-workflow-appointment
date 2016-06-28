@@ -65,6 +65,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
     // TEMPLATES
     private static final String MARK_URL_CANCEL = "url_cancel";
+    private static final String MARK_MOTIF_CANCEL  = "comment_value_";
     
     private static final String PROPERTY_MAIL_LANG_SERVER = "workflow-appointment.server.mail.lang";
 
@@ -87,6 +88,17 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     	ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+      
+        Map<String, String[]> parameters = request.getParameterMap(); 
+        String strCancelMotif = null;
+        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {  
+        	if (entry.getKey().startsWith(MARK_MOTIF_CANCEL)) {       
+        		 String[] tabAllParamsStartedWithCommentValue = entry.getValue();
+        		 strCancelMotif = tabAllParamsStartedWithCommentValue[0];
+        		 config.setCancelMotif(strCancelMotif);
+        		 break;
+        	}
+        }
 
         String strEmail;
 
