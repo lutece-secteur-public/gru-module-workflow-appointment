@@ -89,15 +89,17 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId(  ) );
         Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
       
-        Map<String, String[]> parameters = request.getParameterMap(); 
-        String strCancelMotif = null;
-        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {  
-        	if (entry.getKey().startsWith(MARK_MOTIF_CANCEL)) {       
-        		 String[] tabAllParamsStartedWithCommentValue = entry.getValue();
-        		 strCancelMotif = tabAllParamsStartedWithCommentValue[0];
-        		 config.setCancelMotif(strCancelMotif);
-        		 break;
-        	}
+        if( request != null ){
+	        Map<String, String[]> parameters = request.getParameterMap(); 
+	        String strCancelMotif = null;
+	        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {  
+	        	if (entry.getKey().startsWith(MARK_MOTIF_CANCEL)) {       
+	        		 String[] tabAllParamsStartedWithCommentValue = entry.getValue();
+	        		 strCancelMotif = tabAllParamsStartedWithCommentValue[0];
+	        		 config.setCancelMotif(strCancelMotif);
+	        		 break;
+	        	}
+	        }
         }
 
         String strEmail;
