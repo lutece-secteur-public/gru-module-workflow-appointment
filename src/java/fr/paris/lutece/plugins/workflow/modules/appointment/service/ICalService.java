@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.StringTokenizer;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
@@ -40,51 +49,28 @@ import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Dur;
-import net.fortuna.ical4j.model.Parameter;
-import net.fortuna.ical4j.model.ParameterFactoryRegistry;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.Observance;
-//import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Rsvp;
-import net.fortuna.ical4j.model.parameter.XParameter;
+import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.TzName;
-import net.fortuna.ical4j.model.property.TzOffsetFrom;
-import net.fortuna.ical4j.model.property.TzOffsetTo;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.model.property.TzNameFactory;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
-//import java.util.TimeZone;
 
 
 /**
@@ -100,6 +86,7 @@ public class ICalService
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
     private static final String PROPERTY_TIMEZONE = "workflow-appointment.server.timezone";
     private static final String CONSTANT_MAILTO = "MAILTO:";
+    private static final String TIMEZONE_EUROPE = "Europe/Copenhagen";
 
     /**
      * Get an instance of the service
@@ -162,11 +149,14 @@ public class ICalService
        
         VEvent event = new VEvent( beginningDateTime, endingDateTime, ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
         
-        
+        // Need to add the timezone (RENDEZVOUS-258) for Orange mail calendar for example
+        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+        VTimeZone tz = registry.getTimeZone(TIMEZONE_EUROPE).getVTimeZone();
+        TzId tzParam = new TzId(tz.getProperties().getProperty(Property.TZID).getValue());
+        event.getProperties().getProperty(Property.DTSTART).getParameters().add(tzParam);
+        event.getProperties().getProperty(Property.DTEND).getParameters().add(tzParam);
         calendarStart.add( Calendar.MINUTE, nAppDurationMinutes );
 
-      //  event.getProperties(  ).add( new DtEnd( endingDateTime ) );
- 
         try
         {
             event.getProperties(  )
