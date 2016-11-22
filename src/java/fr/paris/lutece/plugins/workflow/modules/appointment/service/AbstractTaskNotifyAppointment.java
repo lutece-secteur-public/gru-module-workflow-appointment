@@ -59,6 +59,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.util.Strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,7 +198,16 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_FIRSTNAME, appointment.getFirstName(  ) );
         model.put( MARK_LASTNAME, appointment.getLastName(  ) );
         model.put( MARK_EMAIL, appointment.getEmail(  ) );
-        model.put( MARK_REFERENCE, AppointmentService.getService(  ).computeRefAppointment( appointment ) );
+        
+        // If the form is fill in with a reference, we have to put it in prefix of the appointment reference (JIRA RENDEZVOUS-259)
+        String referenceAppointment = AppointmentService.getService(  ).computeRefAppointment( appointment );
+        String referenceForm = AppointmentHome.getReference(appointment.getIdAppointment());
+        if (referenceForm != null && !StringUtils.EMPTY.equalsIgnoreCase(referenceForm))
+        {
+        	referenceAppointment = Strings.toUpperCase(referenceForm.trim()) + " - " + referenceAppointment;
+        }
+        
+        model.put( MARK_REFERENCE,  referenceAppointment);
         model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
         model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif() );
 
