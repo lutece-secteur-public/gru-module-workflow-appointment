@@ -35,10 +35,12 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import fr.paris.lutece.plugins.appointment.business.Appointment;
 import fr.paris.lutece.plugins.appointment.business.AppointmentForm;
+import fr.paris.lutece.plugins.appointment.business.AppointmentFormHome;
 import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.ResponseRecapDTO;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
 import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
+import fr.paris.lutece.plugins.appointment.service.AppointmentFormService;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.service.entrytype.EntryTypePhone;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -200,8 +202,9 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_EMAIL, appointment.getEmail(  ) );
         
         // If the form is fill in with a reference, we have to put it in prefix of the appointment reference (JIRA RENDEZVOUS-259)
+        AppointmentForm form = AppointmentFormHome.findByPrimaryKey( appointmentSlot.getIdForm() );
         String referenceAppointment = AppointmentService.getService(  ).computeRefAppointment( appointment );
-        String referenceForm = AppointmentHome.getReference(appointment.getIdAppointment());
+        String referenceForm = form.getReference();
         if (referenceForm != null && !StringUtils.EMPTY.equalsIgnoreCase(referenceForm))
         {
         	referenceAppointment = Strings.toUpperCase(referenceForm.trim()) + " - " + referenceAppointment;
