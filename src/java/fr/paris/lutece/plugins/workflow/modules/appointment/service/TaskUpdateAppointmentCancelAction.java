@@ -77,11 +77,14 @@ public class TaskUpdateAppointmentCancelAction extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );        
-        if (resourceHistory != null){
+        if ( resourceHistory != null )
+        {
         	Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-        	if (appointment != null){
+        	if ( appointment != null )
+        	{
         		TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId(  ) );
-        		if (config != null){
+        		if ( config != null )
+        		{
         			appointment.setIdActionCancel( config.getIdActionCancel(  ) );
         	        AppointmentHome.update( appointment );
             	}
