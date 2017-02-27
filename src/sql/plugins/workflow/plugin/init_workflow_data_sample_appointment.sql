@@ -62,7 +62,19 @@ INSERT INTO workflow_task_notify_appointment_cf VALUES (121,'L\'équipe Lutèce'
 
 INSERT INTO workflow_task_update_appointment_cancel_cf VALUES (105,106);
 
-INSERT INTO appointment_form VALUES (1,'Formulaire de demande de rendez-vous','demande de RDV','09h00','17h00',30,1,0,1,1,1,0,0,'2014-02-09',NULL,0,1,8,1,101,0,1,4,1,0,0,'MDP_LUTECE',0,0,0,NULL,'NULL',0,NULL,1,NULL,NULL,NULL,'');
+INSERT INTO appointment_form (
+			id_form, title, description, time_start, time_end, duration_appointments, 
+			is_open_monday, is_open_tuesday, is_open_wednesday, is_open_thursday, is_open_friday, is_open_saturday, is_open_sunday, 
+			date_start_validity, date_end_validity, is_active, dispolay_title_fo, nb_weeks_to_display, people_per_appointment, 
+			id_workflow, is_captcha_enabled, users_can_cancel_appointments, min_days_before_app, id_calendar_template, max_appointment_mail, 
+			nb_appointment_week, reference, is_form_step, is_confirmEmail_enabled, is_mandatoryEmail_enabled, icon_form_content, 
+			icon_form_mime_type, seizure_duration, date_limit, maximum_number_of_booked_seats, address, longitude, latitude, category)
+	VALUES (1,'Formulaire de demande de rendez-vous','demande de RDV','09h00','17h00',30,
+			1,0,1,1,1,0,0,
+			'2014-02-09',NULL,0,1,8,1,
+			101,0,1,4,1,0,
+			0,'MDP_LUTECE',0,0,0,NULL,
+			'NULL',0,NULL,1,NULL,NULL,NULL,'');
 INSERT INTO appointment_form_messages VALUES (1,'Choisir une date','Prénom','','Nom','','Email','','Email de confirmation','','Votre demande de rendez-vous a bien été créée avec la reference <b>%%REF%%</b>','jsp/site/Portal.jsp','Votre demande de rendez-vous a bien été annulée','Terminer','Aucun créneau disponible na été trouvé. Veuillez réessayer ultérieurement.','','Reserver','Complet');
 
 INSERT INTO appointment_slot VALUES (1,1,0,1,1,9,0,9,30,1);
