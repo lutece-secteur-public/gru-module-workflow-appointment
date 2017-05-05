@@ -33,8 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
@@ -43,66 +48,46 @@ import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
-
-
 /**
  * Workflow task to update the admin user associated to an appointment
  */
-public class TaskUpdateAdminAppointment extends SimpleTask
-{
-    // TEMPLATES
-    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
+public class TaskUpdateAdminAppointment extends SimpleTask {
+	// TEMPLATES
+	private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
 
-    // SERVICES
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
+	// SERVICES
+	@Inject
+	private IResourceHistoryService _resourceHistoryService;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
-    {
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processTask(int nIdResourceHistory, HttpServletRequest request, Locale locale) {
+		ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey(nIdResourceHistory);
+		String strIdAdminUser = request.getParameter(PARAMETER_ID_ADMIN_USER);
 
-        if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
-        {
-            int nIdAdminUser = Integer.parseInt( strIdAdminUser );
-            AdminUser adminUser = AdminUserHome.findByPrimaryKey( nIdAdminUser );
+		if (StringUtils.isNotEmpty(strIdAdminUser) && StringUtils.isNumeric(strIdAdminUser)) {
+			int nIdAdminUser = Integer.parseInt(strIdAdminUser);
+			AdminUser adminUser = AdminUserHome.findByPrimaryKey(nIdAdminUser);
 
-            if ( adminUser != null )
-            {
-                Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+			if (adminUser != null) {
 
-                if ( appointment.getIdAdminUser(  ) != nIdAdminUser )
-                {
-                    appointment.setIdAdminUser( nIdAdminUser );
-                    AppointmentHome.update( appointment );
+				UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory();
+				history.setIdHistory(resourceHistory.getId());
+				history.setIdAppointment(resourceHistory.getIdResource());
+				history.setIdAdminUser(nIdAdminUser);
+				UpdateAdminAppointmentHistoryHome.create(history);
 
-                    UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory(  );
-                    history.setIdHistory( resourceHistory.getId(  ) );
-                    history.setIdAppointment( resourceHistory.getIdResource(  ) );
-                    history.setIdAdminUser( nIdAdminUser );
-                    UpdateAdminAppointmentHistoryHome.create( history );
-                }
-            }
-        }
-    }
+			}
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTitle( Locale locale )
-    {
-        return StringUtils.EMPTY;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getTitle(Locale locale) {
+		return StringUtils.EMPTY;
+	}
 }

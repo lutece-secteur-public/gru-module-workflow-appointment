@@ -33,50 +33,63 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-
 import java.util.List;
 
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
  * Interface for update admin appointment history
  */
-public interface IUpdateAdminAppointmentHistoryDAO
-{
-    /**
-     * Create a new update admin appointment history
-     * @param history The history to insert into the database
-     * @param plugin The plugin
-     */
-    void create( UpdateAdminAppointmentHistory history, Plugin plugin );
+public interface IUpdateAdminAppointmentHistoryDAO {
+	/**
+	 * Create a new update admin appointment history
+	 * 
+	 * @param history
+	 *            The history to insert into the database
+	 * @param plugin
+	 *            The plugin
+	 */
+	void create(UpdateAdminAppointmentHistory history, Plugin plugin);
 
-    /**
-     * Get an update admin appointment history from its primary key
-     * @param nIdUpdate The id of the history to get
-     * @param plugin The plugin
-     * @return The history
-     */
-    UpdateAdminAppointmentHistory findByPrimaryKey( int nIdUpdate, Plugin plugin );
+	/**
+	 * Get an update admin appointment history from its primary key
+	 * 
+	 * @param nIdUpdate
+	 *            The id of the history to get
+	 * @param plugin
+	 *            The plugin
+	 * @return The history
+	 */
+	UpdateAdminAppointmentHistory findByPrimaryKey(int nIdUpdate, Plugin plugin);
 
-    /**
-     * Get the list of history associated with a given history id
-     * @param nIdHistory The history id
-     * @param plugin The plugin
-     * @return the list of history, or an empty list if none was found
-     */
-    List<UpdateAdminAppointmentHistory> findByIdHistory( int nIdHistory, Plugin plugin );
+	/**
+	 * Get the list of history associated with a given history id
+	 * 
+	 * @param nIdHistory
+	 *            The history id
+	 * @param plugin
+	 *            The plugin
+	 * @return the list of history, or an empty list if none was found
+	 */
+	List<UpdateAdminAppointmentHistory> findByIdHistory(int nIdHistory, Plugin plugin);
 
-    /**
-     * Remove an history from its primary key
-     * @param nIdUpdate The id of the history
-     * @param plugin the plugin
-     */
-    void delete( int nIdUpdate, Plugin plugin );
+	/**
+	 * Remove an history from its primary key
+	 * 
+	 * @param nIdUpdate
+	 *            The id of the history
+	 * @param plugin
+	 *            the plugin
+	 */
+	void delete(int nIdUpdate, Plugin plugin);
 
-    /**
-     * Remove every history associated with a given appointment
-     * @param nIdAppointment The id of the appointment
-     * @param plugin the plugin
-     */
-    void deleteByIdAppointment( int nIdAppointment, Plugin plugin );
+	/**
+	 * Remove every history associated with a given appointment
+	 * 
+	 * @param nIdAppointment
+	 *            The id of the appointment
+	 * @param plugin
+	 *            the plugin
+	 */
+	void deleteByIdAppointment(int nIdAppointment, Plugin plugin);
 }

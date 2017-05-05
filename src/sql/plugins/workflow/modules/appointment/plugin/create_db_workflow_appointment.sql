@@ -89,5 +89,3 @@ CREATE TABLE workflow_task_notify_appointment_crm(
 );
 
 CREATE INDEX idx_wf_task_update_admin_app ON workflow_task_update_admin_appointment (id_appointment);
-ALTER TABLE workflow_task_update_admin_appointment ADD CONSTRAINT fk_wf_task_update_app_cancel_cf FOREIGN KEY (id_appointment)
-      REFERENCES appointment_appointment (id_appointment) ON DELETE RESTRICT ON UPDATE RESTRICT ;

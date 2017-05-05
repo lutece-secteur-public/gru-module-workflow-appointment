@@ -33,75 +33,77 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-import java.util.List;
-
-
 /**
  * Home for manual appointment notification history
  */
-public final class UpdateAdminAppointmentHistoryHome
-{
-    private static IUpdateAdminAppointmentHistoryDAO _dao = SpringContextService.getBean( 
-            "workflow-appointment.manualUpdateAdminAppointmentHistoryDAO" );
-    private static Plugin _plugin = PluginService.getPlugin( WorkflowAppointmentPlugin.PLUGIN_NAME );
+public final class UpdateAdminAppointmentHistoryHome {
+	private static IUpdateAdminAppointmentHistoryDAO _dao = SpringContextService
+			.getBean("workflow-appointment.manualUpdateAdminAppointmentHistoryDAO");
+	private static Plugin _plugin = PluginService.getPlugin(WorkflowAppointmentPlugin.PLUGIN_NAME);
 
-    /**
-     * Private default constructor
-     */
-    private UpdateAdminAppointmentHistoryHome(  )
-    {
-        // Nothing to do
-    }
+	/**
+	 * Private default constructor
+	 */
+	private UpdateAdminAppointmentHistoryHome() {
+		// Nothing to do
+	}
 
-    /**
-     * Create a new manual appointment notification history
-     * @param historyNotif The history to insert into the database
-     */
-    public static void create( UpdateAdminAppointmentHistory historyNotif )
-    {
-        _dao.create( historyNotif, _plugin );
-    }
+	/**
+	 * Create a new manual appointment notification history
+	 * 
+	 * @param historyNotif
+	 *            The history to insert into the database
+	 */
+	public static void create(UpdateAdminAppointmentHistory historyNotif) {
+		_dao.create(historyNotif, _plugin);
+	}
 
-    /**
-     * Get a manual appointment notification history from its primary key
-     * @param nIdNotif The id of the history to get
-     * @return The history
-     */
-    public static UpdateAdminAppointmentHistory findByPrimaryKey( int nIdNotif )
-    {
-        return _dao.findByPrimaryKey( nIdNotif, _plugin );
-    }
+	/**
+	 * Get a manual appointment notification history from its primary key
+	 * 
+	 * @param nIdNotif
+	 *            The id of the history to get
+	 * @return The history
+	 */
+	public static UpdateAdminAppointmentHistory findByPrimaryKey(int nIdNotif) {
+		return _dao.findByPrimaryKey(nIdNotif, _plugin);
+	}
 
-    /**
-     * Get the list of history associated with a given history id
-     * @param nIdHistory The history id
-     * @return the list of history, or an empty list if none was found
-     */
-    public static List<UpdateAdminAppointmentHistory> findByIdHistory( int nIdHistory )
-    {
-        return _dao.findByIdHistory( nIdHistory, _plugin );
-    }
+	/**
+	 * Get the list of history associated with a given history id
+	 * 
+	 * @param nIdHistory
+	 *            The history id
+	 * @return the list of history, or an empty list if none was found
+	 */
+	public static List<UpdateAdminAppointmentHistory> findByIdHistory(int nIdHistory) {
+		return _dao.findByIdHistory(nIdHistory, _plugin);
+	}
 
-    /**
-     * Remove an history from its primary key
-     * @param nIdNotif The id of the history
-     */
-    public static void delete( int nIdNotif )
-    {
-        _dao.delete( nIdNotif, _plugin );
-    }
+	/**
+	 * Remove an history from its primary key
+	 * 
+	 * @param nIdNotif
+	 *            The id of the history
+	 */
+	public static void delete(int nIdNotif) {
+		_dao.delete(nIdNotif, _plugin);
+	}
 
-    /**
-     * Remove every history associated with a given appointment
-     * @param nIdAppointment The id of the appointment
-     */
-    public static void deleteByIdAppointment( int nIdAppointment )
-    {
-        _dao.deleteByIdAppointment( nIdAppointment, _plugin );
-    }
+	/**
+	 * Remove every history associated with a given appointment
+	 * 
+	 * @param nIdAppointment
+	 *            The id of the appointment
+	 */
+	public static void deleteByIdAppointment(int nIdAppointment) {
+		_dao.deleteByIdAppointment(nIdAppointment, _plugin);
+	}
 }

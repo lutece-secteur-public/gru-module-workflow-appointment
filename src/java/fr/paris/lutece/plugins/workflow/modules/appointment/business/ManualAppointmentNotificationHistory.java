@@ -33,126 +33,128 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-
 /**
  * Manual appointment notification
  */
-public class ManualAppointmentNotificationHistory
-{
-    private int _nIdManualNotif;
-    private int _nIdHistory;
-    private int _nIdAppointment;
-    private String _strEmailTo;
-    private String _strEmailSubject;
-    private String _strEmailMessage;
+public class ManualAppointmentNotificationHistory {
+	private int _nIdManualNotif;
+	private int _nIdHistory;
+	private int _nIdAppointment;
+	private String _strEmailTo;
+	private String _strEmailSubject;
+	private String _strEmailMessage;
 
-    /**
-     * Get the id of the notif
-     * @return The id of the notif
-     */
-    public int getIdManualNotif(  )
-    {
-        return _nIdManualNotif;
-    }
+	/**
+	 * Get the id of the notif
+	 * 
+	 * @return The id of the notif
+	 */
+	public int getIdManualNotif() {
+		return _nIdManualNotif;
+	}
 
-    /**
-     * Set the id of the notif
-     * @param nIdManualNotif The id of the notif
-     */
-    public void setIdManualNotif( int nIdManualNotif )
-    {
-        this._nIdManualNotif = nIdManualNotif;
-    }
+	/**
+	 * Set the id of the notif
+	 * 
+	 * @param nIdManualNotif
+	 *            The id of the notif
+	 */
+	public void setIdManualNotif(int nIdManualNotif) {
+		this._nIdManualNotif = nIdManualNotif;
+	}
 
-    /**
-     * Get the id of the history of this manual appointment notification
-     * @return The id of the history of this manual appointment notification
-     */
-    public int getIdHistory(  )
-    {
-        return _nIdHistory;
-    }
+	/**
+	 * Get the id of the history of this manual appointment notification
+	 * 
+	 * @return The id of the history of this manual appointment notification
+	 */
+	public int getIdHistory() {
+		return _nIdHistory;
+	}
 
-    /**
-     * Set the id of the history of this manual appointment notification
-     * @param nIdHistory The id of the history of this manual appointment
-     *            notification
-     */
-    public void setIdHistory( int nIdHistory )
-    {
-        this._nIdHistory = nIdHistory;
-    }
+	/**
+	 * Set the id of the history of this manual appointment notification
+	 * 
+	 * @param nIdHistory
+	 *            The id of the history of this manual appointment notification
+	 */
+	public void setIdHistory(int nIdHistory) {
+		this._nIdHistory = nIdHistory;
+	}
 
-    /**
-     * Get the id of the appointment associated with this history
-     * @return The id of the appointment associated with this history
-     */
-    public int getIdAppointment(  )
-    {
-        return _nIdAppointment;
-    }
+	/**
+	 * Get the id of the appointment associated with this history
+	 * 
+	 * @return The id of the appointment associated with this history
+	 */
+	public int getIdAppointment() {
+		return _nIdAppointment;
+	}
 
-    /**
-     * Set the id of the appointment associated with this history
-     * @param nIdAppointment The id of the appointment associated with this
-     *            history
-     */
-    public void setIdAppointment( int nIdAppointment )
-    {
-        this._nIdAppointment = nIdAppointment;
-    }
+	/**
+	 * Set the id of the appointment associated with this history
+	 * 
+	 * @param nIdAppointment
+	 *            The id of the appointment associated with this history
+	 */
+	public void setIdAppointment(int nIdAppointment) {
+		this._nIdAppointment = nIdAppointment;
+	}
 
-    /**
-     * Get the recipient email
-     * @return The recipient email
-     */
-    public String getEmailTo(  )
-    {
-        return _strEmailTo;
-    }
+	/**
+	 * Get the recipient email
+	 * 
+	 * @return The recipient email
+	 */
+	public String getEmailTo() {
+		return _strEmailTo;
+	}
 
-    /**
-     * Set the recipient email
-     * @param strEmailTo The recipient email
-     */
-    public void setEmailTo( String strEmailTo )
-    {
-        this._strEmailTo = strEmailTo;
-    }
+	/**
+	 * Set the recipient email
+	 * 
+	 * @param strEmailTo
+	 *            The recipient email
+	 */
+	public void setEmailTo(String strEmailTo) {
+		this._strEmailTo = strEmailTo;
+	}
 
-    /**
-     * Get the email subject
-     * @return The email subject
-     */
-    public String getEmailSubject(  )
-    {
-        return _strEmailSubject;
-    }
+	/**
+	 * Get the email subject
+	 * 
+	 * @return The email subject
+	 */
+	public String getEmailSubject() {
+		return _strEmailSubject;
+	}
 
-    /**
-     * Set the email subject
-     * @param strEmailSubject The email subject
-     */
-    public void setEmailSubject( String strEmailSubject )
-    {
-        this._strEmailSubject = strEmailSubject;
-    }
+	/**
+	 * Set the email subject
+	 * 
+	 * @param strEmailSubject
+	 *            The email subject
+	 */
+	public void setEmailSubject(String strEmailSubject) {
+		this._strEmailSubject = strEmailSubject;
+	}
 
-    /**
-     * Get the email message
-     * @return The email message
-     */
-    public String getEmailMessage(  )
-    {
-        return _strEmailMessage;
-    }
+	/**
+	 * Get the email message
+	 * 
+	 * @return The email message
+	 */
+	public String getEmailMessage() {
+		return _strEmailMessage;
+	}
 
-    /**
-     * Set the email message
-     * @param strEmailMessage The email message
-     */
-    public void setEmailMessage( String strEmailMessage )
-    {
-        this._strEmailMessage = strEmailMessage;
-    }
+	/**
+	 * Set the email message
+	 * 
+	 * @param strEmailMessage
+	 *            The email message
+	 */
+	public void setEmailMessage(String strEmailMessage) {
+		this._strEmailMessage = strEmailMessage;
+	}
 }

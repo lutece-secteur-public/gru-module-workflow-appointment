@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.appointment.web.AppointmentJspBean;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -48,161 +57,150 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.util.CryptoService;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-
 /**
  * Do execute a workflow action
  */
-public class ExecuteWorkflowAction
-{
-    // Parameters
-    private static final String PARAMETER_ID_ACTION = "id_action";
-    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
-    private static final String PARAMETER_ID_RESOURCE = "id_resource";
-    private static final String PARAMETER_TIMESTAMP = "timestamp";
-    private static final String PARAMETER_KEY = "key";
+public class ExecuteWorkflowAction {
+	// Parameters
+	private static final String PARAMETER_ID_ACTION = "id_action";
+	private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
+	private static final String PARAMETER_ID_RESOURCE = "id_resource";
+	private static final String PARAMETER_TIMESTAMP = "timestamp";
+	private static final String PARAMETER_KEY = "key";
 
-    // Properties
-    private static final String PROPERTY_LINKS_LIMIT_VALIDITY = "workflow-appointment.executeWorkflowAction.links_limit_validity";
+	// Properties
+	private static final String PROPERTY_LINKS_LIMIT_VALIDITY = "workflow-appointment.executeWorkflowAction.links_limit_validity";
 
-    // JSP URL
-    private static final String JSP_URL_EXECUTE_WORKFLOW_ACTION = "jsp/site/plugins/workflow/modules/appointment/DoExecuteWorkflowAction.jsp";
+	// JSP URL
+	private static final String JSP_URL_EXECUTE_WORKFLOW_ACTION = "jsp/site/plugins/workflow/modules/appointment/DoExecuteWorkflowAction.jsp";
 
-    // Error
-    private static final String ERROR_MESSAGE_ACCESS_DENIED = "portal.site.message.pageAccessDenied";
+	// Error
+	private static final String ERROR_MESSAGE_ACCESS_DENIED = "portal.site.message.pageAccessDenied";
 
-    // Constants
-    private static final String DEFAULT_ENCRYPTION_ALGO = "SHA-256";
-    private static final int DEFAULT_LIMIT_TIME_VALIDITY = 30;
+	// Constants
+	private static final String DEFAULT_ENCRYPTION_ALGO = "SHA-256";
+	private static final int DEFAULT_LIMIT_TIME_VALIDITY = 30;
 
-    /**
-     * Do check if the given key is valid. If it is valid, then the user is
-     * redirected to a page to execute a workflow action.
-     * @param request The request
-     * @param response The response
-     * @return The next URL to redirect to
-     * @throws SiteMessageException If a site message needs to be displayed
-     */
-    public String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response )
-        throws SiteMessageException
-    {
-        String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
-        String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
-        String strIdResource = request.getParameter( PARAMETER_ID_RESOURCE );
-        String strTimestamp = request.getParameter( PARAMETER_TIMESTAMP );
-        String strKey = request.getParameter( PARAMETER_KEY );
+	/**
+	 * Do check if the given key is valid. If it is valid, then the user is
+	 * redirected to a page to execute a workflow action.
+	 * 
+	 * @param request
+	 *            The request
+	 * @param response
+	 *            The response
+	 * @return The next URL to redirect to
+	 * @throws SiteMessageException
+	 *             If a site message needs to be displayed
+	 */
+	public String doExecuteWorkflowAction(HttpServletRequest request, HttpServletResponse response)
+			throws SiteMessageException {
+		String strIdAction = request.getParameter(PARAMETER_ID_ACTION);
+		String strIdAdminUser = request.getParameter(PARAMETER_ID_ADMIN_USER);
+		String strIdResource = request.getParameter(PARAMETER_ID_RESOURCE);
+		String strTimestamp = request.getParameter(PARAMETER_TIMESTAMP);
+		String strKey = request.getParameter(PARAMETER_KEY);
 
-        if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction ) &&
-                StringUtils.isNotEmpty( strTimestamp ) && StringUtils.isNumeric( strTimestamp ) &&
-                StringUtils.isNotEmpty( strIdResource ) && StringUtils.isNumeric( strIdResource ) &&
-                StringUtils.isNotEmpty( strKey ) && StringUtils.isNotEmpty( strIdAdminUser ) &&
-                StringUtils.isNumeric( strIdAdminUser ) )
-        {
-            int nIdAction = Integer.parseInt( strIdAction );
+		if (StringUtils.isNotEmpty(strIdAction) && StringUtils.isNumeric(strIdAction)
+				&& StringUtils.isNotEmpty(strTimestamp) && StringUtils.isNumeric(strTimestamp)
+				&& StringUtils.isNotEmpty(strIdResource) && StringUtils.isNumeric(strIdResource)
+				&& StringUtils.isNotEmpty(strKey) && StringUtils.isNotEmpty(strIdAdminUser)
+				&& StringUtils.isNumeric(strIdAdminUser)) {
+			int nIdAction = Integer.parseInt(strIdAction);
 
-            long lTimestamp = Long.parseLong( strTimestamp );
-            int nIdResource = Integer.parseInt( strIdResource );
+			long lTimestamp = Long.parseLong(strTimestamp);
+			int nIdResource = Integer.parseInt(strIdResource);
 
-            AdminUser user = null;
-            int nIdAdminUser = Integer.parseInt( strIdAdminUser );
+			AdminUser user = null;
+			int nIdAdminUser = Integer.parseInt(strIdAdminUser);
 
-            if ( nIdAdminUser > 0 )
-            {
-                user = AdminUserHome.findByPrimaryKey( nIdAdminUser );
-            }
+			if (nIdAdminUser > 0) {
+				user = AdminUserHome.findByPrimaryKey(nIdAdminUser);
+			}
 
-            int nLinkLimitValidity = AppPropertiesService.getPropertyInt( PROPERTY_LINKS_LIMIT_VALIDITY,
-                    DEFAULT_LIMIT_TIME_VALIDITY );
+			int nLinkLimitValidity = AppPropertiesService.getPropertyInt(PROPERTY_LINKS_LIMIT_VALIDITY,
+					DEFAULT_LIMIT_TIME_VALIDITY);
 
-            if ( nLinkLimitValidity > 0 )
-            {
-                Calendar calendar = GregorianCalendar.getInstance( WorkflowAppointmentPlugin.getPluginLocale( 
-                            Locale.getDefault(  ) ) );
-                calendar.add( Calendar.DAY_OF_WEEK, -1 * nLinkLimitValidity );
+			if (nLinkLimitValidity > 0) {
+				Calendar calendar = GregorianCalendar
+						.getInstance(WorkflowAppointmentPlugin.getPluginLocale(Locale.getDefault()));
+				calendar.add(Calendar.DAY_OF_WEEK, -1 * nLinkLimitValidity);
 
-                if ( calendar.getTimeInMillis(  ) > lTimestamp )
-                {
-                    SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
+				if (calendar.getTimeInMillis() > lTimestamp) {
+					SiteMessageService.setMessage(request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR);
 
-                    return null;
-                }
-            }
+					return null;
+				}
+			}
 
-            String strComputedKey = computeAuthenticationKey( nIdAction, nIdAdminUser, lTimestamp, nIdResource );
+			String strComputedKey = computeAuthenticationKey(nIdAction, nIdAdminUser, lTimestamp, nIdResource);
 
-            if ( ( user == null ) || !StringUtils.equals( strComputedKey, strKey ) )
-            {
-                SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
+			if ((user == null) || !StringUtils.equals(strComputedKey, strKey)) {
+				SiteMessageService.setMessage(request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR);
 
-                return null;
-            }
+				return null;
+			}
 
-            try
-            {
-                AdminAuthenticationService.getInstance(  ).registerUser( request, user );
-            }
-            catch ( AccessDeniedException e )
-            {
-                AppLogService.error( e.getMessage(  ), e );
-            }
-            catch ( UserNotSignedException e )
-            {
-                AppLogService.error( e.getMessage(  ), e );
-            }
+			try {
+				AdminAuthenticationService.getInstance().registerUser(request, user);
+			} catch (AccessDeniedException e) {
+				AppLogService.error(e.getMessage(), e);
+			} catch (UserNotSignedException e) {
+				AppLogService.error(e.getMessage(), e);
+			}
 
-            return AppointmentJspBean.getUrlExecuteWorkflowAction( request, strIdResource, strIdAction );
-        }
+			return AppointmentJspBean.getUrlExecuteWorkflowAction(request, strIdResource, strIdAction);
+		}
 
-        SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
+		SiteMessageService.setMessage(request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR);
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Get the URL to execute a workflow action on an appointment
-     * @param strBaseURL The base URL to use
-     * @param nIdWorkflowAction The id of the workflow action to execute
-     * @param nIdAdminUser The id of the action user that execute the action
-     * @param nIdResource The id of the appointment to execute the workflow
-     *            action on
-     * @return The URL
-     */
-    public static String getExecuteWorkflowActionUrl( String strBaseURL, int nIdWorkflowAction, int nIdAdminUser,
-        int nIdResource )
-    {
-        long lTimestamp = System.currentTimeMillis(  );
-        UrlItem urlItem = new UrlItem( strBaseURL + JSP_URL_EXECUTE_WORKFLOW_ACTION );
-        urlItem.addParameter( PARAMETER_ID_ACTION, nIdWorkflowAction );
-        urlItem.addParameter( PARAMETER_ID_RESOURCE, nIdResource );
-        urlItem.addParameter( PARAMETER_ID_ADMIN_USER, nIdAdminUser );
-        urlItem.addParameter( PARAMETER_TIMESTAMP, Long.toString( lTimestamp ) );
-        urlItem.addParameter( PARAMETER_KEY,
-            computeAuthenticationKey( nIdWorkflowAction, nIdAdminUser, lTimestamp, nIdResource ) );
+	/**
+	 * Get the URL to execute a workflow action on an appointment
+	 * 
+	 * @param strBaseURL
+	 *            The base URL to use
+	 * @param nIdWorkflowAction
+	 *            The id of the workflow action to execute
+	 * @param nIdAdminUser
+	 *            The id of the action user that execute the action
+	 * @param nIdResource
+	 *            The id of the appointment to execute the workflow action on
+	 * @return The URL
+	 */
+	public static String getExecuteWorkflowActionUrl(String strBaseURL, int nIdWorkflowAction, int nIdAdminUser,
+			int nIdResource) {
+		long lTimestamp = System.currentTimeMillis();
+		UrlItem urlItem = new UrlItem(strBaseURL + JSP_URL_EXECUTE_WORKFLOW_ACTION);
+		urlItem.addParameter(PARAMETER_ID_ACTION, nIdWorkflowAction);
+		urlItem.addParameter(PARAMETER_ID_RESOURCE, nIdResource);
+		urlItem.addParameter(PARAMETER_ID_ADMIN_USER, nIdAdminUser);
+		urlItem.addParameter(PARAMETER_TIMESTAMP, Long.toString(lTimestamp));
+		urlItem.addParameter(PARAMETER_KEY,
+				computeAuthenticationKey(nIdWorkflowAction, nIdAdminUser, lTimestamp, nIdResource));
 
-        return urlItem.getUrl(  );
-    }
+		return urlItem.getUrl();
+	}
 
-    /**
-     * Compute the authentication key to execute a workflow action
-     * @param nIdAction The id of the action to execute
-     * @param nIdAdminUser The id of the admin user that will execute the action
-     * @param nTimestamp The timestamp used when the link was created
-     * @param nIdResource The id of the workflow resource
-     * @return The authentication key
-     */
-    private static String computeAuthenticationKey( int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource )
-    {
-        String strPrivateKey = CryptoService.getCryptoKey(  );
+	/**
+	 * Compute the authentication key to execute a workflow action
+	 * 
+	 * @param nIdAction
+	 *            The id of the action to execute
+	 * @param nIdAdminUser
+	 *            The id of the admin user that will execute the action
+	 * @param nTimestamp
+	 *            The timestamp used when the link was created
+	 * @param nIdResource
+	 *            The id of the workflow resource
+	 * @return The authentication key
+	 */
+	private static String computeAuthenticationKey(int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource) {
+		String strPrivateKey = CryptoService.getCryptoKey();
 
-        return CryptoService.encrypt( nIdAction + nIdAdminUser + nTimestamp + nIdResource + strPrivateKey,
-            DEFAULT_ENCRYPTION_ALGO );
-    }
+		return CryptoService.encrypt(nIdAction + nIdAdminUser + nTimestamp + nIdResource + strPrivateKey,
+				DEFAULT_ENCRYPTION_ALGO);
+	}
 }

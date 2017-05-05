@@ -33,71 +33,64 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAdminAppointment;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
-
-
 /**
  *
  * NotifyAppointmentTaskComponent
  *
  */
-public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
-{
-    // MESSAGES
-    private static final String MESSAGE_EMAIL_SENT_TO_ADMIN_USER = "module.workflow.appointment.message.emailSentToAdminUser";
+public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent {
+	// MESSAGES
+	private static final String MESSAGE_EMAIL_SENT_TO_ADMIN_USER = "module.workflow.appointment.message.emailSentToAdminUser";
 
-    // SERVICES
-    @Inject
-    @Named( TaskNotifyAdminAppointment.CONFIG_SERVICE_BEAN_NAME )
-    private ITaskConfigService _taskNotifyAdminAppointmentConfigService;
-    @Inject
-    @Named( ActionService.BEAN_SERVICE )
-    private ActionService _actionService;
+	// SERVICES
+	@Inject
+	@Named(TaskNotifyAdminAppointment.CONFIG_SERVICE_BEAN_NAME)
+	private ITaskConfigService _taskNotifyAdminAppointmentConfigService;
+	@Inject
+	@Named(ActionService.BEAN_SERVICE)
+	private ActionService _actionService;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
-    {
-        return getDisplayConfigForm( request, locale, task, _taskNotifyAdminAppointmentConfigService, true );
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getDisplayConfigForm(HttpServletRequest request, Locale locale, ITask task) {
+		return getDisplayConfigForm(request, locale, task, _taskNotifyAdminAppointmentConfigService, true);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
-    {
-        return doSaveConfig( request, locale, task, _taskNotifyAdminAppointmentConfigService, true );
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String doSaveConfig(HttpServletRequest request, Locale locale, ITask task) {
+		return doSaveConfig(request, locale, task, _taskNotifyAdminAppointmentConfigService, true);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return I18nService.getLocalizedString( MESSAGE_EMAIL_SENT_TO_ADMIN_USER, locale );
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getDisplayTaskInformation(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
+		return I18nService.getLocalizedString(MESSAGE_EMAIL_SENT_TO_ADMIN_USER, locale);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getTaskInformationXml(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
+		return null;
+	}
 }

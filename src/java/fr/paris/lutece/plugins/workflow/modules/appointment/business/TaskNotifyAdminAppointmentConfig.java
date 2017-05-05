@@ -33,51 +33,50 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-
 /**
  *
  * TaskNotifyAppointmentConfig
  *
  */
-public class TaskNotifyAdminAppointmentConfig extends TaskNotifyAppointmentConfig
-{
-    private int _nIdAdminUser;
-    private int _nIdActionValidate;
+public class TaskNotifyAdminAppointmentConfig extends TaskNotifyAppointmentConfig {
+	private int _nIdAdminUser;
+	private int _nIdActionValidate;
 
-    /**
-     * Get the id of the admin user to notify
-     * @return The id of the admin user to notify
-     */
-    public int getIdAdminUser(  )
-    {
-        return _nIdAdminUser;
-    }
+	/**
+	 * Get the id of the admin user to notify
+	 * 
+	 * @return The id of the admin user to notify
+	 */
+	public int getIdAdminUser() {
+		return _nIdAdminUser;
+	}
 
-    /**
-     * Set the id of the admin user to notify
-     * @param nIdAdminUser The id of the admin user to notify
-     */
-    public void setIdAdminUser( int nIdAdminUser )
-    {
-        this._nIdAdminUser = nIdAdminUser;
-    }
+	/**
+	 * Set the id of the admin user to notify
+	 * 
+	 * @param nIdAdminUser
+	 *            The id of the admin user to notify
+	 */
+	public void setIdAdminUser(int nIdAdminUser) {
+		this._nIdAdminUser = nIdAdminUser;
+	}
 
-    /**
-     * Get the id of the workflow action to validate the appointment
-     * @return The id of the workflow action to validate the appointment
-     */
-    public int getIdActionValidate(  )
-    {
-        return _nIdActionValidate;
-    }
+	/**
+	 * Get the id of the workflow action to validate the appointment
+	 * 
+	 * @return The id of the workflow action to validate the appointment
+	 */
+	public int getIdActionValidate() {
+		return _nIdActionValidate;
+	}
 
-    /**
-     * Set the id of the workflow action to validate the appointment
-     * @param nIdActionValidate The id of the workflow action to validate the
-     *            appointment
-     */
-    public void setIdActionValidate( int nIdActionValidate )
-    {
-        this._nIdActionValidate = nIdActionValidate;
-    }
+	/**
+	 * Set the id of the workflow action to validate the appointment
+	 * 
+	 * @param nIdActionValidate
+	 *            The id of the workflow action to validate the appointment
+	 */
+	public void setIdActionValidate(int nIdActionValidate) {
+		this._nIdActionValidate = nIdActionValidate;
+	}
 }
