@@ -45,7 +45,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hdf.model.hdftypes.definitions.FIBAbstractType;
 
 import java.util.Enumeration;
 import java.util.Locale;
