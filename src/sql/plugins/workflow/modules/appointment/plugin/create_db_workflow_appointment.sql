@@ -40,8 +40,6 @@ CREATE TABLE workflow_task_manual_app_notify(
 );
 
 CREATE INDEX idx_wf_task_manual_app_notify ON workflow_task_manual_app_notify (id_appointment);
-ALTER TABLE workflow_task_manual_app_notify ADD CONSTRAINT fk_wf_appoint_man_ap_notif_hist FOREIGN KEY (id_appointment)
-      REFERENCES appointment_appointment (id_appointment) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
 CREATE TABLE workflow_task_notify_admin_appointment_cf(
   id_task INT NOT NULL,
