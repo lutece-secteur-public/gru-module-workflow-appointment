@@ -50,18 +50,14 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.model.component.Observance;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Rsvp;
-import net.fortuna.ical4j.model.parameter.TzId;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
@@ -86,7 +82,7 @@ public class ICalService
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
     private static final String PROPERTY_TIMEZONE = "workflow-appointment.server.timezone";
     private static final String CONSTANT_MAILTO = "MAILTO:";
-    private static final String TIMEZONE_EUROPE = "Europe/Copenhagen";
+   // private static final String TIMEZONE_EUROPE = "Europe/Copenhagen";
 
     /**
      * Get an instance of the service
@@ -126,16 +122,7 @@ public class ICalService
 
         int nAppDurationMinutes = ( ( slot.getEndingHour(  ) - slot.getStartingHour(  ) ) * 60 ) +
             ( slot.getEndingMinute(  ) - slot.getStartingMinute(  ) );
-        int nDurationAppointmentHours = nAppDurationMinutes / 60;
-        int nDurationAppointmentMinutes = nAppDurationMinutes % 60;
-
-        int nDurationAppointmentDays = nDurationAppointmentHours / 24;
-        nDurationAppointmentHours %= 24;
-
- //       Dur duration = new Dur( nDurationAppointmentDays, nDurationAppointmentHours, nDurationAppointmentMinutes, 0 );
-
-//        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-//        TimeZone timezone = registry.getTimeZone("Europe/Paris");
+      
         
         DateTime beginningDateTime = new DateTime(calendarStart.getTimeInMillis(  ));
         beginningDateTime.setTimeZone(getParisZone ( ));
@@ -148,13 +135,7 @@ public class ICalService
         endingDateTime.setTimeZone( getParisZone ( ) );
        
         VEvent event = new VEvent( beginningDateTime, endingDateTime, ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
-        
-        // Need to add the timezone (RENDEZVOUS-258) for Orange mail calendar for example
-        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-        VTimeZone tz = registry.getTimeZone(TIMEZONE_EUROPE).getVTimeZone();
-        TzId tzParam = new TzId(tz.getProperties().getProperty(Property.TZID).getValue());
-        event.getProperties().getProperty(Property.DTSTART).getParameters().add(tzParam);
-        event.getProperties().getProperty(Property.DTEND).getParameters().add(tzParam);
+       
         calendarStart.add( Calendar.MINUTE, nAppDurationMinutes );
 
         try
@@ -237,21 +218,5 @@ public class ICalService
     	return timezone;
     }
     
-    /**
-     * Get infos from TimeZone
-     * @return VtimeZone
-     */
-    private static VTimeZone getTimeZone( )
-    {
-    	VTimeZone tz = getParisZone ( ).getVTimeZone();
-   
-    	Observance tmpobs = tz.getApplicableObservance( (new net.fortuna.ical4j.model.Date(GregorianCalendar.getInstance().getTimeInMillis()) ));
-    	if (tmpobs != null)
-    	{
-    		tz.getObservances().clear();
-    		tz.getObservances().add( tmpobs );
-    	}
-    	
-     	return tz;
-    }
+  
 }
