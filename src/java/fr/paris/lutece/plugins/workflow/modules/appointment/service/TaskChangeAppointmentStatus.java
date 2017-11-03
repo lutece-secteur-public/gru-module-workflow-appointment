@@ -88,7 +88,7 @@ public class TaskChangeAppointmentStatus extends SimpleTask {
 			Appointment appointment = AppointmentService.findAppointmentById(resourceHistory.getIdResource());
 			if (appointment != null) {
 				appointment.setIsCancelled(config.getAppointmentStatus() != 0);
-				AppointmentHome.update(appointment);
+				AppointmentService.updateAppointment(appointment);
 				if (appointment.getIsCancelled()) {
 					Slot slot = SlotService.findSlotById(appointment.getIdSlot());
 					slot.setNbRemainingPlaces(slot.getNbRemainingPlaces() + appointment.getNbPlaces());
