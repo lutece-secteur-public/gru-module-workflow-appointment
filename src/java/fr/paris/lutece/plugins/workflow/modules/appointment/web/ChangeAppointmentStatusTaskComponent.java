@@ -180,10 +180,14 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent {
 	public String getDisplayTaskInformation(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
 		TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService
 				.findByPrimaryKey(task.getId());
-
-		return I18nService.getLocalizedString(
-				(config.getAppointmentStatus() > 0) ? MESSAGE_APPOINTMENT_VALIDATED : MESSAGE_APPOINTMENT_CANCELED,
-				locale);
+		String strInformation = StringUtils.EMPTY;
+		int status = config.getAppointmentStatus();
+		if (status == 0) {
+			strInformation = MESSAGE_APPOINTMENT_VALIDATED;
+		} else {
+			strInformation = MESSAGE_APPOINTMENT_CANCELED;					
+		}
+		return I18nService.getLocalizedString(strInformation, locale);
 	}
 
 	/**
