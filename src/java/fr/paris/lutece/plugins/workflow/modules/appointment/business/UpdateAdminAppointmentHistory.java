@@ -36,87 +36,94 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 /**
  * Update admin appointment history
  */
-public class UpdateAdminAppointmentHistory {
-	private int _nIdUpdate;
-	private int _nIdHistory;
-	private int _nIdAppointment;
-	private int _nIdAdminUser;
+public class UpdateAdminAppointmentHistory
+{
+    private int _nIdUpdate;
+    private int _nIdHistory;
+    private int _nIdAppointment;
+    private int _nIdAdminUser;
 
-	/**
-	 * Get the primary key of the update
-	 * 
-	 * @return The primary key of the update
-	 */
-	public int getIdUpdate() {
-		return _nIdUpdate;
-	}
+    /**
+     * Get the primary key of the update
+     * 
+     * @return The primary key of the update
+     */
+    public int getIdUpdate( )
+    {
+        return _nIdUpdate;
+    }
 
-	/**
-	 * Set the primary key of the update
-	 * 
-	 * @param nIdUpdate
-	 *            The primary key of the update
-	 */
-	public void setIdUpdate(int nIdUpdate) {
-		this._nIdUpdate = nIdUpdate;
-	}
+    /**
+     * Set the primary key of the update
+     * 
+     * @param nIdUpdate
+     *            The primary key of the update
+     */
+    public void setIdUpdate( int nIdUpdate )
+    {
+        this._nIdUpdate = nIdUpdate;
+    }
 
-	/**
-	 * Get the id of the history of this manual appointment notification
-	 * 
-	 * @return The id of the history of this manual appointment notification
-	 */
-	public int getIdHistory() {
-		return _nIdHistory;
-	}
+    /**
+     * Get the id of the history of this manual appointment notification
+     * 
+     * @return The id of the history of this manual appointment notification
+     */
+    public int getIdHistory( )
+    {
+        return _nIdHistory;
+    }
 
-	/**
-	 * Set the id of the history of this manual appointment notification
-	 * 
-	 * @param nIdHistory
-	 *            The id of the history of this manual appointment notification
-	 */
-	public void setIdHistory(int nIdHistory) {
-		this._nIdHistory = nIdHistory;
-	}
+    /**
+     * Set the id of the history of this manual appointment notification
+     * 
+     * @param nIdHistory
+     *            The id of the history of this manual appointment notification
+     */
+    public void setIdHistory( int nIdHistory )
+    {
+        this._nIdHistory = nIdHistory;
+    }
 
-	/**
-	 * Get the id of the appointment associated with this history
-	 * 
-	 * @return The id of the appointment associated with this history
-	 */
-	public int getIdAppointment() {
-		return _nIdAppointment;
-	}
+    /**
+     * Get the id of the appointment associated with this history
+     * 
+     * @return The id of the appointment associated with this history
+     */
+    public int getIdAppointment( )
+    {
+        return _nIdAppointment;
+    }
 
-	/**
-	 * Set the id of the appointment associated with this history
-	 * 
-	 * @param nIdAppointment
-	 *            The id of the appointment associated with this history
-	 */
-	public void setIdAppointment(int nIdAppointment) {
-		this._nIdAppointment = nIdAppointment;
-	}
+    /**
+     * Set the id of the appointment associated with this history
+     * 
+     * @param nIdAppointment
+     *            The id of the appointment associated with this history
+     */
+    public void setIdAppointment( int nIdAppointment )
+    {
+        this._nIdAppointment = nIdAppointment;
+    }
 
-	/**
-	 * Get the id of the admin user that was associated to the appointment
-	 * 
-	 * @return The the id of the admin user that was associated to the
-	 *         appointment
-	 */
-	public int getIdAdminUser() {
-		return _nIdAdminUser;
-	}
+    /**
+     * Get the id of the admin user that was associated to the appointment
+     * 
+     * @return The the id of the admin user that was associated to the appointment
+     */
+    public int getIdAdminUser( )
+    {
+        return _nIdAdminUser;
+    }
 
-	/**
-	 * Set the id of the admin user that was associated to the appointment
-	 * 
-	 * @param nIdAdminUser
-	 *            The id of the admin user that was associated to the
-	 *            appointment
-	 */
-	public void setIdAdminUser(int nIdAdminUser) {
-		this._nIdAdminUser = nIdAdminUser;
-	}
+    /**
+     * Set the id of the admin user that was associated to the appointment
+     * 
+     * @param nIdAdminUser
+     *            The id of the admin user that was associated to the appointment
+     */
+    public void setIdAdminUser( int nIdAdminUser )
+    {
+        this._nIdAdminUser = nIdAdminUser;
+    }
 }

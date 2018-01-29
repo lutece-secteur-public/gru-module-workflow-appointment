@@ -40,35 +40,38 @@ import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
 
 /**
- * Default implementation of the config service of tasks of module workflow
- * appointment.
+ * Default implementation of the config service of tasks of module workflow appointment.
  */
 @Service
-public class AppointmentConfigService extends TaskConfigService {
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER)
-	public void create(ITaskConfig config) {
-		super.create(config);
-	}
+public class AppointmentConfigService extends TaskConfigService
+{
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
+    public void create( ITaskConfig config )
+    {
+        super.create( config );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER)
-	public void update(ITaskConfig config) {
-		super.update(config);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
+    public void update( ITaskConfig config )
+    {
+        super.update( config );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER)
-	public void remove(int nIdTask) {
-		super.remove(nIdTask);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional( WorkflowAppointmentPlugin.BEAN_TRANSACTION_MANAGER )
+    public void remove( int nIdTask )
+    {
+        super.remove( nIdTask );
+    }
 }

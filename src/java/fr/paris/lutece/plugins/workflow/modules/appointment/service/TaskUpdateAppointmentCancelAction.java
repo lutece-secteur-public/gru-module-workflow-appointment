@@ -52,48 +52,51 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * TaskUpdateAppointmentCancelAction
  */
-public class TaskUpdateAppointmentCancelAction extends SimpleTask {
-	/**
-	 * Name of the bean of the config service of this task
-	 */
-	public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskUpdateAppointmentCancelActionConfigService";
+public class TaskUpdateAppointmentCancelAction extends SimpleTask
+{
+    /**
+     * Name of the bean of the config service of this task
+     */
+    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskUpdateAppointmentCancelActionConfigService";
 
-	// MESSAGES
-	private static final String MESSAGE_UPDATE_APPOINTMENT_CANCEL_ACTION = "module.workflow.appointment.task_update_appointment_cancel_action_config.title";
+    // MESSAGES
+    private static final String MESSAGE_UPDATE_APPOINTMENT_CANCEL_ACTION = "module.workflow.appointment.task_update_appointment_cancel_action_config.title";
 
-	// SERVICES
-	@Inject
-	private IResourceHistoryService _resourceHistoryService;
-	@Inject
-	@Named(CONFIG_SERVICE_BEAN_NAME)
-	private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
+    // SERVICES
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
+    @Inject
+    @Named( CONFIG_SERVICE_BEAN_NAME )
+    private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void processTask(int nIdResourceHistory, HttpServletRequest request, Locale locale) {
-		ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey(nIdResourceHistory);
-		TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService
-				.findByPrimaryKey(this.getId());
-		Appointment appointment = AppointmentService.findAppointmentById(resourceHistory.getIdResource());
-		appointment.setIdActionCancelled(config.getIdActionCancel());
-		AppointmentHome.update(appointment);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId( ) );
+        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
+        appointment.setIdActionCancelled( config.getIdActionCancel( ) );
+        AppointmentHome.update( appointment );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doRemoveConfig() {
-		_taskUpdateAppointmentCancelActionConfigService.remove(this.getId());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveConfig( )
+    {
+        _taskUpdateAppointmentCancelActionConfigService.remove( this.getId( ) );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTitle(Locale locale) {
-		return I18nService.getLocalizedString(MESSAGE_UPDATE_APPOINTMENT_CANCEL_ACTION, locale);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( MESSAGE_UPDATE_APPOINTMENT_CANCEL_ACTION, locale );
+    }
 }

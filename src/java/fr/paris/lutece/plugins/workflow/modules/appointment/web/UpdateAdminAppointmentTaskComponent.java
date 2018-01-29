@@ -59,139 +59,147 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * UpdateAdminAppointmentTaskComponent
  */
-public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent {
-	// TEMPLATES
-	private static final String TEMPLATE_UPDATE_ADMIN_APPOINTMENT = "admin/plugins/workflow/modules/appointment/task_update_admin_appointment_config.html";
+public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
+{
+    // TEMPLATES
+    private static final String TEMPLATE_UPDATE_ADMIN_APPOINTMENT = "admin/plugins/workflow/modules/appointment/task_update_admin_appointment_config.html";
 
-	// MESSAGES
-	private static final String MESSAGE_MANDATORY_FIELD = "portal.util.message.mandatoryFields";
-	private static final String MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT = "module.workflow.appointment.task_update_admin_appointment_config.adminUserAssociatedToAppointment";	
+    // MESSAGES
+    private static final String MESSAGE_MANDATORY_FIELD = "portal.util.message.mandatoryFields";
+    private static final String MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT = "module.workflow.appointment.task_update_admin_appointment_config.adminUserAssociatedToAppointment";
 
-	// MARKS
-	private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
+    // MARKS
+    private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
 
-	// PARAMETERS
-	private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
+    // PARAMETERS
+    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
 
-	// CONSTANTS
-	private static final String CONSTANT_SPACE = " ";
+    // CONSTANTS
+    private static final String CONSTANT_SPACE = " ";
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayTaskForm(int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-			ITask task) {
-		Map<String, Object> model = new HashMap<String, Object>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
 
-		Collection<AdminUser> listAdminUser = AdminUserHome.findUserList();
-		ReferenceList refListAdmins = new ReferenceList();
+        Collection<AdminUser> listAdminUser = AdminUserHome.findUserList( );
+        ReferenceList refListAdmins = new ReferenceList( );
 
-		for (AdminUser adminUser : listAdminUser) {
-			refListAdmins.addItem(adminUser.getUserId(),
-					adminUser.getFirstName() + CONSTANT_SPACE + adminUser.getLastName());
-		}
+        for ( AdminUser adminUser : listAdminUser )
+        {
+            refListAdmins.addItem( adminUser.getUserId( ), adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( ) );
+        }
 
-		model.put(MARK_LIST_ADMIN_USERS, refListAdmins);
+        model.put( MARK_LIST_ADMIN_USERS, refListAdmins );
 
-		HtmlTemplate template = AppTemplateService.getTemplate(TEMPLATE_UPDATE_ADMIN_APPOINTMENT, locale, model);
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_UPDATE_ADMIN_APPOINTMENT, locale, model );
 
-		return template.getHtml();
-	}
+        return template.getHtml( );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String doValidateTask(int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-			ITask task) {
-		String strIdAdminUser = request.getParameter(PARAMETER_ID_ADMIN_USER);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    {
+        String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
 
-		if (StringUtils.isBlank(strIdAdminUser) || !StringUtils.isNumeric(strIdAdminUser)) {
-			return AdminMessageService.getMessageUrl(request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP);
-		}
+        if ( StringUtils.isBlank( strIdAdminUser ) || !StringUtils.isNumeric( strIdAdminUser ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP );
+        }
 
-		int nIdAdminUser = Integer.parseInt(strIdAdminUser);
-		AdminUser adminUser = AdminUserHome.findByPrimaryKey(nIdAdminUser);
+        int nIdAdminUser = Integer.parseInt( strIdAdminUser );
+        AdminUser adminUser = AdminUserHome.findByPrimaryKey( nIdAdminUser );
 
-		if (adminUser == null) {
-			return AdminMessageService.getMessageUrl(request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP);
-		}
+        if ( adminUser == null )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP );
+        }
 
-//		Appointment appointment = AppointmentService.findAppointmentById(nIdResource);
-//		Slot slot = SlotService.findSlotById(appointment.getIdSlot());
-//		AppointmentFilter filter = new AppointmentFilter();		
-//		filter.setDateAppointment(appointment.getDateAppointment());
-//
-//		List<Appointment> listAppointments = AppointmentHome.getAppointmentListByFilter(filter);
-//
-//		if (listAppointments.size() > 0) {
-//			Slot slot = SlotService.findSlotById(appointment.getIdSlot());
-//			AppointmentSlot slotOfMatchingAppointment = null;
-//
-//			for (Appointment appointmentFound : listAppointments) {
-//				if ((appointmentFound.getStatus() != Appointment.Status.STATUS_UNRESERVED.getValeur())
-//						&& (appointment.getIdAppointment() != appointmentFound.getIdAppointment())) {
-//					if (appointment.getIdSlot() == appointmentFound.getIdSlot()) {
-//						slotOfMatchingAppointment = slot;
-//
-//						break;
-//					}
-//
-//					AppointmentSlot slotFound = AppointmentSlotHome.findByPrimaryKey(appointmentFound.getIdSlot());
-//
-//					if (slot.getIdForm() != slotFound.getIdDay()) {
-//						int nTimeStart = (slot.getStartingHour() * 100) + slot.getStartingMinute();
-//						int nTimeEnd = (slot.getEndingHour() * 100) + slot.getEndingMinute();
-//						int nTimeStartFound = (slotFound.getStartingHour() * 100) + slotFound.getStartingMinute();
-//						int nTimeEndFound = (slotFound.getEndingHour() * 100) + slotFound.getEndingMinute();
-//
-//						if (((nTimeStartFound > nTimeStart) && (nTimeStartFound < nTimeEnd))
-//								|| ((nTimeStart > nTimeStartFound) && (nTimeStart < nTimeEndFound))) {
-//							slotOfMatchingAppointment = slotFound;
-//
-//							break;
-//						}
-//					}
-//				}
-//			}
-//
-//			if (slotOfMatchingAppointment != null) {
-//				AppointmentForm form = AppointmentFormHome.findByPrimaryKey(slotOfMatchingAppointment.getIdForm());
-//				Object[] args = { form.getTitle() };
-//				AdminMessageService.getMessageUrl(request, ERROR_MESSAGE_ADMIN_USER_BUSY, args, AdminMessage.TYPE_STOP);
-//			}
-//		}
+        // Appointment appointment = AppointmentService.findAppointmentById(nIdResource);
+        // Slot slot = SlotService.findSlotById(appointment.getIdSlot());
+        // AppointmentFilter filter = new AppointmentFilter();
+        // filter.setDateAppointment(appointment.getDateAppointment());
+        //
+        // List<Appointment> listAppointments = AppointmentHome.getAppointmentListByFilter(filter);
+        //
+        // if (listAppointments.size() > 0) {
+        // Slot slot = SlotService.findSlotById(appointment.getIdSlot());
+        // AppointmentSlot slotOfMatchingAppointment = null;
+        //
+        // for (Appointment appointmentFound : listAppointments) {
+        // if ((appointmentFound.getStatus() != Appointment.Status.STATUS_UNRESERVED.getValeur())
+        // && (appointment.getIdAppointment() != appointmentFound.getIdAppointment())) {
+        // if (appointment.getIdSlot() == appointmentFound.getIdSlot()) {
+        // slotOfMatchingAppointment = slot;
+        //
+        // break;
+        // }
+        //
+        // AppointmentSlot slotFound = AppointmentSlotHome.findByPrimaryKey(appointmentFound.getIdSlot());
+        //
+        // if (slot.getIdForm() != slotFound.getIdDay()) {
+        // int nTimeStart = (slot.getStartingHour() * 100) + slot.getStartingMinute();
+        // int nTimeEnd = (slot.getEndingHour() * 100) + slot.getEndingMinute();
+        // int nTimeStartFound = (slotFound.getStartingHour() * 100) + slotFound.getStartingMinute();
+        // int nTimeEndFound = (slotFound.getEndingHour() * 100) + slotFound.getEndingMinute();
+        //
+        // if (((nTimeStartFound > nTimeStart) && (nTimeStartFound < nTimeEnd))
+        // || ((nTimeStart > nTimeStartFound) && (nTimeStart < nTimeEndFound))) {
+        // slotOfMatchingAppointment = slotFound;
+        //
+        // break;
+        // }
+        // }
+        // }
+        // }
+        //
+        // if (slotOfMatchingAppointment != null) {
+        // AppointmentForm form = AppointmentFormHome.findByPrimaryKey(slotOfMatchingAppointment.getIdForm());
+        // Object[] args = { form.getTitle() };
+        // AdminMessageService.getMessageUrl(request, ERROR_MESSAGE_ADMIN_USER_BUSY, args, AdminMessage.TYPE_STOP);
+        // }
+        // }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayTaskInformation(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
-		List<UpdateAdminAppointmentHistory> listHistory = UpdateAdminAppointmentHistoryHome.findByIdHistory(nIdHistory);
-		StringBuilder sbHistory = new StringBuilder();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        List<UpdateAdminAppointmentHistory> listHistory = UpdateAdminAppointmentHistoryHome.findByIdHistory( nIdHistory );
+        StringBuilder sbHistory = new StringBuilder( );
 
-		for (UpdateAdminAppointmentHistory history : listHistory) {
-			AdminUser adminUser = AdminUserHome.findByPrimaryKey(history.getIdAdminUser());
+        for ( UpdateAdminAppointmentHistory history : listHistory )
+        {
+            AdminUser adminUser = AdminUserHome.findByPrimaryKey( history.getIdAdminUser( ) );
 
-			if (adminUser != null) {
-				Object[] args = { adminUser.getFirstName() + CONSTANT_SPACE + adminUser.getLastName() };
-				sbHistory.append(
-						I18nService.getLocalizedString(MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT, args, locale));
-			}
-		}
+            if ( adminUser != null )
+            {
+                Object [ ] args = {
+                    adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( )
+                };
+                sbHistory.append( I18nService.getLocalizedString( MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT, args, locale ) );
+            }
+        }
 
-		return sbHistory.toString();
-	}
+        return sbHistory.toString( );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTaskInformationXml(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 }

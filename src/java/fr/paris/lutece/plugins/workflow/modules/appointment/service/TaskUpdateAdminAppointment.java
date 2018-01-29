@@ -51,43 +51,48 @@ import fr.paris.lutece.portal.business.user.AdminUserHome;
 /**
  * Workflow task to update the admin user associated to an appointment
  */
-public class TaskUpdateAdminAppointment extends SimpleTask {
-	// TEMPLATES
-	private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
+public class TaskUpdateAdminAppointment extends SimpleTask
+{
+    // TEMPLATES
+    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
 
-	// SERVICES
-	@Inject
-	private IResourceHistoryService _resourceHistoryService;
+    // SERVICES
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void processTask(int nIdResourceHistory, HttpServletRequest request, Locale locale) {
-		ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey(nIdResourceHistory);
-		String strIdAdminUser = request.getParameter(PARAMETER_ID_ADMIN_USER);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
 
-		if (StringUtils.isNotEmpty(strIdAdminUser) && StringUtils.isNumeric(strIdAdminUser)) {
-			int nIdAdminUser = Integer.parseInt(strIdAdminUser);
-			AdminUser adminUser = AdminUserHome.findByPrimaryKey(nIdAdminUser);
+        if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
+        {
+            int nIdAdminUser = Integer.parseInt( strIdAdminUser );
+            AdminUser adminUser = AdminUserHome.findByPrimaryKey( nIdAdminUser );
 
-			if (adminUser != null) {
+            if ( adminUser != null )
+            {
 
-				UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory();
-				history.setIdHistory(resourceHistory.getId());
-				history.setIdAppointment(resourceHistory.getIdResource());
-				history.setIdAdminUser(nIdAdminUser);
-				UpdateAdminAppointmentHistoryHome.create(history);
+                UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory( );
+                history.setIdHistory( resourceHistory.getId( ) );
+                history.setIdAppointment( resourceHistory.getIdResource( ) );
+                history.setIdAdminUser( nIdAdminUser );
+                UpdateAdminAppointmentHistoryHome.create( history );
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTitle(Locale locale) {
-		return StringUtils.EMPTY;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTitle( Locale locale )
+    {
+        return StringUtils.EMPTY;
+    }
 }

@@ -57,114 +57,131 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 /**
  * Workflow task to notify a user of an appointment
  */
-public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAppointmentConfig> {
-	/**
-	 * Name of the bean of the config service of this task
-	 */
-	public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskNotifyAppointmentConfigService";
+public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAppointmentConfig>
+{
+    /**
+     * Name of the bean of the config service of this task
+     */
+    public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskNotifyAppointmentConfigService";
 
-	// TEMPLATES
-	private static final String MARK_URL_CANCEL = "url_cancel";
-	private static final String MARK_MOTIF_CANCEL = "comment_value_";
+    // TEMPLATES
+    private static final String MARK_URL_CANCEL = "url_cancel";
+    private static final String MARK_MOTIF_CANCEL = "comment_value_";
 
-	private static final String PROPERTY_MAIL_LANG_SERVER = "workflow-appointment.server.mail.lang";
+    private static final String PROPERTY_MAIL_LANG_SERVER = "workflow-appointment.server.mail.lang";
 
-	// PARAMETERS
-	private static final String ERROR_CANCEL_APPOINTMENT_MSG = "<p>Nous sommes désolés, l'annulation de votre rendez-vous ne peut être prise en compte. Vous pouvez contacter le service aux coordonnées fournies dans l'e-mail de confirmation initial</p>";
-	// SERVICES
-	@Inject
-	private IResourceHistoryService _resourceHistoryService;
-	@Inject
-	@Named(CONFIG_SERVICE_BEAN_NAME)
-	private ITaskConfigService _taskNotifyAppointmentConfigService;
+    // PARAMETERS
+    private static final String ERROR_CANCEL_APPOINTMENT_MSG = "<p>Nous sommes désolés, l'annulation de votre rendez-vous ne peut être prise en compte. Vous pouvez contacter le service aux coordonnées fournies dans l'e-mail de confirmation initial</p>";
+    // SERVICES
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
+    @Inject
+    @Named( CONFIG_SERVICE_BEAN_NAME )
+    private ITaskConfigService _taskNotifyAppointmentConfigService;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void processTask(int nIdResourceHistory, HttpServletRequest request, Locale locale) {
-		String sServerMailLang = AppPropertiesService.getProperty(PROPERTY_MAIL_LANG_SERVER);
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        String sServerMailLang = AppPropertiesService.getProperty( PROPERTY_MAIL_LANG_SERVER );
 
-		ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey(nIdResourceHistory);
-		TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey(this.getId());
-		Appointment appointment = AppointmentService.findAppointmentById(resourceHistory.getIdResource());
-		User user = UserService.findUserById(appointment.getIdUser());
-		if (request != null) {
-			Map<String, String[]> parameters = request.getParameterMap();
-			String strCancelMotif = null;
-			for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-				if (entry.getKey().startsWith(MARK_MOTIF_CANCEL)) {
-					String[] tabAllParamsStartedWithCommentValue = entry.getValue();
-					strCancelMotif = tabAllParamsStartedWithCommentValue[0];
-					config.setCancelMotif(strCancelMotif);
-					break;
-				}
-			}
-		}
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
+        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
+        User user = UserService.findUserById( appointment.getIdUser( ) );
+        if ( request != null )
+        {
+            Map<String, String [ ]> parameters = request.getParameterMap( );
+            String strCancelMotif = null;
+            for ( Map.Entry<String, String [ ]> entry : parameters.entrySet( ) )
+            {
+                if ( entry.getKey( ).startsWith( MARK_MOTIF_CANCEL ) )
+                {
+                    String [ ] tabAllParamsStartedWithCommentValue = entry.getValue( );
+                    strCancelMotif = tabAllParamsStartedWithCommentValue [0];
+                    config.setCancelMotif( strCancelMotif );
+                    break;
+                }
+            }
+        }
 
-		String strEmail;
+        String strEmail;
 
-		if (config != null && config.getIsSms()) {
-			strEmail = getEmailForSmsFromAppointment(appointment);
-		} else {
-			strEmail = user.getEmail();
-		}
+        if ( config != null && config.getIsSms( ) )
+        {
+            strEmail = getEmailForSmsFromAppointment( appointment );
+        }
+        else
+        {
+            strEmail = user.getEmail( );
+        }
 
-		if (StringUtils.isNotBlank(strEmail)) {
-			Locale lEmailLocale = null;
-			if (!sServerMailLang.isEmpty()) {
-				lEmailLocale = new Locale(sServerMailLang.split("_")[0], sServerMailLang.split("_")[1]);
-			} else {
-				lEmailLocale = locale;
-			}
+        if ( StringUtils.isNotBlank( strEmail ) )
+        {
+            Locale lEmailLocale = null;
+            if ( !sServerMailLang.isEmpty( ) )
+            {
+                lEmailLocale = new Locale( sServerMailLang.split( "_" ) [0], sServerMailLang.split( "_" ) [1] );
+            }
+            else
+            {
+                lEmailLocale = locale;
+            }
 
-			if (appointment.getIsCancelled() && StringUtils.isNotEmpty(config.getCancelMotif())) {
-				config.setMessage(ERROR_CANCEL_APPOINTMENT_MSG);
-			}
+            if ( appointment.getIsCancelled( ) && StringUtils.isNotEmpty( config.getCancelMotif( ) ) )
+            {
+                config.setMessage( ERROR_CANCEL_APPOINTMENT_MSG );
+            }
 
-			if (this.sendEmail(appointment, resourceHistory, request, lEmailLocale, config, strEmail) != null) {
-				if ((config.getIdActionCancel() > 0)
-						&& (config.getIdActionCancel() != appointment.getIdActionCancelled())) {
-					appointment.setIdActionCancelled(config.getIdActionCancel());
-					AppointmentService.updateAppointment(appointment);
-				}
-			}
-		}
-	}
+            if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null )
+            {
+                if ( ( config.getIdActionCancel( ) > 0 ) && ( config.getIdActionCancel( ) != appointment.getIdActionCancelled( ) ) )
+                {
+                    appointment.setIdActionCancelled( config.getIdActionCancel( ) );
+                    AppointmentService.updateAppointment( appointment );
+                }
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doRemoveConfig() {
-		_taskNotifyAppointmentConfigService.remove(this.getId());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveConfig( )
+    {
+        _taskNotifyAppointmentConfigService.remove( this.getId( ) );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTitle(Locale locale) {
-		TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey(this.getId());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTitle( Locale locale )
+    {
+        TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
 
-		if (config != null) {
-			return config.getSubject();
-		}
+        if ( config != null )
+        {
+            return config.getSubject( );
+        }
 
-		return StringUtils.EMPTY;
-	}
+        return StringUtils.EMPTY;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Map<String, Object> fillModel(HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO,
-			Appointment appointment, Slot appointmentSlot, Locale locale) {
-		Map<String, Object> model = super.fillModel(request, notifyAppointmentDTO, appointment, appointmentSlot,
-				locale);
-		model.put(MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl(request, appointment));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO, Appointment appointment,
+            Slot appointmentSlot, Locale locale )
+    {
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
+        model.put( MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
 
-		return model;
-	}
+        return model;
+    }
 }

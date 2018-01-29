@@ -57,103 +57,114 @@ import fr.paris.lutece.portal.service.mail.MailService;
 /**
  * Workflow task to manually notify a user of an appointment
  */
-public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppointment<NotifyAppointmentDTO> {
-	// Messages
-	private static final String MESSAGE_TASK_TITLE = "module.workflow.appointment.taskManualAppointmentNotification.title";
+public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppointment<NotifyAppointmentDTO>
+{
+    // Messages
+    private static final String MESSAGE_TASK_TITLE = "module.workflow.appointment.taskManualAppointmentNotification.title";
 
-	// Parameters
-	private static final String PARAMETER_SENDER_NAME = "sender_name";
-	private static final String PARAMETER_SENDER_EMAIL = "sender_email";
-	private static final String PARAMETER_CC = "receipient_cc";
-	private static final String PARAMETER_BCC = "receipient_bcc";
-	private static final String PARAMETER_MESSAGE = "message";
-	private static final String PARAMETER_SUBJECT = "subject";
-	private static final String PARAMETER_SEND_ICAL_NOTIF = "send_ical_notif";
-	private static final String PARAMETER_LOCATION = "location";
-	private static final String PARAMETER_CREATE_NOTIF = "create_notif";
+    // Parameters
+    private static final String PARAMETER_SENDER_NAME = "sender_name";
+    private static final String PARAMETER_SENDER_EMAIL = "sender_email";
+    private static final String PARAMETER_CC = "receipient_cc";
+    private static final String PARAMETER_BCC = "receipient_bcc";
+    private static final String PARAMETER_MESSAGE = "message";
+    private static final String PARAMETER_SUBJECT = "subject";
+    private static final String PARAMETER_SEND_ICAL_NOTIF = "send_ical_notif";
+    private static final String PARAMETER_LOCATION = "location";
+    private static final String PARAMETER_CREATE_NOTIF = "create_notif";
 
-	// SERVICES
-	@Inject
-	private IResourceHistoryService _resourceHistoryService;
+    // SERVICES
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void processTask(int nIdResourceHistory, HttpServletRequest request, Locale locale) {
-		ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey(nIdResourceHistory);
-		Appointment appointment = AppointmentService.findAppointmentById(resourceHistory.getIdResource());
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
 
-		Map<String, String[]> parameters = request.getParameterMap();
-		String strCancelMotif = null;
-		for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-			if (entry.getKey().startsWith("comment_value_")) {
-				String[] tabAllParamsStartedWithCommentValue = entry.getValue();
-				strCancelMotif = tabAllParamsStartedWithCommentValue[0];
-				break;
-			}
-		}
+        Map<String, String [ ]> parameters = request.getParameterMap( );
+        String strCancelMotif = null;
+        for ( Map.Entry<String, String [ ]> entry : parameters.entrySet( ) )
+        {
+            if ( entry.getKey( ).startsWith( "comment_value_" ) )
+            {
+                String [ ] tabAllParamsStartedWithCommentValue = entry.getValue( );
+                strCancelMotif = tabAllParamsStartedWithCommentValue [0];
+                break;
+            }
+        }
 
-		String strSenderName = request.getParameter(PARAMETER_SENDER_NAME);
-		String strSenderEmail = request.getParameter(PARAMETER_SENDER_EMAIL);
-		String strCc = request.getParameter(PARAMETER_CC);
-		String strBcc = request.getParameter(PARAMETER_BCC);
-		String strMessage = request.getParameter(PARAMETER_MESSAGE);
-		String strSubject = request.getParameter(PARAMETER_SUBJECT);
-		boolean bSendICalNotif = Boolean.valueOf(request.getParameter(PARAMETER_SEND_ICAL_NOTIF));
+        String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
+        String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
+        String strCc = request.getParameter( PARAMETER_CC );
+        String strBcc = request.getParameter( PARAMETER_BCC );
+        String strMessage = request.getParameter( PARAMETER_MESSAGE );
+        String strSubject = request.getParameter( PARAMETER_SUBJECT );
+        boolean bSendICalNotif = Boolean.valueOf( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
 
-		if (StringUtils.isBlank(strSenderName)) {
-			strSenderName = MailService.getNoReplyEmail();
-		}
+        if ( StringUtils.isBlank( strSenderName ) )
+        {
+            strSenderName = MailService.getNoReplyEmail( );
+        }
 
-		NotifyAppointmentDTO notifyAppointmentDTO = new NotifyAppointmentDTO();
-		notifyAppointmentDTO.setMessage(strMessage);
-		notifyAppointmentDTO.setRecipientsCc(strCc);
-		notifyAppointmentDTO.setRecipientsBcc(strBcc);
-		notifyAppointmentDTO.setSubject(strSubject);
-		notifyAppointmentDTO.setSenderName(strSenderName);
-		notifyAppointmentDTO.setCancelMotif(strCancelMotif);
-		// We do not check the email nor the sender name since it's done by the
-		// sendEmail( ... ) method.
-		notifyAppointmentDTO.setSenderEmail(strSenderEmail);
-		notifyAppointmentDTO.setSendICalNotif(bSendICalNotif);
+        NotifyAppointmentDTO notifyAppointmentDTO = new NotifyAppointmentDTO( );
+        notifyAppointmentDTO.setMessage( strMessage );
+        notifyAppointmentDTO.setRecipientsCc( strCc );
+        notifyAppointmentDTO.setRecipientsBcc( strBcc );
+        notifyAppointmentDTO.setSubject( strSubject );
+        notifyAppointmentDTO.setSenderName( strSenderName );
+        notifyAppointmentDTO.setCancelMotif( strCancelMotif );
+        // We do not check the email nor the sender name since it's done by the
+        // sendEmail( ... ) method.
+        notifyAppointmentDTO.setSenderEmail( strSenderEmail );
+        notifyAppointmentDTO.setSendICalNotif( bSendICalNotif );
 
-		if (bSendICalNotif) {
-			String strLocation = request.getParameter(PARAMETER_LOCATION);
-			notifyAppointmentDTO.setLocation(strLocation);
-			notifyAppointmentDTO.setCreateNotif(Boolean.parseBoolean(request.getParameter(PARAMETER_CREATE_NOTIF)));
-		}
+        if ( bSendICalNotif )
+        {
+            String strLocation = request.getParameter( PARAMETER_LOCATION );
+            notifyAppointmentDTO.setLocation( strLocation );
+            notifyAppointmentDTO.setCreateNotif( Boolean.parseBoolean( request.getParameter( PARAMETER_CREATE_NOTIF ) ) );
+        }
 
-		String strEmail = null;
-		User user = UserService.findUserById(appointment.getIdUser());
-		if (notifyAppointmentDTO.getIsSms()) {
-			strEmail = getEmailForSmsFromAppointment(appointment);
-		} else {
-			strEmail = user.getEmail();
-		}
+        String strEmail = null;
+        User user = UserService.findUserById( appointment.getIdUser( ) );
+        if ( notifyAppointmentDTO.getIsSms( ) )
+        {
+            strEmail = getEmailForSmsFromAppointment( appointment );
+        }
+        else
+        {
+            strEmail = user.getEmail( );
+        }
 
-		if (StringUtils.isNotBlank(strEmail)) {
-			EmailDTO emailDTO = this.sendEmail(appointment, resourceHistory, request, locale, notifyAppointmentDTO,
-					strEmail);
+        if ( StringUtils.isNotBlank( strEmail ) )
+        {
+            EmailDTO emailDTO = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO, strEmail );
 
-			if (emailDTO != null) {
-				ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory();
-				history.setIdHistory(resourceHistory.getId());
-				history.setIdAppointment(resourceHistory.getIdResource());
-				history.setEmailTo(user.getEmail());
-				history.setEmailSubject(emailDTO.getSubject());
-				history.setEmailMessage(emailDTO.getContent());
-				ManualAppointmentNotificationHistoryHome.create(history);
-			}
-		}
-	}
+            if ( emailDTO != null )
+            {
+                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory( );
+                history.setIdHistory( resourceHistory.getId( ) );
+                history.setIdAppointment( resourceHistory.getIdResource( ) );
+                history.setEmailTo( user.getEmail( ) );
+                history.setEmailSubject( emailDTO.getSubject( ) );
+                history.setEmailMessage( emailDTO.getContent( ) );
+                ManualAppointmentNotificationHistoryHome.create( history );
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTitle(Locale locale) {
-		return I18nService.getLocalizedString(MESSAGE_TASK_TITLE, locale);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( MESSAGE_TASK_TITLE, locale );
+    }
 }

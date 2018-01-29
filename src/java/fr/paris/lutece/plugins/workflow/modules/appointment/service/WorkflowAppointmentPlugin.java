@@ -41,45 +41,49 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 /**
  * Workflow appointment module
  */
-public class WorkflowAppointmentPlugin extends Plugin {
-	/**
-	 * Name of the workflow appointment module
-	 */
-	public static final String PLUGIN_NAME = "workflow-appointment";
+public class WorkflowAppointmentPlugin extends Plugin
+{
+    /**
+     * Name of the workflow appointment module
+     */
+    public static final String PLUGIN_NAME = "workflow-appointment";
 
-	/**
-	 * Transaction manage bean name for services of this plugin
-	 */
-	public static final String BEAN_TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
+    /**
+     * Transaction manage bean name for services of this plugin
+     */
+    public static final String BEAN_TRANSACTION_MANAGER = PLUGIN_NAME + ".transactionManager";
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void init() {
-		// BeanUtilsBean.getInstance( ).getConvertUtils( )
-		// .register( new DateConverter( DateFormat.getDateInstance(
-		// DateFormat.SHORT,
-		// getPluginLocale( Locale.FRANCE ) ) ), java.sql.Date.class );
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init( )
+    {
+        // BeanUtilsBean.getInstance( ).getConvertUtils( )
+        // .register( new DateConverter( DateFormat.getDateInstance(
+        // DateFormat.SHORT,
+        // getPluginLocale( Locale.FRANCE ) ) ), java.sql.Date.class );
+    }
 
-	/**
-	 * Get the locale used by this plugin
-	 * 
-	 * @param locale
-	 *            The locale preferred by the user
-	 * @return The locale used by this plugin
-	 */
-	public static Locale getPluginLocale(Locale locale) {
-		return locale;
-	}
+    /**
+     * Get the locale used by this plugin
+     * 
+     * @param locale
+     *            The locale preferred by the user
+     * @return The locale used by this plugin
+     */
+    public static Locale getPluginLocale( Locale locale )
+    {
+        return locale;
+    }
 
-	/**
-	 * Get the workflow appointment module
-	 * 
-	 * @return The workflow appointment module
-	 */
-	public static Plugin getPlugin() {
-		return PluginService.getPlugin(PLUGIN_NAME);
-	}
+    /**
+     * Get the workflow appointment module
+     * 
+     * @return The workflow appointment module
+     */
+    public static Plugin getPlugin( )
+    {
+        return PluginService.getPlugin( PLUGIN_NAME );
+    }
 }

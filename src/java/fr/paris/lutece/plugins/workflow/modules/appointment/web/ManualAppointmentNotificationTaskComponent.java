@@ -58,83 +58,86 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * NotifyAppointmentTaskComponent
  *
  */
-public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComponent {
-	// TEMPLATES
-	private static final String TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION = "admin/plugins/workflow/modules/appointment/manual_appointment_notification_config.html";
-	private static final String TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY = "admin/plugins/workflow/modules/appointment/manual_appointment_notification_history.html";
+public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComponent
+{
+    // TEMPLATES
+    private static final String TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION = "admin/plugins/workflow/modules/appointment/manual_appointment_notification_config.html";
+    private static final String TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY = "admin/plugins/workflow/modules/appointment/manual_appointment_notification_history.html";
 
-	// MESSAGES
-	private static final String MESSAGE_MANDATORY_FIELD = "portal.util.message.mandatoryFields";
+    // MESSAGES
+    private static final String MESSAGE_MANDATORY_FIELD = "portal.util.message.mandatoryFields";
 
-	// MARKS
-	private static final String MARK_HISTORY_LIST = "listHistory";
-	private static final String MARK_WEBAPP_URL = "webapp_url";
-	private static final String MARK_LOCALE = "locale";
-	private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
+    // MARKS
+    private static final String MARK_HISTORY_LIST = "listHistory";
+    private static final String MARK_WEBAPP_URL = "webapp_url";
+    private static final String MARK_LOCALE = "locale";
+    private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
 
-	// PARAMETERS
-	private static final String PARAMETER_MESSAGE = "message";
-	private static final String PARAMETER_SUBJECT = "subject";
+    // PARAMETERS
+    private static final String PARAMETER_MESSAGE = "message";
+    private static final String PARAMETER_SUBJECT = "subject";
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayTaskForm(int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-			ITask task) {
-		Map<String, Object> model = new HashMap<String, Object>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
 
-		model.put(MARK_WEBAPP_URL, AppPathService.getBaseUrl(request));
-		model.put(MARK_LOCALE, locale);
-		model.put(MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail());
+        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_LOCALE, locale );
+        model.put( MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail( ) );
 
-		HtmlTemplate template = AppTemplateService.getTemplate(TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION, locale, model);
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION, locale, model );
 
-		return template.getHtml();
-	}
+        return template.getHtml( );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String doValidateTask(int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-			ITask task) {
-		String strMessage = request.getParameter(PARAMETER_MESSAGE);
-		String strSubject = request.getParameter(PARAMETER_SUBJECT);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    {
+        String strMessage = request.getParameter( PARAMETER_MESSAGE );
+        String strSubject = request.getParameter( PARAMETER_SUBJECT );
 
-		if (StringUtils.isBlank(strSubject) || StringUtils.isBlank(strMessage)) {
-			return AdminMessageService.getMessageUrl(request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP);
-		}
+        if ( StringUtils.isBlank( strSubject ) || StringUtils.isBlank( strMessage ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP );
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayTaskInformation(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
-		List<ManualAppointmentNotificationHistory> listHistory = ManualAppointmentNotificationHistoryHome
-				.findByIdHistory(nIdHistory);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        List<ManualAppointmentNotificationHistory> listHistory = ManualAppointmentNotificationHistoryHome.findByIdHistory( nIdHistory );
 
-		if (listHistory.size() > 0) {
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put(MARK_HISTORY_LIST, listHistory);
+        if ( listHistory.size( ) > 0 )
+        {
+            Map<String, Object> model = new HashMap<String, Object>( );
+            model.put( MARK_HISTORY_LIST, listHistory );
 
-			HtmlTemplate template = AppTemplateService.getTemplate(TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY,
-					locale, model);
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY, locale, model );
 
-			return template.getHtml();
-		}
+            return template.getHtml( );
+        }
 
-		return StringUtils.EMPTY;
-	}
+        return StringUtils.EMPTY;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTaskInformationXml(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 }

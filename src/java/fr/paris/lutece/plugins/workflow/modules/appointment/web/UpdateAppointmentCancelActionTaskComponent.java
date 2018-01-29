@@ -64,121 +64,133 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * NotifyAppointmentTaskComponent
  *
  */
-public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskComponent {
-	// TEMPLATES
-	private static final String TEMPLATE_TASK_UPDATE_APPOINTMENT_CANCEL_ACTION_CONFIG = "admin/plugins/workflow/modules/appointment/task_update_appointment_cancel_action_config.html";
+public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskComponent
+{
+    // TEMPLATES
+    private static final String TEMPLATE_TASK_UPDATE_APPOINTMENT_CANCEL_ACTION_CONFIG = "admin/plugins/workflow/modules/appointment/task_update_appointment_cancel_action_config.html";
 
-	// MESSAGES
-	private static final String MESSAGE_CANCEL_ACTION_UPDATED = "module.workflow.appointment.message.cancelActionUpdated";
-	private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
-	private static final String FIELD_CANCEL_ACTION = "task_notify_appointment_config.label_action";
+    // MESSAGES
+    private static final String MESSAGE_CANCEL_ACTION_UPDATED = "module.workflow.appointment.message.cancelActionUpdated";
+    private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
+    private static final String FIELD_CANCEL_ACTION = "task_notify_appointment_config.label_action";
 
-	// MARKS
-	private static final String MARK_LIST_ACTIONS = "list_actions";
-	private static final String MARK_CONFIG = "config";
+    // MARKS
+    private static final String MARK_LIST_ACTIONS = "list_actions";
+    private static final String MARK_CONFIG = "config";
 
-	// PARAMETERS
-	private static final String PARAMETER_ID_ACTION_CANCEL = "id_action_cancel";
+    // PARAMETERS
+    private static final String PARAMETER_ID_ACTION_CANCEL = "id_action_cancel";
 
-	// SERVICES
-	@Inject
-	@Named(TaskUpdateAppointmentCancelAction.CONFIG_SERVICE_BEAN_NAME)
-	private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
-	@Inject
-	@Named(ActionService.BEAN_SERVICE)
-	private ActionService _actionService;
+    // SERVICES
+    @Inject
+    @Named( TaskUpdateAppointmentCancelAction.CONFIG_SERVICE_BEAN_NAME )
+    private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
+    @Inject
+    @Named( ActionService.BEAN_SERVICE )
+    private ActionService _actionService;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayConfigForm(HttpServletRequest request, Locale locale, ITask task) {
-		TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService
-				.findByPrimaryKey(task.getId());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId( ) );
 
-		ActionFilter filter = new ActionFilter();
-		Action action = _actionService.findByPrimaryKey(task.getAction().getId());
-		filter.setIdStateBefore(action.getStateAfter().getId());
+        ActionFilter filter = new ActionFilter( );
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+        filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 
-		List<Action> listActions = _actionService.getListActionByFilter(filter);
+        List<Action> listActions = _actionService.getListActionByFilter( filter );
 
-		if (action.getStateAfter().getId() == action.getStateBefore().getId()) {
-			for (Action actionFound : listActions) {
-				if (actionFound.getId() == action.getId()) {
-					listActions.remove(actionFound);
+        if ( action.getStateAfter( ).getId( ) == action.getStateBefore( ).getId( ) )
+        {
+            for ( Action actionFound : listActions )
+            {
+                if ( actionFound.getId( ) == action.getId( ) )
+                {
+                    listActions.remove( actionFound );
 
-					break;
-				}
-			}
-		}
+                    break;
+                }
+            }
+        }
 
-		ReferenceList refListActions = new ReferenceList(listActions.size() + 1);
-		refListActions.addItem(0, StringUtils.EMPTY);
+        ReferenceList refListActions = new ReferenceList( listActions.size( ) + 1 );
+        refListActions.addItem( 0, StringUtils.EMPTY );
 
-		for (Action actionFound : listActions) {
-			refListActions.addItem(actionFound.getId(), actionFound.getName());
-		}
+        for ( Action actionFound : listActions )
+        {
+            refListActions.addItem( actionFound.getId( ), actionFound.getName( ) );
+        }
 
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(MARK_LIST_ACTIONS, refListActions);
-		model.put(MARK_CONFIG, config);
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_LIST_ACTIONS, refListActions );
+        model.put( MARK_CONFIG, config );
 
-		HtmlTemplate template = AppTemplateService.getTemplate(TEMPLATE_TASK_UPDATE_APPOINTMENT_CANCEL_ACTION_CONFIG,
-				locale, model);
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPDATE_APPOINTMENT_CANCEL_ACTION_CONFIG, locale, model );
 
-		return template.getHtml();
-	}
+        return template.getHtml( );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String doSaveConfig(HttpServletRequest request, Locale locale, ITask task) {
-		TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService
-				.findByPrimaryKey(task.getId());
-		boolean bCreate = false;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId( ) );
+        boolean bCreate = false;
 
-		if (config == null) {
-			bCreate = true;
-			config = new TaskUpdateAppointmentCancelActionConfig();
-			config.setIdTask(task.getId());
-		}
+        if ( config == null )
+        {
+            bCreate = true;
+            config = new TaskUpdateAppointmentCancelActionConfig( );
+            config.setIdTask( task.getId( ) );
+        }
 
-		String strIdActionCancel = request.getParameter(PARAMETER_ID_ACTION_CANCEL);
-		int nIdActionCancel = 0;
+        String strIdActionCancel = request.getParameter( PARAMETER_ID_ACTION_CANCEL );
+        int nIdActionCancel = 0;
 
-		if (StringUtils.isEmpty(strIdActionCancel) || !StringUtils.isNumeric(strIdActionCancel)) {
-			Object[] tabRequiredFields = { I18nService.getLocalizedString(FIELD_CANCEL_ACTION, locale) };
+        if ( StringUtils.isEmpty( strIdActionCancel ) || !StringUtils.isNumeric( strIdActionCancel ) )
+        {
+            Object [ ] tabRequiredFields = {
+                I18nService.getLocalizedString( FIELD_CANCEL_ACTION, locale )
+            };
 
-			return AdminMessageService.getMessageUrl(request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-					AdminMessage.TYPE_STOP);
-		}
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+        }
 
-		nIdActionCancel = Integer.parseInt(strIdActionCancel);
-		config.setIdActionCancel(nIdActionCancel);
+        nIdActionCancel = Integer.parseInt( strIdActionCancel );
+        config.setIdActionCancel( nIdActionCancel );
 
-		if (bCreate) {
-			_taskUpdateAppointmentCancelActionConfigService.create(config);
-		} else {
-			_taskUpdateAppointmentCancelActionConfigService.update(config);
-		}
+        if ( bCreate )
+        {
+            _taskUpdateAppointmentCancelActionConfigService.create( config );
+        }
+        else
+        {
+            _taskUpdateAppointmentCancelActionConfigService.update( config );
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayTaskInformation(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
-		return I18nService.getLocalizedString(MESSAGE_CANCEL_ACTION_UPDATED, locale);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        return I18nService.getLocalizedString( MESSAGE_CANCEL_ACTION_UPDATED, locale );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getTaskInformationXml(int nIdHistory, HttpServletRequest request, Locale locale, ITask task) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
+    {
+        return null;
+    }
 }
