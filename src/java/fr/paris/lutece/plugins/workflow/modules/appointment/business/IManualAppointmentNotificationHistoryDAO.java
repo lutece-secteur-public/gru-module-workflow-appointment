@@ -33,10 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-
 import java.util.List;
 
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
  * Interface for manual appointment notification history
@@ -45,38 +44,53 @@ public interface IManualAppointmentNotificationHistoryDAO
 {
     /**
      * Create a new manual appointment notification history
-     * @param history The history to insert into the database
-     * @param plugin The plugin
+     * 
+     * @param history
+     *            The history to insert into the database
+     * @param plugin
+     *            The plugin
      */
     void create( ManualAppointmentNotificationHistory history, Plugin plugin );
 
     /**
      * Get a manual appointment notification history from its primary key
-     * @param nIdNotif The id of the history to get
-     * @param plugin The plugin
+     * 
+     * @param nIdNotif
+     *            The id of the history to get
+     * @param plugin
+     *            The plugin
      * @return The history
      */
     ManualAppointmentNotificationHistory findByPrimaryKey( int nIdNotif, Plugin plugin );
 
     /**
      * Get the list of history associated with a given history id
-     * @param nIdHistory The history id
-     * @param plugin The plugin
+     * 
+     * @param nIdHistory
+     *            The history id
+     * @param plugin
+     *            The plugin
      * @return the list of history, or an empty list if none was found
      */
     List<ManualAppointmentNotificationHistory> findByIdHistory( int nIdHistory, Plugin plugin );
 
     /**
      * Remove an history from its primary key
-     * @param nIdNotif The id of the history
-     * @param plugin the plugin
+     * 
+     * @param nIdNotif
+     *            The id of the history
+     * @param plugin
+     *            the plugin
      */
     void delete( int nIdNotif, Plugin plugin );
 
     /**
      * Remove every history associated with a given appointment
-     * @param nIdAppointment The id of the appointment
-     * @param plugin the plugin
+     * 
+     * @param nIdAppointment
+     *            The id of the appointment
+     * @param plugin
+     *            the plugin
      */
     void deleteByIdAppointment( int nIdAppointment, Plugin plugin );
 }

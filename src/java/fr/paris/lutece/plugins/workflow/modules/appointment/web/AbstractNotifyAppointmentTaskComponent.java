@@ -33,6 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
@@ -54,20 +66,6 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * Abstract task component to notify a user of an appointment
@@ -121,30 +119,34 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
     /**
      * Get the config form to display
-     * @param request The request
-     * @param locale The locale
-     * @param task The task
-     * @param taskConfigService The task config service to use
-     * @param bNotifyAdmin True to notify an admin user, false to notify the
-     *            user of the appointment
+     * 
+     * @param request
+     *            The request
+     * @param locale
+     *            The locale
+     * @param task
+     *            The task
+     * @param taskConfigService
+     *            The task config service to use
+     * @param bNotifyAdmin
+     *            True to notify an admin user, false to notify the user of the appointment
      * @return The HTML code to display
      */
-    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task,
-        ITaskConfigService taskConfigService, boolean bNotifyAdmin )
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task, ITaskConfigService taskConfigService, boolean bNotifyAdmin )
     {
-        TaskNotifyAppointmentConfig config = taskConfigService.findByPrimaryKey( task.getId(  ) );
+        TaskNotifyAppointmentConfig config = taskConfigService.findByPrimaryKey( task.getId( ) );
 
-        ActionFilter filter = new ActionFilter(  );
-        Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
-        filter.setIdStateBefore( action.getStateAfter(  ).getId(  ) );
+        ActionFilter filter = new ActionFilter( );
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+        filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 
         List<Action> listActions = _actionService.getListActionByFilter( filter );
 
-        if ( action.getStateAfter(  ).getId(  ) == action.getStateBefore(  ).getId(  ) )
+        if ( action.getStateAfter( ).getId( ) == action.getStateBefore( ).getId( ) )
         {
             for ( Action actionFound : listActions )
             {
-                if ( actionFound.getId(  ) == action.getId(  ) )
+                if ( actionFound.getId( ) == action.getId( ) )
                 {
                     listActions.remove( actionFound );
 
@@ -153,28 +155,27 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
             }
         }
 
-        ReferenceList refListActions = new ReferenceList( listActions.size(  ) + 1 );
+        ReferenceList refListActions = new ReferenceList( listActions.size( ) + 1 );
         refListActions.addItem( 0, StringUtils.EMPTY );
 
         for ( Action actionFound : listActions )
         {
-            refListActions.addItem( actionFound.getId(  ), actionFound.getName(  ) );
+            refListActions.addItem( actionFound.getId( ), actionFound.getName( ) );
         }
 
-        String strDefaultSenderName = MailService.getNoReplyEmail(  );
+        String strDefaultSenderName = MailService.getNoReplyEmail( );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         if ( bNotifyAdmin )
         {
-            Collection<AdminUser> listAdminUser = AdminUserHome.findUserList(  );
-            ReferenceList refListAdmins = new ReferenceList(  );
+            Collection<AdminUser> listAdminUser = AdminUserHome.findUserList( );
+            ReferenceList refListAdmins = new ReferenceList( );
             refListAdmins.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
             for ( AdminUser adminUser : listAdminUser )
             {
-                refListAdmins.addItem( adminUser.getUserId(  ),
-                    adminUser.getFirstName(  ) + CONSTANT_SPACE + adminUser.getLastName(  ) );
+                refListAdmins.addItem( adminUser.getUserId( ), adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( ) );
             }
 
             model.put( MARK_LIST_ADMIN_USERS, refListAdmins );
@@ -189,22 +190,25 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * Do save the configuration of the task
-     * @param request The request
-     * @param locale The locale
-     * @param task The task
-     * @param taskConfigService The task config service to use
-     * @param bNotifyAdmin True to notify the admin user, false to notify the
-     *            user of the appointment
-     * @return The next URL to redirect to if an error occurs, or null if there
-     *         was no error.
+     * 
+     * @param request
+     *            The request
+     * @param locale
+     *            The locale
+     * @param task
+     *            The task
+     * @param taskConfigService
+     *            The task config service to use
+     * @param bNotifyAdmin
+     *            True to notify the admin user, false to notify the user of the appointment
+     * @return The next URL to redirect to if an error occurs, or null if there was no error.
      */
-    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task,
-        ITaskConfigService taskConfigService, boolean bNotifyAdmin )
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task, ITaskConfigService taskConfigService, boolean bNotifyAdmin )
     {
         String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
         String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
@@ -225,14 +229,16 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         {
             strError = FIELD_SENDER_EMAIL;
         }
-        else if ( StringUtils.isBlank( strSubject ) )
-        {
-            strError = FIELD_SUBJECT;
-        }
-        else if ( StringUtils.isBlank( strMessage ) )
-        {
-            strError = FIELD_MESSAGE;
-        }
+        else
+            if ( StringUtils.isBlank( strSubject ) )
+            {
+                strError = FIELD_SUBJECT;
+            }
+            else
+                if ( StringUtils.isBlank( strMessage ) )
+                {
+                    strError = FIELD_MESSAGE;
+                }
 
         if ( !StringUtil.checkEmail( strSenderEmail ) )
         {
@@ -241,27 +247,28 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
-            Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
+            Object [ ] tabRequiredFields = {
+                I18nService.getLocalizedString( strError, locale )
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
-        NotifyAppointmentDTO config = taskConfigService.findByPrimaryKey( task.getId(  ) );
+        NotifyAppointmentDTO config = taskConfigService.findByPrimaryKey( task.getId( ) );
         Boolean bCreate = false;
 
         if ( config == null )
         {
             if ( bNotifyAdmin )
             {
-                config = new TaskNotifyAdminAppointmentConfig(  );
+                config = new TaskNotifyAdminAppointmentConfig( );
             }
             else
             {
-                config = new TaskNotifyAppointmentConfig(  );
+                config = new TaskNotifyAppointmentConfig( );
             }
 
-            config.setIdTask( task.getId(  ) );
+            config.setIdTask( task.getId( ) );
             bCreate = true;
         }
 

@@ -33,19 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointment;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  *

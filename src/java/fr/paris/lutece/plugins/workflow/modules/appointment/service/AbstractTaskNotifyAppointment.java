@@ -33,15 +33,24 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.appointment.business.AppointmentForm;
-import fr.paris.lutece.plugins.appointment.business.AppointmentFormHome;
-import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.ResponseRecapDTO;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
-import fr.paris.lutece.plugins.appointment.service.AppointmentFormService;
-import fr.paris.lutece.plugins.appointment.service.AppointmentService;
+import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
+import fr.paris.lutece.plugins.appointment.business.slot.Slot;
+import fr.paris.lutece.plugins.appointment.business.user.User;
+import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
+import fr.paris.lutece.plugins.appointment.service.SlotService;
+import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.appointment.service.entrytype.EntryTypePhone;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
@@ -60,21 +69,11 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 
-import org.apache.commons.lang.StringUtils;
-import org.bouncycastle.util.Strings;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-
 /**
  * Abstract task to notify a user of an appointment.
- * @param <T> The type of the DTO to use to send the email
+ * 
+ * @param <T>
+ *            The type of the DTO to use to send the email
  */
 public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentDTO> extends SimpleTask
 {
@@ -103,210 +102,177 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
 
     /**
      * Send an email to a user
-     * @param appointment The appointment
-     * @param resourceHistory The resource history
-     * @param request The request
-     * @param locale The locale
-     * @param notifyAppointmentDTO The DTO with data of the email
-     * @param strEmail The address to send the email to
+     * 
+     * @param appointment
+     *            The appointment
+     * @param resourceHistory
+     *            The resource history
+     * @param request
+     *            The request
+     * @param locale
+     *            The locale
+     * @param notifyAppointmentDTO
+     *            The DTO with data of the email
+     * @param strEmail
+     *            The address to send the email to
      * @return The content sent, or null if no email was sent
      */
     @SuppressWarnings( "deprecation" )
-    public EmailDTO sendEmail( Appointment appointment, ResourceHistory resourceHistory, HttpServletRequest request,
-        Locale locale, T notifyAppointmentDTO, String strEmail )
+    public EmailDTO sendEmail( Appointment appointment, ResourceHistory resourceHistory, HttpServletRequest request, Locale locale, T notifyAppointmentDTO,
+            String strEmail )
     {
-        if ( ( notifyAppointmentDTO != null ) && ( resourceHistory != null ) &&
-                Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) &&
-                ( appointment != null ) )
+        if ( ( notifyAppointmentDTO != null ) && ( resourceHistory != null )
+                && Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) && ( appointment != null ) )
         {
-            AppointmentSlot appointmentSlot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
-
+            Slot appointmentSlot = SlotService.findSlotById( appointment.getIdSlot( ) );
             if ( appointmentSlot != null )
             {
-                if ( StringUtils.isEmpty( notifyAppointmentDTO.getSenderEmail(  ) ) ||
-                        !StringUtil.checkEmail( notifyAppointmentDTO.getSenderEmail(  ) ) )
+                if ( StringUtils.isEmpty( notifyAppointmentDTO.getSenderEmail( ) ) || !StringUtil.checkEmail( notifyAppointmentDTO.getSenderEmail( ) ) )
                 {
-                    notifyAppointmentDTO.setSenderEmail( MailService.getNoReplyEmail(  ) );
+                    notifyAppointmentDTO.setSenderEmail( MailService.getNoReplyEmail( ) );
                 }
-
-                if ( StringUtils.isBlank( notifyAppointmentDTO.getSenderName(  ) ) )
+                if ( StringUtils.isBlank( notifyAppointmentDTO.getSenderName( ) ) )
                 {
-                    notifyAppointmentDTO.setSenderName( notifyAppointmentDTO.getSenderEmail(  ) );
+                    notifyAppointmentDTO.setSenderName( notifyAppointmentDTO.getSenderEmail( ) );
                 }
-
-                if ( StringUtils.isEmpty( notifyAppointmentDTO.getLocation(  ) ) )
+                // if (StringUtils.isEmpty(notifyAppointmentDTO.getLocation()))
+                // {
+                // notifyAppointmentDTO.setLocation(StringUtils.isNotEmpty(appointment.getLocation())
+                // ? appointment.getLocation() : StringUtils.EMPTY);
+                // }
+                Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
+                String strSubject = AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject( ), locale, model ).getHtml( );
+                boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc( ) ) || StringUtils.isNotBlank( notifyAppointmentDTO
+                        .getRecipientsCc( ) ) );
+                String strContent = AppTemplateService.getTemplateFromStringFtl(
+                        AppTemplateService.getTemplate( notifyAppointmentDTO.getIsSms( ) ? TEMPLATE_TASK_NOTIFY_SMS : TEMPLATE_TASK_NOTIFY_MAIL, locale, model )
+                                .getHtml( ), locale, model ).getHtml( );
+                if ( notifyAppointmentDTO.getSendICalNotif( ) )
                 {
-                    notifyAppointmentDTO.setLocation( StringUtils.isNotEmpty( appointment.getLocation(  ) )
-                        ? appointment.getLocation(  ) : StringUtils.EMPTY );
-                }
-
-                Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot,
-                        locale );
-
-                String strSubject = AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject(  ),
-                        locale, model ).getHtml(  );
-
-                boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc(  ) ) ||
-                    StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsCc(  ) ) );
-
-                String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService.getTemplate( notifyAppointmentDTO.getIsSms(  )
-                            ? TEMPLATE_TASK_NOTIFY_SMS : TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml(  ),
-                        locale, model ).getHtml(  );
-
-                if ( notifyAppointmentDTO.getSendICalNotif(  ) )
-                {
-                    getICalService(  )
-                        .sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc(  ), strSubject, strContent,
-                        notifyAppointmentDTO.getLocation(  ), notifyAppointmentDTO.getSenderName(  ),
-                        notifyAppointmentDTO.getSenderEmail(  ), appointment, notifyAppointmentDTO.getCreateNotif(  ) );
+                    getICalService( ).sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject, strContent,
+                            notifyAppointmentDTO.getLocation( ), notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), appointment,
+                            notifyAppointmentDTO.getCreateNotif( ) );
                 }
                 else
                 {
                     if ( bHasRecipients )
                     {
-                        MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getRecipientsCc(  ),
-                            notifyAppointmentDTO.getRecipientsBcc(  ), notifyAppointmentDTO.getSenderName(  ),
-                            notifyAppointmentDTO.getSenderEmail(  ), strSubject, strContent );
+                        MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getRecipientsCc( ), notifyAppointmentDTO.getRecipientsBcc( ),
+                                notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), strSubject, strContent );
                     }
                     else
                     {
-                        MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName(  ),
-                            notifyAppointmentDTO.getSenderEmail(  ), strSubject, strContent );
+                        MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), strSubject,
+                                strContent );
                     }
                 }
-
                 return new EmailDTO( strSubject, strContent );
             }
         }
-
         return null;
     }
 
     /**
-     * Get a model to generate email content for a given appointment and a given
-     * task.
-     * @param request The request
-     * @param notifyAppointmentDTO The configuration of the task.
-     * @param appointment The appointment to get data from
-     * @param appointmentSlot The slot associated with the appointment
-     * @param locale The locale
+     * Get a model to generate email content for a given appointment and a given task.
+     * 
+     * @param request
+     *            The request
+     * @param notifyAppointmentDTO
+     *            The configuration of the task.
+     * @param appointment
+     *            The appointment to get data from
+     * @param appointmentSlot
+     *            The slot associated with the appointment
+     * @param locale
+     *            The locale
      * @return The model with data
      */
-    public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, Appointment appointment,
-        AppointmentSlot appointmentSlot, Locale locale )
+    public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, Appointment appointment, Slot appointmentSlot, Locale locale )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-
-        model.put( MARK_FIRSTNAME, appointment.getFirstName(  ) );
-        model.put( MARK_LASTNAME, appointment.getLastName(  ) );
-        model.put( MARK_EMAIL, appointment.getEmail(  ) );
-        
-        // If the form is fill in with a reference, we have to put it in prefix of the appointment reference (JIRA RENDEZVOUS-259)
-        AppointmentForm form = AppointmentFormHome.findByPrimaryKey( appointmentSlot.getIdForm() );
-        String referenceAppointment = AppointmentService.getService(  ).computeRefAppointment( appointment );
-        String referenceForm = form.getReference();
-        if (referenceForm != null && !StringUtils.EMPTY.equalsIgnoreCase(referenceForm))
-        {
-        	referenceAppointment = Strings.toUpperCase(referenceForm.trim()) + " - " + referenceAppointment;
-        }
-        
-        model.put( MARK_REFERENCE,  referenceAppointment);
-        model.put( MARK_DATE_APPOINTMENT, appointment.getDateAppointment(  ) );
-        model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif() );
-
-        String strStartingTime = AppointmentService.getService(  )
-                                                   .getFormatedStringTime( appointmentSlot.getStartingHour(  ),
-                appointmentSlot.getStartingMinute(  ) );
-        model.put( MARK_TIME_APPOINTMENT, strStartingTime );
-        model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage(  ) );
-
-        List<Response> listResponse = AppointmentHome.findListResponse( appointment.getIdAppointment(  ) );
-
-        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<ResponseRecapDTO>( listResponse.size(  ) );
-
+        Map<String, Object> model = new HashMap<String, Object>( );
+        User user = UserService.findUserById( appointment.getIdUser( ) );
+        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        model.put( MARK_FIRSTNAME, user.getFirstName( ) );
+        model.put( MARK_LASTNAME, user.getLastName( ) );
+        model.put( MARK_EMAIL, user.getEmail( ) );
+        model.put( MARK_REFERENCE, appointment.getReference( ) );
+        model.put( MARK_DATE_APPOINTMENT, slot.getDate( ) );
+        model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif( ) );
+        model.put( MARK_TIME_APPOINTMENT, slot.getStartingTime( ) );
+        model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage( ) );
+        List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
+        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<ResponseRecapDTO>( listResponse.size( ) );
         for ( Response response : listResponse )
         {
-            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry(  ) );
-            listResponseRecapDTO.add( new ResponseRecapDTO( response,
-                    entryTypeService.getResponseValueForRecap( response.getEntry(  ), request, response, locale ) ) );
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
+            listResponseRecapDTO.add( new ResponseRecapDTO( response, entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response,
+                    locale ) ) );
         }
-
         model.put( MARK_LIST_RESPONSE, listResponseRecapDTO );
-
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP, locale, model );
-        model.put( MARK_RECAP, template.getHtml(  ) );
-
+        model.put( MARK_RECAP, template.getHtml( ) );
         return model;
     }
 
     /**
      * Get the email address to use to send an SMS to the user of an appointment
-     * @param appointment The appointment
+     * 
+     * @param appointment
+     *            The appointment
      * @return The email address, or null if no phone number was found.
      */
     protected String getEmailForSmsFromAppointment( Appointment appointment )
     {
         String strPhoneNumber = null;
-        AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
-        EntryFilter entryFilter = new EntryFilter(  );
-        entryFilter.setIdResource( slot.getIdForm(  ) );
+        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        EntryFilter entryFilter = new EntryFilter( );
+        entryFilter.setIdResource( slot.getIdForm( ) );
         entryFilter.setResourceType( AppointmentForm.RESOURCE_TYPE );
         entryFilter.setFieldDependNull( EntryFilter.FILTER_TRUE );
-
-        List<Integer> listIdResponse = AppointmentHome.findListIdResponse( appointment.getIdAppointment(  ) );
-
-        List<Response> listResponses = new ArrayList<Response>( listIdResponse.size(  ) );
-
+        List<Integer> listIdResponse = AppointmentResponseService.findListIdResponse( appointment.getIdAppointment( ) );
+        List<Response> listResponses = new ArrayList<Response>( listIdResponse.size( ) );
         for ( int nIdResponse : listIdResponse )
         {
             listResponses.add( ResponseHome.findByPrimaryKey( nIdResponse ) );
         }
-
         List<Entry> listEntries = EntryHome.getEntryList( entryFilter );
-
         for ( Entry entry : listEntries )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
-
             if ( entryTypeService instanceof EntryTypePhone )
             {
                 for ( Response response : listResponses )
                 {
-                    if ( ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) ) &&
-                            StringUtils.isNotBlank( response.getResponseValue(  ) ) )
+                    if ( ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) ) && StringUtils.isNotBlank( response.getResponseValue( ) ) )
                     {
-                        strPhoneNumber = response.getResponseValue(  );
-
+                        strPhoneNumber = response.getResponseValue( );
                         break;
                     }
                 }
-
                 if ( StringUtils.isNotEmpty( strPhoneNumber ) )
                 {
                     break;
                 }
             }
         }
-
         if ( StringUtils.isNotBlank( strPhoneNumber ) )
         {
             strPhoneNumber = strPhoneNumber + AppPropertiesService.getProperty( PROPERTY_SMS_SERVER );
         }
-
         return strPhoneNumber;
     }
 
     /**
      * Get the ICal service
+     * 
      * @return The ICal service
      */
-    private ICalService getICalService(  )
+    private ICalService getICalService( )
     {
         if ( _iCalService == null )
         {
-            _iCalService = ICalService.getService(  );
+            _iCalService = ICalService.getService( );
         }
-
         return _iCalService;
     }
 }

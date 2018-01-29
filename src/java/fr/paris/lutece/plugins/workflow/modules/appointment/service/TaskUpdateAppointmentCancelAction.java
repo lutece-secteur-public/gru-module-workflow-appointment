@@ -33,22 +33,21 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
+import fr.paris.lutece.plugins.appointment.business.appointment.AppointmentHome;
+import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * TaskUpdateAppointmentCancelAction
@@ -76,29 +75,20 @@ public class TaskUpdateAppointmentCancelAction extends SimpleTask
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );        
-        if ( resourceHistory != null )
-        {
-        	Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-        	if ( appointment != null )
-        	{
-        		TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId(  ) );
-        		if ( config != null )
-        		{
-        			appointment.setIdActionCancel( config.getIdActionCancel(  ) );
-        	        AppointmentHome.update( appointment );
-            	}
-        	}        	        	
-        }              
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId( ) );
+        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
+        appointment.setIdActionCancelled( config.getIdActionCancel( ) );
+        AppointmentHome.update( appointment );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskUpdateAppointmentCancelActionConfigService.remove( this.getId(  ) );
+        _taskUpdateAppointmentCancelActionConfigService.remove( this.getId( ) );
     }
 
     /**

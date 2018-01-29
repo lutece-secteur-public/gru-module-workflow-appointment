@@ -33,17 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
 
-import org.springframework.stereotype.Service;
-
-import org.springframework.transaction.annotation.Transactional;
-
-
 /**
- * Default implementation of the config service of tasks of module workflow
- * appointment.
+ * Default implementation of the config service of tasks of module workflow appointment.
  */
 @Service
 public class AppointmentConfigService extends TaskConfigService

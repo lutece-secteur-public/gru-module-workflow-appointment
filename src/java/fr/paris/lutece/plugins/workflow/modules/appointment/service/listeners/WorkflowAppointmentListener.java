@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdmin
 
 import java.util.Locale;
 
-
 /**
  * Appointment listener for module workflow appointment
  */

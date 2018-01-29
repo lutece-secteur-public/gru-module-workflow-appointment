@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
-
 /**
  * TaskUpdateAppointmentCancelActionConfig
  */
@@ -45,17 +44,19 @@ public class TaskUpdateAppointmentCancelActionConfig extends TaskConfig
 
     /**
      * Get the id of the workflow action to cancel the appointment
+     * 
      * @return The id of the workflow action to cancel the appointment
      */
-    public int getIdActionCancel(  )
+    public int getIdActionCancel( )
     {
         return _nIdActionCancel;
     }
 
     /**
      * Set the id of the workflow action to cancel the appointment
-     * @param nIdActionCancel The id of the workflow action to cancel the
-     *            appointment
+     * 
+     * @param nIdActionCancel
+     *            The id of the workflow action to cancel the appointment
      */
     public void setIdActionCancel( int nIdActionCancel )
     {

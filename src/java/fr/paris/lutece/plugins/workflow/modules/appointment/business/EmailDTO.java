@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-
 /**
  * DTO to describe an email
  */
@@ -44,8 +43,11 @@ public class EmailDTO
 
     /**
      * Creates a new initialized EmailDTO
-     * @param strSubject The subject of the email
-     * @param strContent The content of the email
+     * 
+     * @param strSubject
+     *            The subject of the email
+     * @param strContent
+     *            The content of the email
      */
     public EmailDTO( String strSubject, String strContent )
     {
@@ -55,18 +57,20 @@ public class EmailDTO
 
     /**
      * Get the subject of the email
+     * 
      * @return The subject of the email
      */
-    public String getSubject(  )
+    public String getSubject( )
     {
         return _strSubject;
     }
 
     /**
      * Get the content of the email
+     * 
      * @return the content of the email
      */
-    public String getContent(  )
+    public String getContent( )
     {
         return _strContent;
     }

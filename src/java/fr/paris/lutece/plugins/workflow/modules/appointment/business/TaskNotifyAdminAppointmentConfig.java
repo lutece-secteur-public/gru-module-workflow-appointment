@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-
 /**
  *
  * TaskNotifyAppointmentConfig
@@ -46,16 +45,19 @@ public class TaskNotifyAdminAppointmentConfig extends TaskNotifyAppointmentConfi
 
     /**
      * Get the id of the admin user to notify
+     * 
      * @return The id of the admin user to notify
      */
-    public int getIdAdminUser(  )
+    public int getIdAdminUser( )
     {
         return _nIdAdminUser;
     }
 
     /**
      * Set the id of the admin user to notify
-     * @param nIdAdminUser The id of the admin user to notify
+     * 
+     * @param nIdAdminUser
+     *            The id of the admin user to notify
      */
     public void setIdAdminUser( int nIdAdminUser )
     {
@@ -64,17 +66,19 @@ public class TaskNotifyAdminAppointmentConfig extends TaskNotifyAppointmentConfi
 
     /**
      * Get the id of the workflow action to validate the appointment
+     * 
      * @return The id of the workflow action to validate the appointment
      */
-    public int getIdActionValidate(  )
+    public int getIdActionValidate( )
     {
         return _nIdActionValidate;
     }
 
     /**
      * Set the id of the workflow action to validate the appointment
-     * @param nIdActionValidate The id of the workflow action to validate the
-     *            appointment
+     * 
+     * @param nIdActionValidate
+     *            The id of the workflow action to validate the appointment
      */
     public void setIdActionValidate( int nIdActionValidate )
     {

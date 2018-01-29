@@ -33,34 +33,35 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-
-import java.util.List;
-
 
 /**
  * Home for manual appointment notification history
  */
 public final class ManualAppointmentNotificationHistoryHome
 {
-    private static IManualAppointmentNotificationHistoryDAO _dao = SpringContextService.getBean( 
-            "workflow-appointment.manualAppointmentNotificationHistoryDAO" );
+    private static IManualAppointmentNotificationHistoryDAO _dao = SpringContextService
+            .getBean( "workflow-appointment.manualAppointmentNotificationHistoryDAO" );
     private static Plugin _plugin = PluginService.getPlugin( WorkflowAppointmentPlugin.PLUGIN_NAME );
 
     /**
      * Private default constructor
      */
-    private ManualAppointmentNotificationHistoryHome(  )
+    private ManualAppointmentNotificationHistoryHome( )
     {
         // Nothing to do
     }
 
     /**
      * Create a new manual appointment notification history
-     * @param historyNotif The history to insert into the database
+     * 
+     * @param historyNotif
+     *            The history to insert into the database
      */
     public static void create( ManualAppointmentNotificationHistory historyNotif )
     {
@@ -69,7 +70,9 @@ public final class ManualAppointmentNotificationHistoryHome
 
     /**
      * Get a manual appointment notification history from its primary key
-     * @param nIdNotif The id of the history to get
+     * 
+     * @param nIdNotif
+     *            The id of the history to get
      * @return The history
      */
     public static ManualAppointmentNotificationHistory findByPrimaryKey( int nIdNotif )
@@ -79,7 +82,9 @@ public final class ManualAppointmentNotificationHistoryHome
 
     /**
      * Get the list of history associated with a given history id
-     * @param nIdHistory The history id
+     * 
+     * @param nIdHistory
+     *            The history id
      * @return the list of history, or an empty list if none was found
      */
     public static List<ManualAppointmentNotificationHistory> findByIdHistory( int nIdHistory )
@@ -89,7 +94,9 @@ public final class ManualAppointmentNotificationHistoryHome
 
     /**
      * Remove an history from its primary key
-     * @param nIdNotif The id of the history
+     * 
+     * @param nIdNotif
+     *            The id of the history
      */
     public static void delete( int nIdNotif )
     {
@@ -98,7 +105,9 @@ public final class ManualAppointmentNotificationHistoryHome
 
     /**
      * Remove every history associated with a given appointment
-     * @param nIdAppointment The id of the appointment
+     * 
+     * @param nIdAppointment
+     *            The id of the appointment
      */
     public static void deleteByIdAppointment( int nIdAppointment )
     {

@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.appointment.web.AppointmentJspBean;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -47,16 +56,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.util.CryptoService;
 import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 
 /**
  * Do execute a workflow action
@@ -84,15 +83,17 @@ public class ExecuteWorkflowAction
     private static final int DEFAULT_LIMIT_TIME_VALIDITY = 30;
 
     /**
-     * Do check if the given key is valid. If it is valid, then the user is
-     * redirected to a page to execute a workflow action.
-     * @param request The request
-     * @param response The response
+     * Do check if the given key is valid. If it is valid, then the user is redirected to a page to execute a workflow action.
+     * 
+     * @param request
+     *            The request
+     * @param response
+     *            The response
      * @return The next URL to redirect to
-     * @throws SiteMessageException If a site message needs to be displayed
+     * @throws SiteMessageException
+     *             If a site message needs to be displayed
      */
-    public String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response )
-        throws SiteMessageException
+    public String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
     {
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
@@ -100,11 +101,9 @@ public class ExecuteWorkflowAction
         String strTimestamp = request.getParameter( PARAMETER_TIMESTAMP );
         String strKey = request.getParameter( PARAMETER_KEY );
 
-        if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction ) &&
-                StringUtils.isNotEmpty( strTimestamp ) && StringUtils.isNumeric( strTimestamp ) &&
-                StringUtils.isNotEmpty( strIdResource ) && StringUtils.isNumeric( strIdResource ) &&
-                StringUtils.isNotEmpty( strKey ) && StringUtils.isNotEmpty( strIdAdminUser ) &&
-                StringUtils.isNumeric( strIdAdminUser ) )
+        if ( StringUtils.isNotEmpty( strIdAction ) && StringUtils.isNumeric( strIdAction ) && StringUtils.isNotEmpty( strTimestamp )
+                && StringUtils.isNumeric( strTimestamp ) && StringUtils.isNotEmpty( strIdResource ) && StringUtils.isNumeric( strIdResource )
+                && StringUtils.isNotEmpty( strKey ) && StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
         {
             int nIdAction = Integer.parseInt( strIdAction );
 
@@ -119,16 +118,14 @@ public class ExecuteWorkflowAction
                 user = AdminUserHome.findByPrimaryKey( nIdAdminUser );
             }
 
-            int nLinkLimitValidity = AppPropertiesService.getPropertyInt( PROPERTY_LINKS_LIMIT_VALIDITY,
-                    DEFAULT_LIMIT_TIME_VALIDITY );
+            int nLinkLimitValidity = AppPropertiesService.getPropertyInt( PROPERTY_LINKS_LIMIT_VALIDITY, DEFAULT_LIMIT_TIME_VALIDITY );
 
             if ( nLinkLimitValidity > 0 )
             {
-                Calendar calendar = GregorianCalendar.getInstance( WorkflowAppointmentPlugin.getPluginLocale( 
-                            Locale.getDefault(  ) ) );
+                Calendar calendar = GregorianCalendar.getInstance( WorkflowAppointmentPlugin.getPluginLocale( Locale.getDefault( ) ) );
                 calendar.add( Calendar.DAY_OF_WEEK, -1 * nLinkLimitValidity );
 
-                if ( calendar.getTimeInMillis(  ) > lTimestamp )
+                if ( calendar.getTimeInMillis( ) > lTimestamp )
                 {
                     SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
 
@@ -147,15 +144,15 @@ public class ExecuteWorkflowAction
 
             try
             {
-                AdminAuthenticationService.getInstance(  ).registerUser( request, user );
+                AdminAuthenticationService.getInstance( ).registerUser( request, user );
             }
-            catch ( AccessDeniedException e )
+            catch( AccessDeniedException e )
             {
-                AppLogService.error( e.getMessage(  ), e );
+                AppLogService.error( e.getMessage( ), e );
             }
-            catch ( UserNotSignedException e )
+            catch( UserNotSignedException e )
             {
-                AppLogService.error( e.getMessage(  ), e );
+                AppLogService.error( e.getMessage( ), e );
             }
 
             return AppointmentJspBean.getUrlExecuteWorkflowAction( request, strIdResource, strIdAction );
@@ -168,41 +165,47 @@ public class ExecuteWorkflowAction
 
     /**
      * Get the URL to execute a workflow action on an appointment
-     * @param strBaseURL The base URL to use
-     * @param nIdWorkflowAction The id of the workflow action to execute
-     * @param nIdAdminUser The id of the action user that execute the action
-     * @param nIdResource The id of the appointment to execute the workflow
-     *            action on
+     * 
+     * @param strBaseURL
+     *            The base URL to use
+     * @param nIdWorkflowAction
+     *            The id of the workflow action to execute
+     * @param nIdAdminUser
+     *            The id of the action user that execute the action
+     * @param nIdResource
+     *            The id of the appointment to execute the workflow action on
      * @return The URL
      */
-    public static String getExecuteWorkflowActionUrl( String strBaseURL, int nIdWorkflowAction, int nIdAdminUser,
-        int nIdResource )
+    public static String getExecuteWorkflowActionUrl( String strBaseURL, int nIdWorkflowAction, int nIdAdminUser, int nIdResource )
     {
-        long lTimestamp = System.currentTimeMillis(  );
+        long lTimestamp = System.currentTimeMillis( );
         UrlItem urlItem = new UrlItem( strBaseURL + JSP_URL_EXECUTE_WORKFLOW_ACTION );
         urlItem.addParameter( PARAMETER_ID_ACTION, nIdWorkflowAction );
         urlItem.addParameter( PARAMETER_ID_RESOURCE, nIdResource );
         urlItem.addParameter( PARAMETER_ID_ADMIN_USER, nIdAdminUser );
         urlItem.addParameter( PARAMETER_TIMESTAMP, Long.toString( lTimestamp ) );
-        urlItem.addParameter( PARAMETER_KEY,
-            computeAuthenticationKey( nIdWorkflowAction, nIdAdminUser, lTimestamp, nIdResource ) );
+        urlItem.addParameter( PARAMETER_KEY, computeAuthenticationKey( nIdWorkflowAction, nIdAdminUser, lTimestamp, nIdResource ) );
 
-        return urlItem.getUrl(  );
+        return urlItem.getUrl( );
     }
 
     /**
      * Compute the authentication key to execute a workflow action
-     * @param nIdAction The id of the action to execute
-     * @param nIdAdminUser The id of the admin user that will execute the action
-     * @param nTimestamp The timestamp used when the link was created
-     * @param nIdResource The id of the workflow resource
+     * 
+     * @param nIdAction
+     *            The id of the action to execute
+     * @param nIdAdminUser
+     *            The id of the admin user that will execute the action
+     * @param nTimestamp
+     *            The timestamp used when the link was created
+     * @param nIdResource
+     *            The id of the workflow resource
      * @return The authentication key
      */
     private static String computeAuthenticationKey( int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource )
     {
-        String strPrivateKey = CryptoService.getCryptoKey(  );
+        String strPrivateKey = CryptoService.getCryptoKey( );
 
-        return CryptoService.encrypt( nIdAction + nIdAdminUser + nTimestamp + nIdResource + strPrivateKey,
-            DEFAULT_ENCRYPTION_ALGO );
+        return CryptoService.encrypt( nIdAction + nIdAdminUser + nTimestamp + nIdResource + strPrivateKey, DEFAULT_ENCRYPTION_ALGO );
     }
 }

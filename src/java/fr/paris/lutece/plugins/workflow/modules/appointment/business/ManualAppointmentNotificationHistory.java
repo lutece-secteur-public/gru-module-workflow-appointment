@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-
 /**
  * Manual appointment notification
  */
@@ -48,16 +47,19 @@ public class ManualAppointmentNotificationHistory
 
     /**
      * Get the id of the notif
+     * 
      * @return The id of the notif
      */
-    public int getIdManualNotif(  )
+    public int getIdManualNotif( )
     {
         return _nIdManualNotif;
     }
 
     /**
      * Set the id of the notif
-     * @param nIdManualNotif The id of the notif
+     * 
+     * @param nIdManualNotif
+     *            The id of the notif
      */
     public void setIdManualNotif( int nIdManualNotif )
     {
@@ -66,17 +68,19 @@ public class ManualAppointmentNotificationHistory
 
     /**
      * Get the id of the history of this manual appointment notification
+     * 
      * @return The id of the history of this manual appointment notification
      */
-    public int getIdHistory(  )
+    public int getIdHistory( )
     {
         return _nIdHistory;
     }
 
     /**
      * Set the id of the history of this manual appointment notification
-     * @param nIdHistory The id of the history of this manual appointment
-     *            notification
+     * 
+     * @param nIdHistory
+     *            The id of the history of this manual appointment notification
      */
     public void setIdHistory( int nIdHistory )
     {
@@ -85,17 +89,19 @@ public class ManualAppointmentNotificationHistory
 
     /**
      * Get the id of the appointment associated with this history
+     * 
      * @return The id of the appointment associated with this history
      */
-    public int getIdAppointment(  )
+    public int getIdAppointment( )
     {
         return _nIdAppointment;
     }
 
     /**
      * Set the id of the appointment associated with this history
-     * @param nIdAppointment The id of the appointment associated with this
-     *            history
+     * 
+     * @param nIdAppointment
+     *            The id of the appointment associated with this history
      */
     public void setIdAppointment( int nIdAppointment )
     {
@@ -104,16 +110,19 @@ public class ManualAppointmentNotificationHistory
 
     /**
      * Get the recipient email
+     * 
      * @return The recipient email
      */
-    public String getEmailTo(  )
+    public String getEmailTo( )
     {
         return _strEmailTo;
     }
 
     /**
      * Set the recipient email
-     * @param strEmailTo The recipient email
+     * 
+     * @param strEmailTo
+     *            The recipient email
      */
     public void setEmailTo( String strEmailTo )
     {
@@ -122,16 +131,19 @@ public class ManualAppointmentNotificationHistory
 
     /**
      * Get the email subject
+     * 
      * @return The email subject
      */
-    public String getEmailSubject(  )
+    public String getEmailSubject( )
     {
         return _strEmailSubject;
     }
 
     /**
      * Set the email subject
-     * @param strEmailSubject The email subject
+     * 
+     * @param strEmailSubject
+     *            The email subject
      */
     public void setEmailSubject( String strEmailSubject )
     {
@@ -140,16 +152,19 @@ public class ManualAppointmentNotificationHistory
 
     /**
      * Get the email message
+     * 
      * @return The email message
      */
-    public String getEmailMessage(  )
+    public String getEmailMessage( )
     {
         return _strEmailMessage;
     }
 
     /**
      * Set the email message
-     * @param strEmailMessage The email message
+     * 
+     * @param strEmailMessage
+     *            The email message
      */
     public void setEmailMessage( String strEmailMessage )
     {

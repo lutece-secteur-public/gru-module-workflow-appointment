@@ -33,11 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-
 import java.util.Locale;
 
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 
 /**
  * Workflow appointment module
@@ -58,16 +57,19 @@ public class WorkflowAppointmentPlugin extends Plugin
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
-        //        BeanUtilsBean.getInstance(  ).getConvertUtils(  )
-        //                     .register( new DateConverter( DateFormat.getDateInstance( DateFormat.SHORT,
-        //                    getPluginLocale( Locale.FRANCE ) ) ), java.sql.Date.class );
+        // BeanUtilsBean.getInstance( ).getConvertUtils( )
+        // .register( new DateConverter( DateFormat.getDateInstance(
+        // DateFormat.SHORT,
+        // getPluginLocale( Locale.FRANCE ) ) ), java.sql.Date.class );
     }
 
     /**
      * Get the locale used by this plugin
-     * @param locale The locale preferred by the user
+     * 
+     * @param locale
+     *            The locale preferred by the user
      * @return The locale used by this plugin
      */
     public static Locale getPluginLocale( Locale locale )
@@ -77,9 +79,10 @@ public class WorkflowAppointmentPlugin extends Plugin
 
     /**
      * Get the workflow appointment module
+     * 
      * @return The workflow appointment module
      */
-    public static Plugin getPlugin(  )
+    public static Plugin getPlugin( )
     {
         return PluginService.getPlugin( PLUGIN_NAME );
     }

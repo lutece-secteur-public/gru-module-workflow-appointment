@@ -33,46 +33,47 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.util.sql.DAOUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * ManualAppointmentNotificationHistoryDAO
  */
 public class ManualAppointmentNotificationHistoryDAO implements IManualAppointmentNotificationHistoryDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_appointment,email,subject,message " +
-        "FROM workflow_task_manual_app_notify WHERE id_notif=?";
-    private static final String SQL_QUERY_FIND_BY_ID_HISTORY = "SELECT id_notif,id_history,id_appointment,email,subject,message " +
-        "FROM workflow_task_manual_app_notify WHERE id_history=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_manual_app_notify( " +
-        "id_notif,id_history,id_appointment,email,subject,message)" + "VALUES (?,?,?,?,?,?)";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_appointment,email,subject,message "
+            + "FROM workflow_task_manual_app_notify WHERE id_notif=?";
+    private static final String SQL_QUERY_FIND_BY_ID_HISTORY = "SELECT id_notif,id_history,id_appointment,email,subject,message "
+            + "FROM workflow_task_manual_app_notify WHERE id_history=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_manual_app_notify( "
+            + "id_notif,id_history,id_appointment,email,subject,message)" + "VALUES (?,?,?,?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_manual_app_notify WHERE id_notif = ? ";
     private static final String SQL_QUERY_DELETE_BY_ID_APPOINTMENT = "DELETE FROM workflow_task_manual_app_notify WHERE id_appointment = ? ";
     private static final String SQL_QUEERY_NEW_PRIMARY_KEY = "SELECT MAX(id_notif) FROM workflow_task_manual_app_notify";
 
     /**
      * Get a new primary key
-     * @param plugin The plugin
+     * 
+     * @param plugin
+     *            The plugin
      * @return The new value of the primary key
      */
     private int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUEERY_NEW_PRIMARY_KEY, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nRes = 1;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             nRes = daoUtil.getInt( 1 ) + 1;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return nRes;
     }
@@ -87,14 +88,14 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
         int nIndex = 1;
-        daoUtil.setInt( nIndex++, history.getIdManualNotif(  ) );
-        daoUtil.setInt( nIndex++, history.getIdHistory(  ) );
-        daoUtil.setInt( nIndex++, history.getIdAppointment(  ) );
-        daoUtil.setString( nIndex++, history.getEmailTo(  ) );
-        daoUtil.setString( nIndex++, history.getEmailSubject(  ) );
-        daoUtil.setString( nIndex, history.getEmailMessage(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( nIndex++, history.getIdManualNotif( ) );
+        daoUtil.setInt( nIndex++, history.getIdHistory( ) );
+        daoUtil.setInt( nIndex++, history.getIdAppointment( ) );
+        daoUtil.setString( nIndex++, history.getEmailTo( ) );
+        daoUtil.setString( nIndex++, history.getEmailSubject( ) );
+        daoUtil.setString( nIndex, history.getEmailMessage( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -105,14 +106,14 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
         daoUtil.setInt( 1, nIdNotif );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         ManualAppointmentNotificationHistory history;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             int nIndex = 1;
-            history = new ManualAppointmentNotificationHistory(  );
+            history = new ManualAppointmentNotificationHistory( );
             history.setIdManualNotif( nIdNotif );
             history.setIdHistory( daoUtil.getInt( nIndex++ ) );
             history.setIdAppointment( daoUtil.getInt( nIndex++ ) );
@@ -125,7 +126,7 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
             history = null;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return history;
     }
@@ -138,8 +139,8 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, nIdNotif );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -150,14 +151,14 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, plugin );
         daoUtil.setInt( 1, nIdHistory );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        List<ManualAppointmentNotificationHistory> listHistory = new ArrayList<ManualAppointmentNotificationHistory>(  );
+        List<ManualAppointmentNotificationHistory> listHistory = new ArrayList<ManualAppointmentNotificationHistory>( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             int nIndex = 1;
-            ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
+            ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory( );
             history.setIdManualNotif( daoUtil.getInt( nIndex++ ) );
             history.setIdHistory( daoUtil.getInt( nIndex++ ) );
             history.setIdAppointment( daoUtil.getInt( nIndex++ ) );
@@ -167,7 +168,7 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
             listHistory.add( history );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listHistory;
     }
@@ -180,7 +181,7 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_APPOINTMENT, plugin );
         daoUtil.setInt( 1, nIdAppointment );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

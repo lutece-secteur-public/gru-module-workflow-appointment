@@ -33,8 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.business.AppointmentHome;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
+import fr.paris.lutece.plugins.appointment.business.user.User;
+import fr.paris.lutece.plugins.appointment.service.AppointmentService;
+import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
@@ -43,16 +53,6 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  * Workflow task to manually notify a user of an appointment
@@ -80,22 +80,25 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings( "unchecked" )
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        Appointment appointment = AppointmentHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-       
-        Map<String, String[]> parameters = request.getParameterMap(); 
+        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
+
+        Map<String, String [ ]> parameters = request.getParameterMap( );
         String strCancelMotif = null;
-        for (Map.Entry<String, String[]> entry : parameters.entrySet()) {  
-        	if (entry.getKey().startsWith("comment_value_")) {       
-        		 String[] tabAllParamsStartedWithCommentValue = entry.getValue();
-        		 strCancelMotif = tabAllParamsStartedWithCommentValue[0];
-        		 break;
-        	}
+        for ( Map.Entry<String, String [ ]> entry : parameters.entrySet( ) )
+        {
+            if ( entry.getKey( ).startsWith( "comment_value_" ) )
+            {
+                String [ ] tabAllParamsStartedWithCommentValue = entry.getValue( );
+                strCancelMotif = tabAllParamsStartedWithCommentValue [0];
+                break;
+            }
         }
-         
+
         String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
         String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
         String strCc = request.getParameter( PARAMETER_CC );
@@ -106,17 +109,18 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
 
         if ( StringUtils.isBlank( strSenderName ) )
         {
-            strSenderName = MailService.getNoReplyEmail(  );
+            strSenderName = MailService.getNoReplyEmail( );
         }
 
-        NotifyAppointmentDTO notifyAppointmentDTO = new NotifyAppointmentDTO(  );
+        NotifyAppointmentDTO notifyAppointmentDTO = new NotifyAppointmentDTO( );
         notifyAppointmentDTO.setMessage( strMessage );
         notifyAppointmentDTO.setRecipientsCc( strCc );
         notifyAppointmentDTO.setRecipientsBcc( strBcc );
         notifyAppointmentDTO.setSubject( strSubject );
         notifyAppointmentDTO.setSenderName( strSenderName );
         notifyAppointmentDTO.setCancelMotif( strCancelMotif );
-        // We do not check the email nor the sender name since it's done by the sendEmail( ... ) method.
+        // We do not check the email nor the sender name since it's done by the
+        // sendEmail( ... ) method.
         notifyAppointmentDTO.setSenderEmail( strSenderEmail );
         notifyAppointmentDTO.setSendICalNotif( bSendICalNotif );
 
@@ -128,29 +132,28 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
         }
 
         String strEmail = null;
-
-        if ( notifyAppointmentDTO.getIsSms(  ) )
+        User user = UserService.findUserById( appointment.getIdUser( ) );
+        if ( notifyAppointmentDTO.getIsSms( ) )
         {
             strEmail = getEmailForSmsFromAppointment( appointment );
         }
         else
         {
-            strEmail = appointment.getEmail(  );
+            strEmail = user.getEmail( );
         }
 
         if ( StringUtils.isNotBlank( strEmail ) )
         {
-            EmailDTO emailDTO = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO,
-                    strEmail );
+            EmailDTO emailDTO = this.sendEmail( appointment, resourceHistory, request, locale, notifyAppointmentDTO, strEmail );
 
             if ( emailDTO != null )
             {
-                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory(  );
-                history.setIdHistory( resourceHistory.getId(  ) );
-                history.setIdAppointment( resourceHistory.getIdResource(  ) );
-                history.setEmailTo( appointment.getEmail(  ) );
-                history.setEmailSubject( emailDTO.getSubject(  ) );
-                history.setEmailMessage( emailDTO.getContent(  ) );
+                ManualAppointmentNotificationHistory history = new ManualAppointmentNotificationHistory( );
+                history.setIdHistory( resourceHistory.getId( ) );
+                history.setIdAppointment( resourceHistory.getIdResource( ) );
+                history.setEmailTo( user.getEmail( ) );
+                history.setEmailSubject( emailDTO.getSubject( ) );
+                history.setEmailMessage( emailDTO.getContent( ) );
                 ManualAppointmentNotificationHistoryHome.create( history );
             }
         }

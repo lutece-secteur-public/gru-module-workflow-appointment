@@ -33,9 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -45,9 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.business.Appointment.Status;
-import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskChangeAppointmentStatus;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -66,7 +61,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
 
 /**
  * ChangeAppointmentStatusTaskComponent
@@ -99,11 +93,12 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     @Named( TaskChangeAppointmentStatus.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskChangeAppointmentStatusConfigService;
     @Inject
-    @Named( ActionService.BEAN_SERVICE)
-    private IActionService  _taskActionService;
+    @Named( ActionService.BEAN_SERVICE )
+    private IActionService _taskActionService;
     @Inject
-    @Named( StateService.BEAN_SERVICE)
+    @Named( StateService.BEAN_SERVICE )
     private IStateService _taskStateService;
+
     /**
      * {@inheritDoc}
      */
@@ -122,23 +117,24 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
             }
         }
 
-        int nAppointmentStatus = AppointmentService.getService(  ).parseInt( strAppointmentStatus );
+        int nAppointmentStatus = Integer.parseInt( strAppointmentStatus );
 
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
-            Object[] tabRequiredFields = { I18nService.getLocalizedString( strError, locale ) };
+            Object [ ] tabRequiredFields = {
+                I18nService.getLocalizedString( strError, locale )
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId( ) );
         Boolean bCreate = false;
 
         if ( config == null )
         {
-            config = new TaskChangeAppointmentStatusConfig(  );
-            config.setIdTask( task.getId(  ) );
+            config = new TaskChangeAppointmentStatusConfig( );
+            config.setIdTask( task.getId( ) );
             bCreate = true;
         }
 
@@ -157,45 +153,33 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     }
 
     /**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
-	{
-	    TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
-	
-	    ReferenceList refListStatus = new ReferenceList(  );
-	    refListStatus.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
-	    Action tmpAction = _taskActionService.findByPrimaryKey( task.getAction().getId() );
-	    int nIdWorkflow = tmpAction.getWorkflow().getId();
-        
-	    StateFilter stateFilter = new StateFilter(  );
-	    stateFilter.setIdWorkflow( nIdWorkflow );	    
- 
-        /* List<State> listAction = _taskStateService.getListStateByFilter( stateFilter );
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId( ) );
 
-        for (State tmpStat : listAction )
-        {
-        	refListStatus.addItem( tmpStat.getId(), tmpStat.getName() );
-        }*/
-	    
-	    Status [] listStat =Appointment.Status.values();
-	    for (Status tmpState : listStat ){
-	    	
-	    	refListStatus.addItem(  tmpState.getValeur(	) , I18nService.getLocalizedString(tmpState.getLibelle( ), locale) );
-	   
-		}
-          
-	    Map<String, Object> model = new HashMap<String, Object>(  );
-	
-	    model.put( MARK_CONFIG, config );
-	    model.put( MARK_REF_LIST_STATUS, refListStatus );
-	
-	    HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale,
-	            model );
-	
-	    return template.getHtml(  );
-	}
+        ReferenceList refListStatus = new ReferenceList( );
+        refListStatus.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
+        Action tmpAction = _taskActionService.findByPrimaryKey( task.getAction( ).getId( ) );
+        int nIdWorkflow = tmpAction.getWorkflow( ).getId( );
+
+        StateFilter stateFilter = new StateFilter( );
+        stateFilter.setIdWorkflow( nIdWorkflow );
+
+        refListStatus.addItem( 0, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_RESERVED, locale ) );
+        refListStatus.addItem( 1, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_UNRESERVED, locale ) );
+
+        Map<String, Object> model = new HashMap<String, Object>( );
+
+        model.put( MARK_CONFIG, config );
+        model.put( MARK_REF_LIST_STATUS, refListStatus );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG, locale, model );
+
+        return template.getHtml( );
+    }
 
     /**
      * {@inheritDoc}
@@ -203,11 +187,18 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId(  ) );
-
-        return I18nService.getLocalizedString( ( config.getAppointmentStatus(  ) > 0 ) ? MESSAGE_APPOINTMENT_VALIDATED
-                                                                                       : MESSAGE_APPOINTMENT_CANCELED,
-            locale );
+        TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId( ) );
+        String strInformation = StringUtils.EMPTY;
+        int status = config.getAppointmentStatus( );
+        if ( status == 0 || status == 10 )
+        {
+            strInformation = MESSAGE_APPOINTMENT_VALIDATED;
+        }
+        else
+        {
+            strInformation = MESSAGE_APPOINTMENT_CANCELED;
+        }
+        return I18nService.getLocalizedString( strInformation, locale );
     }
 
     /**

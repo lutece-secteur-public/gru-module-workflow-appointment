@@ -35,24 +35,20 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
+import java.time.ZoneId;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.appointment.business.Appointment;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlot;
-import fr.paris.lutece.plugins.appointment.business.calendar.AppointmentSlotHome;
+import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
+import fr.paris.lutece.plugins.appointment.business.slot.Slot;
+import fr.paris.lutece.plugins.appointment.service.SlotService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+//import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
@@ -68,6 +64,7 @@ import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 
+//import java.util.TimeZone;
 
 /**
  * Service to send iCal appointments by email
@@ -80,143 +77,104 @@ public class ICalService
     public static final String BEAN_NAME = "workflow-appointment.iCalService";
     private static final String PROPERTY_MAIL_LIST_SEPARATOR = "mail.list.separator";
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
-    private static final String PROPERTY_TIMEZONE = "workflow-appointment.server.timezone";
     private static final String CONSTANT_MAILTO = "MAILTO:";
-   // private static final String TIMEZONE_EUROPE = "Europe/Copenhagen";
 
     /**
      * Get an instance of the service
+     * 
      * @return An instance of the bean of this service
      */
-    public static ICalService getService(  )
+    public static ICalService getService( )
     {
         return SpringContextService.getBean( BEAN_NAME );
     }
 
     /**
      * Send an appointment to a user by email.
-     * @param strEmailAttendee Comma separated list of users that will attend
-     *            the appointment
-     * @param strEmailOptionnal Comma separated list of users that will be
-     *            invited to the appointment, but who are not required.
-     * @param strSubject The subject of the appointment.
-     * @param strBodyContent The body content that describes the appointment
-     * @param strLocation The location of the appointment
-     * @param strSenderName The name of the sender
-     * @param strSenderEmail The email of the sender
-     * @param appointment The appointment
-     * @param bCreate True to notify the creation of the appointment, false to
-     *            notify its removal
+     * 
+     * @param strEmailAttendee
+     *            Comma separated list of users that will attend the appointment
+     * @param strEmailOptionnal
+     *            Comma separated list of users that will be invited to the appointment, but who are not required.
+     * @param strSubject
+     *            The subject of the appointment.
+     * @param strBodyContent
+     *            The body content that describes the appointment
+     * @param strLocation
+     *            The location of the appointment
+     * @param strSenderName
+     *            The name of the sender
+     * @param strSenderEmail
+     *            The email of the sender
+     * @param appointment
+     *            The appointment
+     * @param bCreate
+     *            True to notify the creation of the appointment, false to notify its removal
      */
-    public void sendAppointment( String strEmailAttendee, String strEmailOptionnal, String strSubject,
-        String strBodyContent, String strLocation, String strSenderName, String strSenderEmail,
-        Appointment appointment, boolean bCreate )
+    public void sendAppointment( String strEmailAttendee, String strEmailOptionnal, String strSubject, String strBodyContent, String strLocation,
+            String strSenderName, String strSenderEmail, Appointment appointment, boolean bCreate )
     {
-                
-        AppointmentSlot slot = AppointmentSlotHome.findByPrimaryKey( appointment.getIdSlot(  ) );
-        Calendar calendarStart = new GregorianCalendar( Locale.FRENCH );
-
-        calendarStart.setTime( appointment.getDateAppointment(  ) );
-        calendarStart.add( Calendar.HOUR, slot.getStartingHour(  ) );
-        calendarStart.add( Calendar.MINUTE, slot.getStartingMinute(  ) );
-
-        int nAppDurationMinutes = ( ( slot.getEndingHour(  ) - slot.getStartingHour(  ) ) * 60 ) +
-            ( slot.getEndingMinute(  ) - slot.getStartingMinute(  ) );
-      
-        
-        DateTime beginningDateTime = new DateTime(calendarStart.getTimeInMillis(  ));
-        beginningDateTime.setTimeZone(getParisZone ( ));
-        
-        Calendar endCal = new GregorianCalendar();
-        endCal.setTimeInMillis(calendarStart.getTimeInMillis(  ));
-        endCal.add(  Calendar.MINUTE, nAppDurationMinutes );
-        
-        DateTime endingDateTime = new DateTime(endCal.getTimeInMillis(  ));
-        endingDateTime.setTimeZone( getParisZone ( ) );
-       
+        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        DateTime beginningDateTime = new DateTime( slot.getStartingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
+        DateTime endingDateTime = new DateTime( slot.getEndingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
         VEvent event = new VEvent( beginningDateTime, endingDateTime, ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
-       
-        calendarStart.add( Calendar.MINUTE, nAppDurationMinutes );
-
         try
         {
-            event.getProperties(  )
-                 .add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment(  ) ) );
-
+            event.getProperties( ).add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment( ) ) );
             String strEmailSeparator = AppPropertiesService.getProperty( PROPERTY_MAIL_LIST_SEPARATOR, ";" );
             if ( StringUtils.isNotEmpty( strEmailAttendee ) )
             {
                 StringTokenizer st = new StringTokenizer( strEmailAttendee, strEmailSeparator );
-
-                while ( st.hasMoreTokens(  ) )
+                while ( st.hasMoreTokens( ) )
                 {
-                    addAttendee( event, st.nextToken(  ), true );
+                    addAttendee( event, st.nextToken( ), true );
                 }
             }
-
             if ( StringUtils.isNotEmpty( strEmailOptionnal ) )
             {
                 StringTokenizer st = new StringTokenizer( strEmailOptionnal, strEmailSeparator );
-
-                while ( st.hasMoreTokens(  ) )
+                while ( st.hasMoreTokens( ) )
                 {
-                    addAttendee( event, st.nextToken(  ), false );
+                    addAttendee( event, st.nextToken( ), false );
                 }
             }
-            
             Organizer organizer = new Organizer( strSenderEmail );
-            organizer.getParameters(  ).add( new Cn( strSenderName ) );
-            event.getProperties(  ).add( organizer );
-            event.getProperties(  ).add( new Location( strLocation ) );
-            event.getProperties(  ).add( new Description( strBodyContent ) );
+            organizer.getParameters( ).add( new Cn( strSenderName ) );
+            event.getProperties( ).add( organizer );
+            event.getProperties( ).add( new Location( strLocation ) );
+            event.getProperties( ).add( new Description( strBodyContent ) );
         }
-        catch ( URISyntaxException e )
+        catch( URISyntaxException e )
         {
-            AppLogService.error( e.getMessage(  ), e );
+            AppLogService.error( e.getMessage( ), e );
         }
-
-        net.fortuna.ical4j.model.Calendar iCalendar = new net.fortuna.ical4j.model.Calendar(  );
-        iCalendar.getProperties(  ).add( bCreate ? Method.REQUEST : Method.CANCEL );
-        iCalendar.getProperties(  ).add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
-        iCalendar.getProperties(  ).add( Version.VERSION_2_0 );
-        iCalendar.getProperties(  ).add( CalScale.GREGORIAN );
-
-         iCalendar.getComponents(  ).add( event );
-
-        MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
-            ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent, iCalendar.toString(  ), bCreate );
+        net.fortuna.ical4j.model.Calendar iCalendar = new net.fortuna.ical4j.model.Calendar( );
+        iCalendar.getProperties( ).add( bCreate ? Method.REQUEST : Method.CANCEL );
+        iCalendar.getProperties( ).add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
+        iCalendar.getProperties( ).add( Version.VERSION_2_0 );
+        iCalendar.getProperties( ).add( CalScale.GREGORIAN );
+        iCalendar.getComponents( ).add( event );
+        MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail, ( strSubject != null ) ? strSubject
+                : StringUtils.EMPTY, strBodyContent, iCalendar.toString( ), bCreate );
     }
 
     /**
      * Add an attendee to an event
-     * @param event The event to add the attendee to
-     * @param strEmail The email of the user
-     * @param bRequired True if the presence of the user is mandatory, false if
-     *            it is optional
+     * 
+     * @param event
+     *            The event to add the attendee to
+     * @param strEmail
+     *            The email of the user
+     * @param bRequired
+     *            True if the presence of the user is mandatory, false if it is optional
      */
     private void addAttendee( VEvent event, String strEmail, boolean bRequired )
     {
         Attendee attendee = new Attendee( URI.create( CONSTANT_MAILTO + strEmail ) );
-        attendee.getParameters(  ).add( bRequired ? Role.REQ_PARTICIPANT : Role.OPT_PARTICIPANT );
-        attendee.getParameters(  ).add( PartStat.NEEDS_ACTION );
-        attendee.getParameters(  ).add( Rsvp.FALSE );
-        event.getProperties(  ).add( attendee );
+        attendee.getParameters( ).add( bRequired ? Role.REQ_PARTICIPANT : Role.OPT_PARTICIPANT );
+        attendee.getParameters( ).add( PartStat.NEEDS_ACTION );
+        attendee.getParameters( ).add( Rsvp.FALSE );
+        event.getProperties( ).add( attendee );
     }
-    
-    /**
-     * Get  TimeZone
-     * @return Paris TimeZone
-     */
-    private static TimeZone getParisZone ( )
-    {
-    	TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-    	String strZone = "\"Romance Standard Time\"";
-    	if ( AppPropertiesService.getProperty( PROPERTY_TIMEZONE ) != null &&
-    		 AppPropertiesService.getProperty( PROPERTY_TIMEZONE ).trim().length() > 0)
-    		strZone = AppPropertiesService.getProperty( PROPERTY_TIMEZONE ).trim();
-    	TimeZone timezone =  registry.getTimeZone(strZone) ;
-    	return timezone;
-    }
-    
-  
+
 }

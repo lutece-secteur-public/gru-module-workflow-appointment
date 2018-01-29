@@ -33,6 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointmentCancelAction;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
@@ -47,19 +58,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
-
 
 /**
  *
@@ -97,19 +95,19 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId(  ) );
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId( ) );
 
-        ActionFilter filter = new ActionFilter(  );
-        Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
-        filter.setIdStateBefore( action.getStateAfter(  ).getId(  ) );
+        ActionFilter filter = new ActionFilter( );
+        Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
+        filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 
         List<Action> listActions = _actionService.getListActionByFilter( filter );
 
-        if ( action.getStateAfter(  ).getId(  ) == action.getStateBefore(  ).getId(  ) )
+        if ( action.getStateAfter( ).getId( ) == action.getStateBefore( ).getId( ) )
         {
             for ( Action actionFound : listActions )
             {
-                if ( actionFound.getId(  ) == action.getId(  ) )
+                if ( actionFound.getId( ) == action.getId( ) )
                 {
                     listActions.remove( actionFound );
 
@@ -118,22 +116,21 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
             }
         }
 
-        ReferenceList refListActions = new ReferenceList( listActions.size(  ) + 1 );
+        ReferenceList refListActions = new ReferenceList( listActions.size( ) + 1 );
         refListActions.addItem( 0, StringUtils.EMPTY );
 
         for ( Action actionFound : listActions )
         {
-            refListActions.addItem( actionFound.getId(  ), actionFound.getName(  ) );
+            refListActions.addItem( actionFound.getId( ), actionFound.getName( ) );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_LIST_ACTIONS, refListActions );
         model.put( MARK_CONFIG, config );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPDATE_APPOINTMENT_CANCEL_ACTION_CONFIG,
-                locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPDATE_APPOINTMENT_CANCEL_ACTION_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -142,14 +139,14 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId(  ) );
+        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId( ) );
         boolean bCreate = false;
 
         if ( config == null )
         {
             bCreate = true;
-            config = new TaskUpdateAppointmentCancelActionConfig(  );
-            config.setIdTask( task.getId(  ) );
+            config = new TaskUpdateAppointmentCancelActionConfig( );
+            config.setIdTask( task.getId( ) );
         }
 
         String strIdActionCancel = request.getParameter( PARAMETER_ID_ACTION_CANCEL );
@@ -157,10 +154,11 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
 
         if ( StringUtils.isEmpty( strIdActionCancel ) || !StringUtils.isNumeric( strIdActionCancel ) )
         {
-            Object[] tabRequiredFields = { I18nService.getLocalizedString( FIELD_CANCEL_ACTION, locale ) };
+            Object [ ] tabRequiredFields = {
+                I18nService.getLocalizedString( FIELD_CANCEL_ACTION, locale )
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         nIdActionCancel = Integer.parseInt( strIdActionCancel );
