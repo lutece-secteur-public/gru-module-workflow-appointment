@@ -182,7 +182,7 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent {
 				.findByPrimaryKey(task.getId());
 		String strInformation = StringUtils.EMPTY;
 		int status = config.getAppointmentStatus();
-		if (status == 0) {
+		if (status == 0 || status == 10) {
 			strInformation = MESSAGE_APPOINTMENT_VALIDATED;
 		} else {
 			strInformation = MESSAGE_APPOINTMENT_CANCELED;					
