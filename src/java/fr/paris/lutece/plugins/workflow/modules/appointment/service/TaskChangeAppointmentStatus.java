@@ -89,7 +89,7 @@ public class TaskChangeAppointmentStatus extends SimpleTask
             Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
             if ( appointment != null )
             {
-                appointment.setIsCancelled( config.getAppointmentStatus( ) != 0 );
+                appointment.setIsCancelled( config.getAppointmentStatus( ) == 0 );
                 AppointmentService.updateAppointment( appointment );
                 if ( appointment.getIsCancelled( ) )
                 {
@@ -121,7 +121,7 @@ public class TaskChangeAppointmentStatus extends SimpleTask
 
         if ( config != null )
         {
-            return I18nService.getLocalizedString( ( config.getAppointmentStatus( ) > 0 ) ? MESSAGE_ACTIVATE_APPOINTMENT : MESSAGE_DEACTIVATE_APPOINTMENT,
+            return I18nService.getLocalizedString( ( config.getAppointmentStatus( ) == 1 ) ? MESSAGE_ACTIVATE_APPOINTMENT : MESSAGE_DEACTIVATE_APPOINTMENT,
                     locale );
         }
 
