@@ -168,8 +168,8 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         StateFilter stateFilter = new StateFilter( );
         stateFilter.setIdWorkflow( nIdWorkflow );
 
-        refListStatus.addItem( 0, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_RESERVED, locale ) );
-        refListStatus.addItem( 1, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_UNRESERVED, locale ) );
+        refListStatus.addItem( 0,I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_UNRESERVED, locale ) );
+        refListStatus.addItem( 1, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_RESERVED, locale ) );
 
         Map<String, Object> model = new HashMap<String, Object>( );
 
