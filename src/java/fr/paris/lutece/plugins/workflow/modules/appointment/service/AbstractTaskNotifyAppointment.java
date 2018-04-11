@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.appointment.business.AppointmentForm;
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.business.user.User;
@@ -51,6 +50,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
 import fr.paris.lutece.plugins.appointment.service.SlotService;
 import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.appointment.service.entrytype.EntryTypePhone;
+import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.ResponseRecapDTO;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
@@ -227,7 +227,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
         EntryFilter entryFilter = new EntryFilter( );
         entryFilter.setIdResource( slot.getIdForm( ) );
-        entryFilter.setResourceType( AppointmentForm.RESOURCE_TYPE );
+        entryFilter.setResourceType( AppointmentFormDTO.RESOURCE_TYPE );
         entryFilter.setFieldDependNull( EntryFilter.FILTER_TRUE );
         List<Integer> listIdResponse = AppointmentResponseService.findListIdResponse( appointment.getIdAppointment( ) );
         List<Response> listResponses = new ArrayList<Response>( listIdResponse.size( ) );
