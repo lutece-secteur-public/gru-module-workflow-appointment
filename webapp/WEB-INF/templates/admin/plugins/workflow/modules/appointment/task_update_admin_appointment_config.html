@@ -1,9 +1,9 @@
 <fieldset>
-	<legend> #i18n{module.workflow.appointment.task_update_admin_appointment_config.title}</legend>
-	<div class="control-group">
-		<label class="control-label" for="id_admin_user">#i18n{module.workflow.appointment.task_update_admin_appointment_config.label_admin_user} * </label>
-		<div class="controls">
-			<@combo items=list_admin_users name="id_admin_user" default_value="" />
-		</div>
-	</div>
+    <legend> #i18n{module.workflow.appointment.task_update_admin_appointment_config.title}</legend>
+    <@formGroup labelFor='id_admin_user' labelKey='#i18n{module.workflow.appointment.task_update_admin_appointment_config.label_admin_user}' mandatory=true>
+        <@select items=list_admin_users name='id_admin_user' id='id_admin_user' default_value='' />
+    </@formGroup>
+    <@formGroup labelFor='is_cal_notif'>
+        <@checkBox labelFor='is_cal_notif' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical}' name='is_cal_notif' id='is_cal_notif' value='true' />
+    </@formGroup>
 </fieldset>
