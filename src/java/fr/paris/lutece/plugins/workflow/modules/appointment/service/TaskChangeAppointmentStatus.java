@@ -42,9 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
-import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
-import fr.paris.lutece.plugins.appointment.service.SlotService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskChangeAppointmentStatusConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -90,13 +88,6 @@ public class TaskChangeAppointmentStatus extends SimpleTask
             {
                 appointment.setIsCancelled( config.getAppointmentStatus( ) == 0 );
                 AppointmentService.updateAppointment( appointment );
-                if ( appointment.getIsCancelled( ) )
-                {
-                    Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
-                    slot.setNbRemainingPlaces( slot.getNbRemainingPlaces( ) + appointment.getNbPlaces( ) );
-                    slot.setNbPotentialRemainingPlaces( slot.getNbPotentialRemainingPlaces( ) + appointment.getNbPlaces( ) );
-                    SlotService.updateSlot( slot );
-                }
             }
         }
     }

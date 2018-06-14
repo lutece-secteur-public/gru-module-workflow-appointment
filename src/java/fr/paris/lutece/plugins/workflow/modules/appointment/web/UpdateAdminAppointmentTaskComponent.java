@@ -69,7 +69,7 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "portal.util.message.mandatoryFields";
     private static final String MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT = "module.workflow.appointment.task_update_admin_appointment_config.adminUserAssociatedToAppointment";
-    
+
     // MARKS
     private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
 
@@ -121,9 +121,9 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, AdminMessage.TYPE_STOP );
         }
-        Appointment appointment = AppointmentService.findAppointmentById(nIdResource);
-        appointment.setIdAdminUser(nIdAdminUser);
-        AppointmentService.updateAppointment(appointment);
+        Appointment appointment = AppointmentService.findAppointmentById( nIdResource );
+        appointment.setIdAdminUser( nIdAdminUser );
+        AppointmentService.updateAppointment( appointment );
         return null;
     }
 
