@@ -87,16 +87,26 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
         TaskNotifyAdminAppointmentConfig config = _taskNotifyAppointmentAdminConfigService.findByPrimaryKey( this.getId( ) );
         if ( config != null )
         {
-            AdminUser adminUser = null;
-            if ( config.getIdAdminUser( ) > 0 )
+            ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+            if ( resourceHistory != null )
             {
-                adminUser = AdminUserHome.findByPrimaryKey( config.getIdAdminUser( ) );
-            }
-            if ( adminUser != null )
-            {
-                ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
                 Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
-                this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail( ) );
+                if ( appointment != null )
+                {
+                    AdminUser adminUser = null;
+                    if ( config.getIdAdminUser( ) > 0 )
+                    {
+                        adminUser = AdminUserHome.findByPrimaryKey( config.getIdAdminUser( ) );
+                    }
+                    else
+                    {
+                        adminUser = AdminUserHome.findByPrimaryKey( appointment.getIdAdminUser( ) );
+                    }
+                    if ( adminUser != null )
+                    {
+                        this.sendEmail( appointment, resourceHistory, request, locale, config, adminUser.getEmail( ) );
+                    }
+                }
             }
         }
     }
