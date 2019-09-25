@@ -46,9 +46,17 @@ import fr.paris.lutece.plugins.appointment.service.SlotService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.DateTime;
-//import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
@@ -57,10 +65,13 @@ import net.fortuna.ical4j.model.parameter.Rsvp;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Method;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
 
@@ -75,10 +86,20 @@ public class ICalService
      * The name of the bean of this service
      */
     public static final String BEAN_NAME = "workflow-appointment.iCalService";
+    
+    // properties
     private static final String PROPERTY_MAIL_LIST_SEPARATOR = "mail.list.separator";
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
+    private static final String PROPERTY_DEFAULT_TIME_ZONE = "workflow-appointment.server.timezone.id";
+    private static final String PROPERTY_RELATIVE_PATH_TO_TIME_ZONE_FILE = "workflow-appointment.server.timezone.fileRelativePath";
+    
+    // constants
     private static final String CONSTANT_MAILTO = "MAILTO:";
-
+    
+    // messages
+    private static final String MSG_TIMEZONE_FILE_NOT_FOUND = "iCal default Time zone file not found";
+    private static final String MSG_TIMEZONE_FILE_INCORRECT = "iCal default Time zone file format problem";
+    
     /**
      * Get an instance of the service
      * 
@@ -115,9 +136,44 @@ public class ICalService
             String strSenderName, String strSenderEmail, Appointment appointment, boolean bCreate )
     {
         Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+
+        CalendarBuilder builder = new CalendarBuilder();
+        Calendar iCalendar;
+        try 
+        {
+            String strRelativeWebPath = AppPropertiesService.getProperty( PROPERTY_RELATIVE_PATH_TO_TIME_ZONE_FILE );
+            String absoluteTimeZoneFilePath = AppPathService.getAbsolutePathFromRelativePath( strRelativeWebPath );
+            iCalendar = builder.build( new FileInputStream( absoluteTimeZoneFilePath ) );
+        } 
+        catch (FileNotFoundException ex) 
+        {
+            AppLogService.error( MSG_TIMEZONE_FILE_NOT_FOUND, ex);
+            return ;
+        } 
+        catch (IOException | ParserException ex) 
+        {
+            AppLogService.error( MSG_TIMEZONE_FILE_INCORRECT, ex);
+            return ;
+        }
+        
+        TimeZoneRegistry registry =  builder.getRegistry();
+        TimeZone timeZone = registry.getTimeZone( AppPropertiesService.getProperty( PROPERTY_DEFAULT_TIME_ZONE ) );
+   
+        
         DateTime beginningDateTime = new DateTime( slot.getStartingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
         DateTime endingDateTime = new DateTime( slot.getEndingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
-        VEvent event = new VEvent( beginningDateTime, endingDateTime, ( strSubject != null ) ? strSubject : StringUtils.EMPTY );
+        
+        DtStart dtStart = new DtStart( beginningDateTime );
+        dtStart.setTimeZone( timeZone );
+        
+        DtEnd dtEnd = new DtEnd( endingDateTime );
+        dtEnd.setTimeZone( timeZone );
+        
+        VEvent event = new VEvent( );
+        event.getProperties( ).add( dtStart );
+        event.getProperties( ).add( dtEnd );
+        event.getProperties( ).add( new Summary( ( strSubject != null ) ? strSubject : StringUtils.EMPTY ) );
+        
         try
         {
             event.getProperties( ).add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment( ) ) );
@@ -148,7 +204,7 @@ public class ICalService
         {
             AppLogService.error( e.getMessage( ), e );
         }
-        net.fortuna.ical4j.model.Calendar iCalendar = new net.fortuna.ical4j.model.Calendar( );
+
         iCalendar.getProperties( ).add( bCreate ? Method.REQUEST : Method.CANCEL );
         iCalendar.getProperties( ).add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
         iCalendar.getProperties( ).add( Version.VERSION_2_0 );
@@ -176,5 +232,5 @@ public class ICalService
         attendee.getParameters( ).add( Rsvp.FALSE );
         event.getProperties( ).add( attendee );
     }
-
+    
 }
