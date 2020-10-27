@@ -121,5 +121,19 @@
  	<bean id="workflow-appointment.notifyCrmTaskTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.NotifyCrmTaskComponent"
 		p:taskType-ref="workflow-appointment.taskTypeNotifyAppointementCrm"
 		p:taskConfigService-ref="workflow-appointment.taskNotifyCrmConfigService" />
+		
+	<!-- Task update appointment -->
+	<bean id="workflow-appointment.taskUpdateAppointment" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointment" scope="prototype" />
+
+	<bean id="workflow-appointment.taskTypeUpdateAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+ 		p:key="taskUpdateAppointment"
+ 		p:titleI18nKey="module.workflow.appointment.task_update_appointment.title"
+ 		p:beanName="workflow-appointment.taskUpdateAppointment"
+ 		p:configRequired="false"
+ 		p:taskForAutomaticAction="false" 
+ 		p:formTaskRequired="true" />
+ 	<bean id="workflow-appointment.updateAppointmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.UpdateAppointmentTaskComponent"
+		p:taskType-ref="workflow-appointment.taskTypeUpdateAppointment" />
+	
 	
 </beans>

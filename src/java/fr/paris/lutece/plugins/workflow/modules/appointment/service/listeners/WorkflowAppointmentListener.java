@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.appointment.service.listeners.IAppointmentListene
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -58,7 +59,7 @@ public class WorkflowAppointmentListener implements IAppointmentListener
      * {@inheritDoc}
      */
     @Override
-    public String appointmentDateChanged( int nIdAppointment, int nIdSlot, Locale locale )
+    public String appointmentDateChanged( int nIdAppointment, List<Integer> listIdSlot, Locale locale )
     {
         // Do nothing
         return null;

@@ -1,0 +1,145 @@
+<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+<@row>
+	<@columns>
+		<@box>
+			<#if form.displayTitleFo && form.title != "" >
+				<#assign title = form.title />
+			<#else>
+				<#assign title = '#i18n{appointment.appointmentApp.defaultTitle}' />
+			</#if>
+			<@boxHeader title=title />
+			<@boxBody>
+
+
+					<input type='hidden' name='id_form' value='${form.idForm}' />
+					<input type='hidden' name='date_of_display' value='${date_of_display}' />
+
+					<fieldset>
+						<legend class="hidden">
+							<#if form.displayTitleFo && form.title != "" >
+								${form.title}
+							<#else>
+								#i18n{appointment.appointmentApp.defaultTitle}
+							</#if>
+						</legend>
+						<#if infos?? || errors??>
+							<@messages infos=infos errors=errors />			
+						</#if>
+						<br>				
+						<#if form_errors??>
+							<#list form_errors as form_error>
+								<#if form_error.isDisplayableError>
+								<#list form_errors as form_error>	
+									<#if form_error.isDisplayableError && form_error.errorMessage==listAllErrors[8] >
+										<@alert class='danger'>
+											${form_error.errorMessage}
+										</@alert>
+									</#if>	
+								</#list>						
+								</#if>
+							</#list>
+						</#if>	
+						
+						<#if formMessages.fieldLastNameHelp?? && formMessages.fieldLastNameHelp != ''>
+							<#assign formGroupHelpKey = '${formMessages.fieldLastNameHelp}' />
+						</#if>
+						<#if form_errors??>
+							<#list form_errors as form_error>	
+								<#if form_error.isDisplayableError && form_error.errorMessage==listAllErrors[0]>
+									<#assign formGroupHelpKey = '${form_error.errorMessage}' />
+									<#assign formGroupClass='has-error' />
+								</#if>	
+							</#list>
+						</#if>
+						
+						<@formGroup class='${formGroupClass!}' labelFor='lastname' labelKey='${formMessages.fieldLastNameTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+							<@input type='text' name='lastname' id='lastname' value='${appointment.lastName!}' maxlength=255 />
+						</@formGroup>
+						
+						
+						<#if formMessages.fieldFirstNameHelp?? && formMessages.fieldFirstNameHelp != ''>
+							<#assign formGroupHelpKey = '${formMessages.fieldFirstNameHelp}' />
+						</#if>
+						<#if form_errors??>
+							<#list form_errors as form_error>	
+								<#if form_error.isDisplayableError && form_error.errorMessage==listAllErrors[1]>
+									<#assign formGroupHelpKey = '${form_error.errorMessage}' />
+									<#assign formGroupClass='has-error' />
+								</#if>	
+							</#list>
+						</#if>
+						
+						<@formGroup class='${formGroupClass!}' labelFor='firstname' labelKey='${formMessages.fieldFirstNameTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+							<@input type='text' name='firstname' id='firstname' value='${appointment.firstName!}' maxlength=255 />
+						</@formGroup>
+						
+						
+						<#if formMessages.fieldEmailHelp?? && formMessages.fieldEmailHelp != ''>
+							<#assign formGroupHelpKey = '${formMessages.fieldEmailHelp}' />
+						</#if>
+						<#if form_errors??>
+							<#list form_errors as form_error>	
+								<#if  form_error.isDisplayableError && (form_error.errorMessage==listAllErrors[2] || form_error.errorMessage==listAllErrors[3])>
+									<#assign formGroupHelpKey = '${form_error.errorMessage}' />
+									<#assign formGroupClass='has-error' />
+								</#if>	
+							</#list>
+						</#if>
+						
+						<@formGroup class='${formGroupClass!}' labelFor='email' labelKey='${formMessages.fieldEmailTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+							<@input type='email' name='email' id='email' value='${appointment.email!}' maxlength=255 />
+						</@formGroup>
+						
+						
+						<#if formMessages.fieldConfirmationEmail?? && formMessages.fieldConfirmationEmailHelp != ''>
+							<#assign formGroupHelpKey = '${formMessages.fieldConfirmationEmailHelp!}' />
+						</#if>
+						<#if form_errors??>
+							<#list form_errors as form_error>	
+								<#if form_error.isDisplayableError && (form_error.errorMessage == listAllErrors[4] || form_error.errorMessage == listAllErrors[5] )>
+									<#assign formGroupHelpKey = '${form_error.errorMessage}' />
+									<#assign formGroupClass='has-error' />
+								</#if>	
+							</#list>
+						</#if>
+						
+						<@formGroup class='${formGroupClass!}' labelFor='emailConfirm' labelKey='${formMessages.fieldConfirmationEmail!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+							<@input type='email' name='emailConfirm' id='emailConfirm' value='${appointment.email!}' maxlength=255 />
+						</@formGroup>
+						
+		
+						${str_entry}
+						${addon!} 
+
+						<@formGroup>
+							
+						</@formGroup>		
+					</fieldset>
+
+			</@boxBody>
+		</@box>
+		
+	</@columns>
+</@row>
+<@addRequiredJsFiles />		
+<script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=appointmentAsynchronousUploadHandler" ></script>
+		
+<script type="text/javascript">
+	function validateQty(event) {
+		var key = window.event ? event.keyCode : event.which;
+	
+	if (event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 46
+	 || event.keyCode == 37 || event.keyCode == 39) {
+		return true;
+	}
+	else if ( key < 48 || key > 57 ) {
+		return false;
+	}
+	else return true;
+	};
+   $(document).ready(function () {
+      $('#emailConfirm').bind('paste', function (e) {
+         e.preventDefault();
+      });
+   });
+</script>

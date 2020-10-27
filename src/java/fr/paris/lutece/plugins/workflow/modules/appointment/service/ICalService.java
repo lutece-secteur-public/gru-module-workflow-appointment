@@ -135,7 +135,7 @@ public class ICalService
     public void sendAppointment( String strEmailAttendee, String strEmailOptionnal, String strSubject, String strBodyContent, String strLocation,
             String strSenderName, String strSenderEmail, Appointment appointment, boolean bCreate )
     {
-        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
 
         CalendarBuilder builder = new CalendarBuilder();
         Calendar iCalendar;

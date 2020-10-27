@@ -86,7 +86,7 @@ public class TaskNotifyAppointementCrm extends SimpleTask
         TaskNotifyCrmConfig config = _taskNotifyAppointmentCrmConfigService.findByPrimaryKey( this.getId( ) );
         Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
         User user = UserService.findUserById( appointment.getIdUser( ) );
-        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
         String strIdDemand = null;
 
         if ( config != null )

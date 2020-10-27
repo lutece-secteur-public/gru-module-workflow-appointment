@@ -124,7 +124,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         if ( ( notifyAppointmentDTO != null ) && ( resourceHistory != null )
                 && Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) && ( appointment != null ) )
         {
-            Slot appointmentSlot = SlotService.findSlotById( appointment.getIdSlot( ) );
+            Slot appointmentSlot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
             if ( appointmentSlot != null )
             {
                 if ( StringUtils.isEmpty( notifyAppointmentDTO.getSenderEmail( ) ) || !StringUtil.checkEmail( notifyAppointmentDTO.getSenderEmail( ) ) )
@@ -191,7 +191,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     {
         Map<String, Object> model = new HashMap<String, Object>( );
         User user = UserService.findUserById( appointment.getIdUser( ) );
-        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
         model.put( MARK_FIRSTNAME, user.getFirstName( ) );
         model.put( MARK_LASTNAME, user.getLastName( ) );
         model.put( MARK_EMAIL, user.getEmail( ) );
@@ -224,7 +224,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     protected String getEmailForSmsFromAppointment( Appointment appointment )
     {
         String strPhoneNumber = null;
-        Slot slot = SlotService.findSlotById( appointment.getIdSlot( ) );
+        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
         EntryFilter entryFilter = new EntryFilter( );
         entryFilter.setIdResource( slot.getIdForm( ) );
         entryFilter.setResourceType( AppointmentFormDTO.RESOURCE_TYPE );
