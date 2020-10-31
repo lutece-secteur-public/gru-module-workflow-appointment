@@ -45,6 +45,7 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
+import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.web.ExecuteWorkflowAction;
@@ -90,7 +91,7 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
             ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
             if ( resourceHistory != null )
             {
-                Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
+                AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment(resourceHistory.getIdResource( ) );
                 if ( appointment != null )
                 {
                     AdminUser adminUser = null;
