@@ -47,6 +47,7 @@ import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.service.SlotService;
 import fr.paris.lutece.plugins.appointment.service.UserService;
+import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.crmclient.service.ICRMClientService;
 import fr.paris.lutece.plugins.crmclient.util.CRMException;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyCrmConfig;
@@ -84,9 +85,8 @@ public class TaskNotifyAppointementCrm extends SimpleTask
 
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyCrmConfig config = _taskNotifyAppointmentCrmConfigService.findByPrimaryKey( this.getId( ) );
-        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
-        User user = UserService.findUserById( appointment.getIdUser( ) );
-        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
+        AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment(resourceHistory.getIdResource( ) );
+        User user = appointment.getUser( );
         String strIdDemand = null;
 
         if ( config != null )
@@ -105,7 +105,7 @@ public class TaskNotifyAppointementCrm extends SimpleTask
         if ( strIdDemand != null )
         {
 
-            String mesg = getMessageAppointment( config.getMessage( ), appointment, user, slot );
+            String mesg = getMessageAppointment( config.getMessage( ), appointment, user );
             _crmClientService.notify( strIdDemand, config.getObject( ), mesg, config.getSender( ) );
 
         }
@@ -136,12 +136,12 @@ public class TaskNotifyAppointementCrm extends SimpleTask
         _taskNotifyAppointmentCrmConfigService.remove( this.getId( ) );
     }
 
-    private String getMessageAppointment( String msg, Appointment appointment, User user, Slot slot )
+    private String getMessageAppointment( String msg, AppointmentDTO appointment, User user )
     {
 
         String message = ( msg.replace( MARK_FIRSTNAME, user.getFirstName( ) ) ).replace( MARK_LASTNAME, user.getLastName( ) );
         String m = message.replace( MARK_REFERENCE, appointment.getReference( ) );
-        String messag = m.replace( MARK_DATE_APPOINTMENT, slot.getDate( ).toString( ) );
+        String messag = m.replace( MARK_DATE_APPOINTMENT, appointment.getDateOfTheAppointment( ) );
 
         return messag;
     }

@@ -50,6 +50,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
 import fr.paris.lutece.plugins.appointment.service.SlotService;
 import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.appointment.service.entrytype.EntryTypePhone;
+import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.ResponseRecapDTO;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -118,15 +119,13 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      * @return The content sent, or null if no email was sent
      */
     @SuppressWarnings( "deprecation" )
-    public EmailDTO sendEmail( Appointment appointment, ResourceHistory resourceHistory, HttpServletRequest request, Locale locale, T notifyAppointmentDTO,
+    public EmailDTO sendEmail( AppointmentDTO appointment, ResourceHistory resourceHistory, HttpServletRequest request, Locale locale, T notifyAppointmentDTO,
             String strEmail )
     {
         if ( ( notifyAppointmentDTO != null ) && ( resourceHistory != null )
                 && Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) && ( appointment != null ) )
         {
-            Slot appointmentSlot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
-            if ( appointmentSlot != null )
-            {
+            
                 if ( StringUtils.isEmpty( notifyAppointmentDTO.getSenderEmail( ) ) || !StringUtil.checkEmail( notifyAppointmentDTO.getSenderEmail( ) ) )
                 {
                     notifyAppointmentDTO.setSenderEmail( MailService.getNoReplyEmail( ) );
@@ -140,7 +139,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                 // notifyAppointmentDTO.setLocation(StringUtils.isNotEmpty(appointment.getLocation())
                 // ? appointment.getLocation() : StringUtils.EMPTY);
                 // }
-                Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
+                Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, locale );
                 String strSubject = AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject( ), locale, model ).getHtml( );
                 boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc( ) ) || StringUtils.isNotBlank( notifyAppointmentDTO
                         .getRecipientsCc( ) ) );
@@ -167,7 +166,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                     }
                 }
                 return new EmailDTO( strSubject, strContent );
-            }
+            
         }
         return null;
     }
@@ -187,21 +186,20 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      *            The locale
      * @return The model with data
      */
-    public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, Appointment appointment, Slot appointmentSlot, Locale locale )
+    public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, AppointmentDTO appointment,  Locale locale )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
         User user = UserService.findUserById( appointment.getIdUser( ) );
-        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
         model.put( MARK_FIRSTNAME, user.getFirstName( ) );
         model.put( MARK_LASTNAME, user.getLastName( ) );
         model.put( MARK_EMAIL, user.getEmail( ) );
         model.put( MARK_REFERENCE, appointment.getReference( ) );
-        model.put( MARK_DATE_APPOINTMENT, slot.getDate( ) );
+        model.put( MARK_DATE_APPOINTMENT, appointment.getSlot().get( 0 ).getDate( ) );
         model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif( ) );
-        model.put( MARK_TIME_APPOINTMENT, slot.getStartingTime( ) );
+        model.put( MARK_TIME_APPOINTMENT, appointment.getStartingTime( ) );
         model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage( ) );
         List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
-        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<ResponseRecapDTO>( listResponse.size( ) );
+        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList< >( listResponse.size( ) );
         for ( Response response : listResponse )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
@@ -221,12 +219,11 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      *            The appointment
      * @return The email address, or null if no phone number was found.
      */
-    protected String getEmailForSmsFromAppointment( Appointment appointment )
+    protected String getEmailForSmsFromAppointment( AppointmentDTO appointment )
     {
         String strPhoneNumber = null;
-        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
         EntryFilter entryFilter = new EntryFilter( );
-        entryFilter.setIdResource( slot.getIdForm( ) );
+        entryFilter.setIdResource( appointment.getIdForm( ) );
         entryFilter.setResourceType( AppointmentFormDTO.RESOURCE_TYPE );
         entryFilter.setFieldDependNull( EntryFilter.FILTER_TRUE );
         List<Integer> listIdResponse = AppointmentResponseService.findListIdResponse( appointment.getIdAppointment( ) );

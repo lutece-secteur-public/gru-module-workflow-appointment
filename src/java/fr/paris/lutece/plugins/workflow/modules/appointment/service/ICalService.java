@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.service.SlotService;
+import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -133,9 +134,8 @@ public class ICalService
      *            True to notify the creation of the appointment, false to notify its removal
      */
     public void sendAppointment( String strEmailAttendee, String strEmailOptionnal, String strSubject, String strBodyContent, String strLocation,
-            String strSenderName, String strSenderEmail, Appointment appointment, boolean bCreate )
+            String strSenderName, String strSenderEmail, AppointmentDTO appointment, boolean bCreate )
     {
-        Slot slot = SlotService.findSlotById( appointment.getListAppointmentSlot().get(0).getIdSlot( ) );
 
         CalendarBuilder builder = new CalendarBuilder();
         Calendar iCalendar;
@@ -160,8 +160,8 @@ public class ICalService
         TimeZone timeZone = registry.getTimeZone( AppPropertiesService.getProperty( PROPERTY_DEFAULT_TIME_ZONE ) );
    
         
-        DateTime beginningDateTime = new DateTime( slot.getStartingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
-        DateTime endingDateTime = new DateTime( slot.getEndingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
+        DateTime beginningDateTime = new DateTime( appointment.getStartingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
+        DateTime endingDateTime = new DateTime( appointment.getEndingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
         
         DtStart dtStart = new DtStart( beginningDateTime );
         dtStart.setTimeZone( timeZone );
