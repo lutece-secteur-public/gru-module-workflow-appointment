@@ -141,10 +141,10 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, Appointment appointment,
-            Slot appointmentSlot, Locale locale )
+    public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, AppointmentDTO appointment,
+             Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment,  locale );
         model.put( MARK_URL_CANCEL, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
                 notifyAppointmentDTO.getIdActionCancel( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
         model.put( MARK_URL_VALIDATE, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),

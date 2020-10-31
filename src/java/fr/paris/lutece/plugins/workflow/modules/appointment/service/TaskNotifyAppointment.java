@@ -41,13 +41,10 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-
-import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
-import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
-import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.appointment.web.AppointmentApp;
+import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -90,8 +87,8 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
-        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
-        User user = UserService.findUserById( appointment.getIdUser( ) );
+        AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
+        User user = appointment.getUser( );
         if ( request != null )
         {
             Map<String, String [ ]> parameters = request.getParameterMap( );
@@ -176,10 +173,10 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO, Appointment appointment,
-            Slot appointmentSlot, Locale locale )
+    public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO, AppointmentDTO appointment,
+             Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, appointmentSlot, locale );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment,  locale );
         model.put( MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
 
         return model;
