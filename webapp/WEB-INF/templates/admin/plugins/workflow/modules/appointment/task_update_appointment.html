@@ -9,75 +9,68 @@
 			</#if>
 			<@boxHeader title=title />
 			<@boxBody>
+				<@input type='hidden' name='id_form' value='${form.idForm}' />
+				<@input type='hidden' name='date_of_display' value='${date_of_display}' />
 
+				<fieldset>
+					<legend class="hidden">
+						<#if form.displayTitleFo && form.title != "" >
+							${form.title}
+						<#else>
+							#i18n{appointment.appointmentApp.defaultTitle}
+						</#if>
+					</legend>
+					<#if infos?? || errors??>
+						<@messages infos=infos errors=errors />			
+					</#if>
+					<br>				
+					
+					
+					<#if formMessages.fieldLastNameHelp?? && formMessages.fieldLastNameHelp != ''>
+						<#assign formGroupHelpKey = '${formMessages.fieldLastNameHelp}' />
+					</#if>
+					
+					
+					<@formGroup class='${formGroupClass!}' labelFor='lastname' labelKey='${formMessages.fieldLastNameTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+						<@input type='text' name='lastname' id='lastname' value='${appointment.lastName!}' maxlength=255 />
+					</@formGroup>
+					
+					
+					<#if formMessages.fieldFirstNameHelp?? && formMessages.fieldFirstNameHelp != ''>
+						<#assign formGroupHelpKey = '${formMessages.fieldFirstNameHelp}' />
+					</#if>
+					
+					<@formGroup class='${formGroupClass!}' labelFor='firstname' labelKey='${formMessages.fieldFirstNameTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+						<@input type='text' name='firstname' id='firstname' value='${appointment.firstName!}' maxlength=255 />
+					</@formGroup>
+					
+					
+					<#if formMessages.fieldEmailHelp?? && formMessages.fieldEmailHelp != ''>
+						<#assign formGroupHelpKey = '${formMessages.fieldEmailHelp}' />
+					</#if>
+					
+					
+					<@formGroup class='${formGroupClass!}' labelFor='email' labelKey='${formMessages.fieldEmailTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+						<@input type='email' name='email' id='email' value='${appointment.email!}' maxlength=255 />
+					</@formGroup>
+					
+					
+					<#if formMessages.fieldConfirmationEmail?? && formMessages.fieldConfirmationEmailHelp != ''>
+						<#assign formGroupHelpKey = '${formMessages.fieldConfirmationEmailHelp!}' />
+					</#if>
+					
+					
+					<@formGroup class='${formGroupClass!}' labelFor='emailConfirm' labelKey='${formMessages.fieldConfirmationEmail!}' helpKey='${formGroupHelpKey!}' mandatory=true>
+						<@input type='email' name='emailConfirm' id='emailConfirm' value='${appointment.email!}' maxlength=255 />
+					</@formGroup>
+					
+	
+					${str_entry}
+					${addon!} 
 
-					<input type='hidden' name='id_form' value='${form.idForm}' />
-					<input type='hidden' name='date_of_display' value='${date_of_display}' />
-
-					<fieldset>
-						<legend class="hidden">
-							<#if form.displayTitleFo && form.title != "" >
-								${form.title}
-							<#else>
-								#i18n{appointment.appointmentApp.defaultTitle}
-							</#if>
-						</legend>
-						<#if infos?? || errors??>
-							<@messages infos=infos errors=errors />			
-						</#if>
-						<br>				
-						
-						
-						<#if formMessages.fieldLastNameHelp?? && formMessages.fieldLastNameHelp != ''>
-							<#assign formGroupHelpKey = '${formMessages.fieldLastNameHelp}' />
-						</#if>
-						
-						
-						<@formGroup class='${formGroupClass!}' labelFor='lastname' labelKey='${formMessages.fieldLastNameTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
-							<@input type='text' name='lastname' id='lastname' value='${appointment.lastName!}' maxlength=255 />
-						</@formGroup>
-						
-						
-						<#if formMessages.fieldFirstNameHelp?? && formMessages.fieldFirstNameHelp != ''>
-							<#assign formGroupHelpKey = '${formMessages.fieldFirstNameHelp}' />
-						</#if>
-						
-						<@formGroup class='${formGroupClass!}' labelFor='firstname' labelKey='${formMessages.fieldFirstNameTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
-							<@input type='text' name='firstname' id='firstname' value='${appointment.firstName!}' maxlength=255 />
-						</@formGroup>
-						
-						
-						<#if formMessages.fieldEmailHelp?? && formMessages.fieldEmailHelp != ''>
-							<#assign formGroupHelpKey = '${formMessages.fieldEmailHelp}' />
-						</#if>
-						
-						
-						<@formGroup class='${formGroupClass!}' labelFor='email' labelKey='${formMessages.fieldEmailTitle!}' helpKey='${formGroupHelpKey!}' mandatory=true>
-							<@input type='email' name='email' id='email' value='${appointment.email!}' maxlength=255 />
-						</@formGroup>
-						
-						
-						<#if formMessages.fieldConfirmationEmail?? && formMessages.fieldConfirmationEmailHelp != ''>
-							<#assign formGroupHelpKey = '${formMessages.fieldConfirmationEmailHelp!}' />
-						</#if>
-						
-						
-						<@formGroup class='${formGroupClass!}' labelFor='emailConfirm' labelKey='${formMessages.fieldConfirmationEmail!}' helpKey='${formGroupHelpKey!}' mandatory=true>
-							<@input type='email' name='emailConfirm' id='emailConfirm' value='${appointment.email!}' maxlength=255 />
-						</@formGroup>
-						
-		
-						${str_entry}
-						${addon!} 
-
-						<@formGroup>
-							
-						</@formGroup>		
-					</fieldset>
-
+				</fieldset>
 			</@boxBody>
 		</@box>
-		
 	</@columns>
 </@row>
 <@addRequiredJsFiles />		

@@ -1,12 +1,10 @@
 <div>
 	<#list listResponse as response>
 		<#if response.recapValue?has_content>
-		<div class="control-group">
-			<label class="control-label"><#if !entrySave?exists||entrySave.idEntry!=response.entry.idEntry>${response.entry.title}<#assign entrySave=response.entry></#if></label>
-			<div class="controls">
-				${response.recapValue}
-			</div>
-		</div>
+		<#if !entrySave?exists||entrySave.idEntry!=response.entry.idEntry><#assign formGroupLabel = response.entry.title /><#assign entrySave=response.entry></#if>
+		<@formGroup labelKey=formGroupLabel>
+			${response.recapValue}
+		</@formGroup>
 		</#if>
 	</#list>
 </div>

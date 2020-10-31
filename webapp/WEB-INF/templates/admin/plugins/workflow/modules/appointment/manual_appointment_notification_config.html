@@ -1,84 +1,47 @@
 <#include "/admin/util/editor/editor.html" />
 <fieldset>
 	<legend> #i18n{module.workflow.appointment.task_notify_appointment_config.title}</legend>
-	<div class="control-group">
-		<label class="control-label" for="send_ical_notif">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}</label>
-		<div class="controls">
-			<input type="checkbox" name="send_ical_notif" onClick="javascript:$('#ical').toggle();" value="true" <#if config?exists && config.sendICalNotif>checked="checked"</#if> />
-			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}</span>
-		</div>
-	</div>
+	<@formGroup labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}'>
+		<@checkBox labelFor='send_ical_notif' name='send_ical_notif' id='send_ical_notif' params='onClick="javascript:$(\'#ical\').toggle();"' value='true' checked=config?exists&&config.sendICalNotif />
+	</@formGroup>
 	<div id="ical">
-		<div class="control-group">
-			<div class="controls">
-				<label class="radio inline" for="create_notif">
-					<input type="radio" name="create_notif" value="true" <#if !(config?exists) || config.createNotif>checked="checked"</#if> />
-					#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}
-				</label>
-				<label class="radio inline" for="create_notif">
-					<input type="radio" name="create_notif" value="false" <#if config?exists && !(config.createNotif)>checked="checked"</#if> />
-					#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}
-				</label>
-				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}</span>
-			</div>
-		</div>
-		<div id="location" class="control-group">
-			<label class="control-label" for="location">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}</label>
-			<div class="controls">
-				<input type="text" name="location" value="${(config.location)!}" maxlength="255" />
-				<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}</span>
-			</div>
-		</div>
+		<@formGroup helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}'>
+			<@radioButton orientation='horizontal' labelFor='create_notif' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}' name='create_notif' value='true' checked=!(config?exists)||config.createNotif />
+			<@radioButton orientation='horizontal' labelFor='create_notif' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}' name='create_notif' value='false' checked=config?exists&&!(config.createNotif) />
+		</@formGroup>
+
+		<@formGroup id='location' labelFor='location' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}'>
+			<@input type='text' name='location' value='${(config.location)!}' maxlength=255 />
+		</@formGroup>
 	</div>
-	<div class="control-group">
-		<label class="control-label" for="sender_name">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name} * </label>
-		<div class="controls">
-			<input type="text" name="sender_name" id="" class="input-xxlarge" value="${default_sender_name!}" maxlength="255"/>
-			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name_comment}</span>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="sender_email">#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_email} * </label>
-		<div class="controls">
-			<input type="text" name="sender_email" id="" class="input-xxlarge" value="${default_sender_name!}" maxlength="255"/>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="recipients_cc">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc}</label>
-		<div class="controls">
-			<input type="text" name="recipients_cc" id="" class="input-xxlarge" value=""  maxlength="255"/>
-			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc_comment}</span>
-		 </div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="recipients_bcc">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc}</label>
-		<div class="controls">
-			<input type="text" name="recipients_bcc" id="" class="input-xxlarge" value=""  maxlength="255"/>
-			<span class="help-block">#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc_comment}</span>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="suject">#i18n{module.workflow.appointment.task_notify_appointment_config.label_subject} * </label>
-		<div class="controls">
-			<input type="text" name="subject" id="" class="input-xxlarge" value="" maxlength="255"/>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="message">#i18n{module.workflow.appointment.task_notify_appointment_config.label_message} * </label>
-		<div class="controls">
-			<textarea class="richtext" name="message" rows="20" cols="90" >${(config.message)!}</textarea>
-			#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :
-			<ul>
-				<li>${r"${firstName!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
-				<li>${r"${lastName!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_lastname}</li>
-				<li>${r"${email!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_email}</li>
-				<li>${r"${date_appointment!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
-				<li>${r"${time_appointment!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
-				<li>${r"${reference!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
-				<li>${r"${cancelMotif!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_cancelmotif}</li>
-			</ul>
-		</div>
-	</div>
+	<@formGroup labelFor='sender_name' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name_comment}' mandatory=true>
+		<@input type='text' name='sender_name' id='' value='${default_sender_name!}' maxlength=255 />
+	</@formGroup>
+	<@formGroup labelFor='sender_email' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_email}' mandatory=true>
+		<@input type='text' name='sender_email' id='' value='${default_sender_name!}' maxlength=255 />
+	</@formGroup>
+	<@formGroup labelFor='recipients_cc' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc_comment}'>
+		<@input type='text' name='recipients_cc' id='' value='' maxlength=255 />
+	</@formGroup>
+	<@formGroup labelFor='recipients_bcc' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc_comment}'>
+		<@input type='text' name='recipients_bcc' id='' value='' maxlength=255 />
+	</@formGroup>
+	<@formGroup labelFor='suject' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_subject}' mandatory=true>
+		<@input type='text' name='subject' id='' value='' maxlength=255 />
+	</@formGroup>
+	<@formGroup labelFor='message' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_message}' mandatory=true>
+		<@input type='textarea' richtext=true name='message' rows=20 cols=90>${(config.message)!}</@input>
+		<p>#i18n{module.workflow.appointment.task_notify_appointment_config.label_message_comment} :</p>
+		<ul>
+			<li>${r"${firstName!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_firstname}</li>
+			<li>${r"${lastName!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_lastname}</li>
+			<li>${r"${email!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_email}</li>
+			<li>${r"${date_appointment!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_date_appointment}</li>
+			<li>${r"${time_appointment!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_time_appointment}</li>
+			<li>${r"${reference!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_reference}</li>
+			<li>${r"${cancelMotif!}"} : #i18n{module.workflow.appointment.task_notify_appointment_config.label_cancelmotif}</li>
+		</ul>
+	</@formGroup>
 </fieldset>
 <@initEditor />
 <#if !config?exists || !config.sendICalNotif>
