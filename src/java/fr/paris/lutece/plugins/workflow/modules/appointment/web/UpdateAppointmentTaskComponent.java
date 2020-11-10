@@ -115,26 +115,26 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 
         appointmentDTO.setListResponse( AppointmentResponseService.findAndBuildListResponse( nIdResource, request ) );
         appointmentDTO.setMapResponsesByIdEntry( AppointmentResponseService.buildMapFromListResponse( appointmentDTO.getListResponse( ) ) );
-        List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), true );
         StringBuilder strBuffer = new StringBuilder( );
-        for ( Entry entry : listEntryFirstLevel )
-        {
-            EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, false, appointmentDTO );
-        }
+        
         model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
         model.put( MARK_FORM, form );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_FORM_MESSAGES, formMessages );
         model.put( MARK_APPOINTMENT, appointmentDTO );
+        model.put( PARAMETER_DATE_OF_DISPLAY, appointmentDTO.getStartingDateTime().toLocalDate( ) );
         
-        model.put( PARAMETER_DATE_OF_DISPLAY, appointmentDTO.getSlot( ).get( 0 ).getDate( ) );
         HtmlTemplate template = null;
-    	User user = AdminUserService.getAdminUser( request );
-    	if (user == null) {
+    	if ( isAdminUser( request ) ) {
     		try {
-    		
+    	        List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), true );
+    	        for ( Entry entry : listEntryFirstLevel )
+    	        {
+    	            EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, true, appointmentDTO );
+    	        }
+    			
     			template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_FO, locale, model );
-    			user = SecurityService.getInstance( ).getRemoteUser( request );
+    			SecurityService.getInstance( ).getRemoteUser( request );
 			
     		} catch (UserNotSignedException e) {
 				
@@ -143,6 +143,11 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 			}
     	} else {
     		
+            List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), false );
+            for ( Entry entry : listEntryFirstLevel )
+            {
+                EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, false, appointmentDTO );
+            }
     		template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_BO, locale, model );
     	}
 
@@ -167,19 +172,21 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), appointmentForm, locale, listFormErrors );
-        AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors );
-
-        if ( CollectionUtils.isNotEmpty( listFormErrors ) )
-        {
-        	if ( AdminUserService.getAdminUser( request ) != null )
+        
+        if( isAdminUser( request ) ) {
+        	
+            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
+            if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
-        		
-               return buildErrorUrl(listFormErrors, request);
+                return buildErrorUrl(listFormErrors, request);
             }
-            else
-            {
 
-                 return listFormErrors.get(0).getErrorMessage( );
+        }else {
+           
+        	AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
+        	if ( CollectionUtils.isNotEmpty( listFormErrors ) )
+            {
+                return listFormErrors.get(0).getErrorMessage( );
             }
 
         }
@@ -226,4 +233,17 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR, listMessageParameters, AdminMessage.TYPE_STOP );
     }
 
+    /**
+     * Test if is Admin User
+     * @param request
+     * @return true if is admin user
+     */
+    private boolean isAdminUser( HttpServletRequest request) {
+    
+    	if ( AdminUserService.getAdminUser( request ) != null ) {
+    		
+    		return true;
+    	}
+    	return false;
+    }
 }

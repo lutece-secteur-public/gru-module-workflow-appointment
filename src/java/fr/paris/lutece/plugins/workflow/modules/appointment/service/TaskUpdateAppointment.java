@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
@@ -102,9 +103,18 @@ public class TaskUpdateAppointment extends SimpleTask
 
         AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, request.getParameter( PARAMETER_FIRST_NAME ),
                 request.getParameter( PARAMETER_LAST_NAME ) );
-        AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors );
         AppointmentUtilities.fillInListResponseWithMapResponse( appointmentDTO );
 
+         
+    	if ( AdminUserService.getAdminUser( request ) == null ) {
+    		
+            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
+
+    	}else {
+    		
+            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
+
+    	}
 
         if ( CollectionUtils.isEmpty( listFormErrors ) )
         {
