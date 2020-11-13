@@ -100,13 +100,12 @@ public class TaskUpdateAppointment extends SimpleTask
 
         List<GenericAttributeError> listFormErrors = new ArrayList< >( );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), form, locale, listFormErrors );
-
         AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, request.getParameter( PARAMETER_FIRST_NAME ),
                 request.getParameter( PARAMETER_LAST_NAME ) );
         AppointmentUtilities.fillInListResponseWithMapResponse( appointmentDTO );
 
          
-    	if ( AdminUserService.getAdminUser( request ) == null ) {
+    	if ( AdminUserService.getAdminUser( request ) != null ) {
     		
             AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
 

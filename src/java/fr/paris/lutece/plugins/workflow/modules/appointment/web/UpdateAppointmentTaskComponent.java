@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.appointment.business.message.FormMessage;
 import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
@@ -117,7 +116,6 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         appointmentDTO.setMapResponsesByIdEntry( AppointmentResponseService.buildMapFromListResponse( appointmentDTO.getListResponse( ) ) );
         StringBuilder strBuffer = new StringBuilder( );
         
-        model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
         model.put( MARK_FORM, form );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_FORM_MESSAGES, formMessages );
@@ -125,14 +123,15 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         model.put( PARAMETER_DATE_OF_DISPLAY, appointmentDTO.getStartingDateTime().toLocalDate( ) );
         
         HtmlTemplate template = null;
-    	if ( isAdminUser( request ) ) {
+    	if ( !isAdminUser( request ) ) {
     		try {
     	        List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), true );
     	        for ( Entry entry : listEntryFirstLevel )
     	        {
     	            EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, true, appointmentDTO );
     	        }
-    			
+    	        
+    	        model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
     			template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_FO, locale, model );
     			SecurityService.getInstance( ).getRemoteUser( request );
 			
@@ -148,6 +147,8 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
             {
                 EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, false, appointmentDTO );
             }
+            
+            model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
     		template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_BO, locale, model );
     	}
 
