@@ -102,18 +102,9 @@ public class TaskUpdateAppointment extends SimpleTask
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), form, locale, listFormErrors );
         AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, request.getParameter( PARAMETER_FIRST_NAME ),
                 request.getParameter( PARAMETER_LAST_NAME ) );
+        
+        AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, AdminUserService.getAdminUser( request ) != null );
         AppointmentUtilities.fillInListResponseWithMapResponse( appointmentDTO );
-
-         
-    	if ( AdminUserService.getAdminUser( request ) != null ) {
-    		
-            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
-
-    	}else {
-    		
-            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
-
-    	}
 
         if ( CollectionUtils.isEmpty( listFormErrors ) )
         {
