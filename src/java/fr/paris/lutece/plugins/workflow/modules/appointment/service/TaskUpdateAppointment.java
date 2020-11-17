@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentUtilities;
 import fr.paris.lutece.plugins.appointment.service.FormService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
@@ -66,15 +68,12 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskUpdateAppointment extends SimpleTask
 {
-	
-	private static final String PARAMETER_EMAIL = "email";
-	private static final String PARAMETER_EMAIL_CONFIRMATION = "emailConfirm";
-	private static final String PARAMETER_ID_FORM = "id_form";
-	private static final String PARAMETER_LAST_NAME = "lastname";
-	private static final String PARAMETER_FIRST_NAME = "firstname";
 
-
- 
+    private static final String PARAMETER_EMAIL = "email";
+    private static final String PARAMETER_EMAIL_CONFIRMATION = "emailConfirm";
+    private static final String PARAMETER_ID_FORM = "id_form";
+    private static final String PARAMETER_LAST_NAME = "lastname";
+    private static final String PARAMETER_FIRST_NAME = "firstname";
 
     // MESSAGES
     private static final String MESSAGE_UPDATE_APPOINTMENT = "module.workflow.appointment.task_update_appointment_config.title";
@@ -82,7 +81,6 @@ public class TaskUpdateAppointment extends SimpleTask
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
-  
 
     /**
      * {@inheritDoc}
@@ -93,52 +91,43 @@ public class TaskUpdateAppointment extends SimpleTask
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( appointment.getIdAppointment( ) );
-   
+
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
-        AppointmentFormDTO form = FormService.buildAppointmentForm( Integer.parseInt(strIdForm ), 0, 0 );
+        AppointmentFormDTO form = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0, 0 );
 
-        List<GenericAttributeError> listFormErrors = new ArrayList< >( );
+        List<GenericAttributeError> listFormErrors = new ArrayList<>( );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), form, locale, listFormErrors );
         AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, request.getParameter( PARAMETER_FIRST_NAME ),
                 request.getParameter( PARAMETER_LAST_NAME ) );
+
+        AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, AdminUserService.getAdminUser( request ) != null );
         AppointmentUtilities.fillInListResponseWithMapResponse( appointmentDTO );
-
-         
-    	if ( AdminUserService.getAdminUser( request ) != null ) {
-    		
-            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
-
-    	}else {
-    		
-            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
-
-    	}
 
         if ( CollectionUtils.isEmpty( listFormErrors ) )
         {
-        	User user = appointmentDTO.getUser( );
-        	user.setEmail(appointmentDTO.getEmail( ) );
-        	user.setFirstName(appointmentDTO.getFirstName());
-        	user.setLastName(appointmentDTO.getLastName());
-        	user.setPhoneNumber(appointmentDTO.getPhoneNumber());
-	        UserHome.update( user);
-	        AppointmentResponseService.removeResponsesByIdAppointment( appointment.getIdAppointment( ) );
-	        if ( CollectionUtils.isNotEmpty( appointmentDTO.getListResponse( ) ) )
-	        {
-	        	for ( Response response : appointmentDTO.getListResponse( ) )
-	        	{
-	        		ResponseHome.create( response );
-	        		AppointmentResponseService.insertAppointmentResponse( appointment.getIdAppointment( ), response.getIdResponse( ) );
-	        	}
-	        }
-	        
-	        
-	        AppointmentHome.update( appointment );
+            User user = appointmentDTO.getUser( );
+            user.setEmail( appointmentDTO.getEmail( ) );
+            user.setFirstName( appointmentDTO.getFirstName( ) );
+            user.setLastName( appointmentDTO.getLastName( ) );
+            user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );
+            UserHome.update( user );
+            List<Integer> entryIdToDelete = appointmentDTO.getListResponse( ).stream( ).map( Response::getEntry ).map( Entry::getIdEntry )
+                    .collect( Collectors.toList( ) );
+
+            AppointmentResponseService.removeResponsesByIdAppointmentAndListEntryId( appointment.getIdAppointment( ), entryIdToDelete );
+            if ( CollectionUtils.isNotEmpty( appointmentDTO.getListResponse( ) ) )
+            {
+                for ( Response response : appointmentDTO.getListResponse( ) )
+                {
+                    ResponseHome.create( response );
+                    AppointmentResponseService.insertAppointmentResponse( appointment.getIdAppointment( ), response.getIdResponse( ) );
+                }
+            }
+
+            AppointmentHome.update( appointment );
         }
     }
-
-    
 
     /**
      * {@inheritDoc}

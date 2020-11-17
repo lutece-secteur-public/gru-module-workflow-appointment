@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,43 +51,43 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
     public void insert( TaskNotifyCrmConfig config )
     {
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setString( nIndex++, config.getDemandeType( ) );
+            daoUtil.setString( nIndex++, config.getData( ) );
+            daoUtil.setString( nIndex++, config.getStatusText( ) );
+            daoUtil.setString( nIndex++, config.getIdStatusCRM( ) );
+            daoUtil.setString( nIndex++, config.getObject( ) );
+            daoUtil.setString( nIndex++, config.getMessage( ) );
+            daoUtil.setString( nIndex++, config.getSender( ) );
 
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setString( nIndex++, config.getDemandeType( ) );
-        daoUtil.setString( nIndex++, config.getData( ) );
-        daoUtil.setString( nIndex++, config.getStatusText( ) );
-        daoUtil.setString( nIndex++, config.getIdStatusCRM( ) );
-        daoUtil.setString( nIndex++, config.getObject( ) );
-        daoUtil.setString( nIndex++, config.getMessage( ) );
-        daoUtil.setString( nIndex++, config.getSender( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
 
     }
 
     @Override
     public void store( TaskNotifyCrmConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setString( nIndex++, config.getDemandeType( ) );
+            daoUtil.setString( nIndex++, config.getData( ) );
+            daoUtil.setString( nIndex++, config.getStatusText( ) );
+            daoUtil.setString( nIndex++, config.getIdStatusCRM( ) );
+            daoUtil.setString( nIndex++, config.getObject( ) );
+            daoUtil.setString( nIndex++, config.getMessage( ) );
+            daoUtil.setString( nIndex++, config.getSender( ) );
 
-        daoUtil.setString( nIndex++, config.getDemandeType( ) );
-        daoUtil.setString( nIndex++, config.getData( ) );
-        daoUtil.setString( nIndex++, config.getStatusText( ) );
-        daoUtil.setString( nIndex++, config.getIdStatusCRM( ) );
-        daoUtil.setString( nIndex++, config.getObject( ) );
-        daoUtil.setString( nIndex++, config.getMessage( ) );
-        daoUtil.setString( nIndex++, config.getSender( ) );
+            daoUtil.setInt( nIndex, config.getIdTask( ) );
 
-        daoUtil.setInt( nIndex, config.getIdTask( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
 
     }
 
@@ -96,30 +96,26 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
     {
 
         TaskNotifyCrmConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
-            config = new TaskNotifyCrmConfig( );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setDemandeType( daoUtil.getString( nIndex++ ) );
-            config.setData( daoUtil.getString( nIndex++ ) );
-            config.setStatusText( daoUtil.getString( nIndex++ ) );
-            config.setIdStatusCRM( daoUtil.getString( nIndex++ ) );
-            config.setObject( daoUtil.getString( nIndex++ ) );
-            config.setMessage( daoUtil.getString( nIndex++ ) );
-            config.setSender( daoUtil.getString( nIndex++ ) );
+            daoUtil.setInt( 1, nIdTask );
 
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                int nIndex = 1;
+                config = new TaskNotifyCrmConfig( );
+                config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setDemandeType( daoUtil.getString( nIndex++ ) );
+                config.setData( daoUtil.getString( nIndex++ ) );
+                config.setStatusText( daoUtil.getString( nIndex++ ) );
+                config.setIdStatusCRM( daoUtil.getString( nIndex++ ) );
+                config.setObject( daoUtil.getString( nIndex++ ) );
+                config.setMessage( daoUtil.getString( nIndex++ ) );
+                config.setSender( daoUtil.getString( nIndex++ ) );
+
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -127,11 +123,11 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
     public void delete( int nIdTask )
     {
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
 
     }
 

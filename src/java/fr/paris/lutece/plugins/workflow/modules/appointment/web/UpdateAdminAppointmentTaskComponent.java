@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,7 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         Collection<AdminUser> listAdminUser = AdminUserHome.findUserList( );
         ReferenceList refListAdmins = new ReferenceList( );
@@ -143,7 +143,7 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
             if ( adminUser != null )
             {
                 Object [ ] args = {
-                    adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( )
+                        adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( )
                 };
                 sbHistory.append( I18nService.getLocalizedString( MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT, args, locale ) );
             }

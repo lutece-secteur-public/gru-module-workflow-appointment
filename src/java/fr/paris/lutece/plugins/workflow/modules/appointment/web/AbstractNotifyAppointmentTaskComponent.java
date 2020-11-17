@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -165,7 +165,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
         String strDefaultSenderName = MailService.getNoReplyEmail( );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         if ( bNotifyAdmin )
         {
@@ -216,7 +216,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         String strMessage = request.getParameter( PARAMETER_MESSAGE );
         String strRecipientsCc = request.getParameter( PARAMETER_RECIPIENTS_CC );
         String strRecipientsBcc = request.getParameter( PARAMETER_RECIPIENTS_BCC );
-        boolean bSendICalNotif = Boolean.valueOf( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
+        boolean bSendICalNotif = Boolean.parseBoolean( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
         String strLocation = request.getParameter( PARAMETER_LOCATION );
         String strError = StringUtils.EMPTY;
 
@@ -248,14 +248,14 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strError, locale )
+                    I18nService.getLocalizedString( strError, locale )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         NotifyAppointmentDTO config = taskConfigService.findByPrimaryKey( task.getId( ) );
-        Boolean bCreate = false;
+        boolean bCreate = false;
 
         if ( config == null )
         {

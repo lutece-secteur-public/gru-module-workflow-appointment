@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -109,12 +109,9 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         String strApply = request.getParameter( PARAMETER_APPLY );
         String strError = StringUtils.EMPTY;
 
-        if ( StringUtils.isBlank( strApply ) )
+        if ( StringUtils.isBlank( strApply ) && StringUtils.isBlank( strAppointmentStatus ) )
         {
-            if ( StringUtils.isBlank( strAppointmentStatus ) )
-            {
-                strError = FIELD_APPOINTMENT_STATUS;
-            }
+            strError = FIELD_APPOINTMENT_STATUS;
         }
 
         int nAppointmentStatus = Integer.parseInt( strAppointmentStatus );
@@ -122,14 +119,14 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strError, locale )
+                    I18nService.getLocalizedString( strError, locale )
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId( ) );
-        Boolean bCreate = false;
+        boolean bCreate = false;
 
         if ( config == null )
         {
@@ -171,7 +168,7 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         refListStatus.addItem( 0, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_UNRESERVED, locale ) );
         refListStatus.addItem( 1, I18nService.getLocalizedString( MESSAGE_LABEL_STATUS_RESERVED, locale ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_CONFIG, config );
         model.put( MARK_REF_LIST_STATUS, refListStatus );
@@ -188,7 +185,7 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId( ) );
-        String strInformation = StringUtils.EMPTY;
+        String strInformation;
         int status = config.getAppointmentStatus( );
         if ( status == 1 )
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,7 +80,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     private static final String MESSAGE_ERROR = "module.workflow.appointment.error.task.update.appointment";
 
     // MARKS
-   
+
     private static final String MARK_LOCALE = "locale";
     private static final String PARAMETER_DATE_OF_DISPLAY = "date_of_display";
     private static final String MARK_APPOINTMENT = "appointment";
@@ -88,16 +88,12 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     private static final String MARK_FORM_MESSAGES = "formMessages";
     private static final String MARK_FORM = "form";
 
-
-
     // PARAMETERS
 
-	private static final String PARAMETER_EMAIL = "email";
-	private static final String PARAMETER_EMAIL_CONFIRMATION = "emailConfirm";
-	private static final String PARAMETER_ID_FORM = "id_form";
-	private static final String PARAMETER_ID_APPOINTMENT = "id_appointment";
-
-
+    private static final String PARAMETER_EMAIL = "email";
+    private static final String PARAMETER_EMAIL_CONFIRMATION = "emailConfirm";
+    private static final String PARAMETER_ID_FORM = "id_form";
+    private static final String PARAMETER_ID_APPOINTMENT = "id_appointment";
 
     /**
      * {@inheritDoc}
@@ -105,9 +101,8 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap< >( );
+        Map<String, Object> model = new HashMap<>( );
 
-       
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( nIdResource );
         AppointmentFormDTO form = FormService.buildAppointmentForm( appointmentDTO.getIdForm( ), 0, 0 );
         FormMessage formMessages = FormMessageService.findFormMessageByIdForm( form.getIdForm( ) );
@@ -115,42 +110,46 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         appointmentDTO.setListResponse( AppointmentResponseService.findAndBuildListResponse( nIdResource, request ) );
         appointmentDTO.setMapResponsesByIdEntry( AppointmentResponseService.buildMapFromListResponse( appointmentDTO.getListResponse( ) ) );
         StringBuilder strBuffer = new StringBuilder( );
-        
+
         model.put( MARK_FORM, form );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_FORM_MESSAGES, formMessages );
         model.put( MARK_APPOINTMENT, appointmentDTO );
-        model.put( PARAMETER_DATE_OF_DISPLAY, appointmentDTO.getStartingDateTime().toLocalDate( ) );
-        
+        model.put( PARAMETER_DATE_OF_DISPLAY, appointmentDTO.getStartingDateTime( ).toLocalDate( ) );
+
         HtmlTemplate template = null;
-    	if ( !isAdminUser( request ) ) {
-    		try {
-    	        List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), true );
-    	        for ( Entry entry : listEntryFirstLevel )
-    	        {
-    	            EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, true, appointmentDTO );
-    	        }
-    	        
-    	        model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
-    			template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_FO, locale, model );
-    			SecurityService.getInstance( ).getRemoteUser( request );
-			
-    		} catch (UserNotSignedException e) {
-				
-				AppLogService.error(e.getMessage( ), e);
-				return null;
-			}
-    	} else {
-    		
+        if ( !isAdminUser( request ) )
+        {
+            try
+            {
+                List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), true );
+                for ( Entry entry : listEntryFirstLevel )
+                {
+                    EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, true, appointmentDTO );
+                }
+
+                model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
+                template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_FO, locale, model );
+                SecurityService.getInstance( ).getRemoteUser( request );
+
+            }
+            catch( UserNotSignedException e )
+            {
+                AppLogService.error( e.getMessage( ), e );
+                return null;
+            }
+        }
+        else
+        {
             List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), false );
             for ( Entry entry : listEntryFirstLevel )
             {
                 EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, false, appointmentDTO );
             }
-            
+
             model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
-    		template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_BO, locale, model );
-    	}
+            template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_BO, locale, model );
+        }
 
         return template.getHtml( );
 
@@ -162,32 +161,33 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        List<GenericAttributeError> listFormErrors = new ArrayList< >( );
+        List<GenericAttributeError> listFormErrors = new ArrayList<>( );
 
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
         String strIdAppointment = request.getParameter( PARAMETER_ID_APPOINTMENT );
 
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( Integer.parseInt( strIdAppointment ) );
 
-        AppointmentFormDTO appointmentForm = FormService.buildAppointmentForm( Integer.parseInt(strIdForm ), 0, 0 );
+        AppointmentFormDTO appointmentForm = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0, 0 );
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), appointmentForm, locale, listFormErrors );
-        
-        if( isAdminUser( request ) ) {
-        	
+
+        if ( isAdminUser( request ) )
+        {
             AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
             if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
-                return buildErrorUrl(listFormErrors, request);
+                return buildErrorUrl( listFormErrors, request );
             }
 
-        }else {
-           
-        	AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
-        	if ( CollectionUtils.isNotEmpty( listFormErrors ) )
+        }
+        else
+        {
+            AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
+            if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
-                return listFormErrors.get(0).getErrorMessage( );
+                return listFormErrors.get( 0 ).getErrorMessage( );
             }
 
         }
@@ -212,7 +212,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     {
         return null;
     }
-    
+
     /**
      * Builds the error URL
      * 
@@ -224,27 +224,24 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
      */
     private String buildErrorUrl( List<GenericAttributeError> listError, HttpServletRequest request )
     {
-    	int i=0;
-        Object [ ] listMessageParameters = new Object[listError.size()];
-        for( GenericAttributeError error:listError ) {
-        	
-        	listMessageParameters[i]=error.getErrorMessage( );
-        	i++;
+        int i = 0;
+        Object [ ] listMessageParameters = new Object [ listError.size( )];
+        for ( GenericAttributeError error : listError )
+        {
+            listMessageParameters [i] = error.getErrorMessage( );
+            i++;
         }
         return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR, listMessageParameters, AdminMessage.TYPE_STOP );
     }
 
     /**
      * Test if is Admin User
+     * 
      * @param request
      * @return true if is admin user
      */
-    private boolean isAdminUser( HttpServletRequest request) {
-    
-    	if ( AdminUserService.getAdminUser( request ) != null ) {
-    		
-    		return true;
-    	}
-    	return false;
+    private boolean isAdminUser( HttpServletRequest request )
+    {
+        return AdminUserService.getAdminUser( request ) != null;
     }
 }

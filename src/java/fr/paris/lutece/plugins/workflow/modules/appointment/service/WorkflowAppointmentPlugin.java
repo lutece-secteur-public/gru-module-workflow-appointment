@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,10 +59,7 @@ public class WorkflowAppointmentPlugin extends Plugin
     @Override
     public void init( )
     {
-        // BeanUtilsBean.getInstance( ).getConvertUtils( )
-        // .register( new DateConverter( DateFormat.getDateInstance(
-        // DateFormat.SHORT,
-        // getPluginLocale( Locale.FRANCE ) ) ), java.sql.Date.class );
+        // Nothing to init
     }
 
     /**

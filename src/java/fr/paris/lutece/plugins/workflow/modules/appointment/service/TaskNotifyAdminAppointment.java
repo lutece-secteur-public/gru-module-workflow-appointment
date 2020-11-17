@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,8 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
-import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
@@ -91,7 +89,7 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
             ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
             if ( resourceHistory != null )
             {
-                AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment(resourceHistory.getIdResource( ) );
+                AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
                 if ( appointment != null )
                 {
                     AdminUser adminUser = null;
@@ -142,9 +140,9 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
      */
     @Override
     public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, AppointmentDTO appointment,
-             Locale locale )
+            Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment,  locale );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, locale );
         model.put( MARK_URL_CANCEL, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
                 notifyAppointmentDTO.getIdActionCancel( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
         model.put( MARK_URL_VALIDATE, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),

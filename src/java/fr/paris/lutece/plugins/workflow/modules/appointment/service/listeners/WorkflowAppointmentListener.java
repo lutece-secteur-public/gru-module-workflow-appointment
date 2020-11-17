@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,15 +65,15 @@ public class WorkflowAppointmentListener implements IAppointmentListener
         return null;
     }
 
-	@Override
-	public void notifyAppointmentCreated(int nIdAppointment) {
-		 // Do nothing
-		
-	}
+    @Override
+    public void notifyAppointmentCreated( int nIdAppointment )
+    {
+        // Do nothing
+    }
 
-	@Override
-	public void notifyAppointmentUpdated(int nIdAppointment) {
-		 // Do nothing
-		
-	}
+    @Override
+    public void notifyAppointmentUpdated( int nIdAppointment )
+    {
+        // Do nothing
+    }
 }
