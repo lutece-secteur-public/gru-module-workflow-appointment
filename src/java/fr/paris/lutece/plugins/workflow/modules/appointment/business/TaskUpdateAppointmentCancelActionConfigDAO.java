@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,10 +59,10 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nPos = 0;
-    
+
             daoUtil.setInt( ++nPos, config.getIdTask( ) );
             daoUtil.setInt( ++nPos, config.getIdActionCancel( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -76,9 +76,9 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nPos = 0;
-    
+
             daoUtil.setInt( ++nPos, config.getIdActionCancel( ) );
-    
+
             daoUtil.setInt( ++nPos, config.getIdTask( ) );
             daoUtil.executeUpdate( );
         }
@@ -94,11 +94,11 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             daoUtil.setInt( 1, nIdTask );
-    
+
             daoUtil.executeQuery( );
-    
+
             int nPos = 0;
-    
+
             if ( daoUtil.next( ) )
             {
                 config = new TaskUpdateAppointmentCancelActionConfig( );

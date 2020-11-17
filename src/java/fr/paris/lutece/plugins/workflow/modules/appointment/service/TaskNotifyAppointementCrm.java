@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ public class TaskNotifyAppointementCrm extends SimpleTask
 
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyCrmConfig config = _taskNotifyAppointmentCrmConfigService.findByPrimaryKey( this.getId( ) );
-        AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment(resourceHistory.getIdResource( ) );
+        AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
         User user = appointment.getUser( );
         String strIdDemand = null;
 

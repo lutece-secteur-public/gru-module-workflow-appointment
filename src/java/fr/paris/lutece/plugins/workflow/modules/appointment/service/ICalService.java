@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,20 +83,20 @@ public class ICalService
      * The name of the bean of this service
      */
     public static final String BEAN_NAME = "workflow-appointment.iCalService";
-    
+
     // properties
     private static final String PROPERTY_MAIL_LIST_SEPARATOR = "mail.list.separator";
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
     private static final String PROPERTY_DEFAULT_TIME_ZONE = "workflow-appointment.server.timezone.id";
     private static final String PROPERTY_RELATIVE_PATH_TO_TIME_ZONE_FILE = "workflow-appointment.server.timezone.fileRelativePath";
-    
+
     // constants
     private static final String CONSTANT_MAILTO = "MAILTO:";
-    
+
     // messages
     private static final String MSG_TIMEZONE_FILE_NOT_FOUND = "iCal default Time zone file not found";
     private static final String MSG_TIMEZONE_FILE_INCORRECT = "iCal default Time zone file format problem";
-    
+
     /**
      * Get an instance of the service
      * 
@@ -133,43 +133,42 @@ public class ICalService
             String strSenderName, String strSenderEmail, AppointmentDTO appointment, boolean bCreate )
     {
 
-        CalendarBuilder builder = new CalendarBuilder();
+        CalendarBuilder builder = new CalendarBuilder( );
         Calendar iCalendar;
-        try 
+        try
         {
             String strRelativeWebPath = AppPropertiesService.getProperty( PROPERTY_RELATIVE_PATH_TO_TIME_ZONE_FILE );
             String absoluteTimeZoneFilePath = AppPathService.getAbsolutePathFromRelativePath( strRelativeWebPath );
             iCalendar = builder.build( new FileInputStream( absoluteTimeZoneFilePath ) );
-        } 
-        catch (FileNotFoundException ex) 
-        {
-            AppLogService.error( MSG_TIMEZONE_FILE_NOT_FOUND, ex);
-            return ;
-        } 
-        catch (IOException | ParserException ex) 
-        {
-            AppLogService.error( MSG_TIMEZONE_FILE_INCORRECT, ex);
-            return ;
         }
-        
-        TimeZoneRegistry registry =  builder.getRegistry();
+        catch( FileNotFoundException ex )
+        {
+            AppLogService.error( MSG_TIMEZONE_FILE_NOT_FOUND, ex );
+            return;
+        }
+        catch( IOException | ParserException ex )
+        {
+            AppLogService.error( MSG_TIMEZONE_FILE_INCORRECT, ex );
+            return;
+        }
+
+        TimeZoneRegistry registry = builder.getRegistry( );
         TimeZone timeZone = registry.getTimeZone( AppPropertiesService.getProperty( PROPERTY_DEFAULT_TIME_ZONE ) );
-   
-        
+
         DateTime beginningDateTime = new DateTime( appointment.getStartingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
         DateTime endingDateTime = new DateTime( appointment.getEndingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
-        
+
         DtStart dtStart = new DtStart( beginningDateTime );
         dtStart.setTimeZone( timeZone );
-        
+
         DtEnd dtEnd = new DtEnd( endingDateTime );
         dtEnd.setTimeZone( timeZone );
-        
+
         VEvent event = new VEvent( );
         event.getProperties( ).add( dtStart );
         event.getProperties( ).add( dtEnd );
         event.getProperties( ).add( new Summary( ( strSubject != null ) ? strSubject : StringUtils.EMPTY ) );
-        
+
         try
         {
             event.getProperties( ).add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment( ) ) );
@@ -206,8 +205,8 @@ public class ICalService
         iCalendar.getProperties( ).add( Version.VERSION_2_0 );
         iCalendar.getProperties( ).add( CalScale.GREGORIAN );
         iCalendar.getComponents( ).add( event );
-        MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail, ( strSubject != null ) ? strSubject
-                : StringUtils.EMPTY, strBodyContent, iCalendar.toString( ), bCreate );
+        MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
+                ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent, iCalendar.toString( ), bCreate );
     }
 
     /**
@@ -228,5 +227,5 @@ public class ICalService
         attendee.getParameters( ).add( Rsvp.FALSE );
         event.getProperties( ).add( attendee );
     }
-    
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -143,7 +143,7 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
             if ( adminUser != null )
             {
                 Object [ ] args = {
-                    adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( )
+                        adminUser.getFirstName( ) + CONSTANT_SPACE + adminUser.getLastName( )
                 };
                 sbHistory.append( I18nService.getLocalizedString( MESSAGE_ADMIN_USER_ASSOCIATED_TO_APPOINTMENT, args, locale ) );
             }

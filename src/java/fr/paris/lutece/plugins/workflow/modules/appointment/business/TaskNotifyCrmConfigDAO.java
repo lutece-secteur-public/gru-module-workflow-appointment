@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setInt( nIndex++, config.getIdTask( ) );
             daoUtil.setString( nIndex++, config.getDemandeType( ) );
             daoUtil.setString( nIndex++, config.getData( ) );
@@ -63,7 +63,7 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
             daoUtil.setString( nIndex++, config.getObject( ) );
             daoUtil.setString( nIndex++, config.getMessage( ) );
             daoUtil.setString( nIndex++, config.getSender( ) );
-    
+
             daoUtil.executeUpdate( );
         }
 
@@ -75,7 +75,7 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setString( nIndex++, config.getDemandeType( ) );
             daoUtil.setString( nIndex++, config.getData( ) );
             daoUtil.setString( nIndex++, config.getStatusText( ) );
@@ -83,9 +83,9 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
             daoUtil.setString( nIndex++, config.getObject( ) );
             daoUtil.setString( nIndex++, config.getMessage( ) );
             daoUtil.setString( nIndex++, config.getSender( ) );
-    
+
             daoUtil.setInt( nIndex, config.getIdTask( ) );
-    
+
             daoUtil.executeUpdate( );
         }
 
@@ -99,7 +99,7 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             daoUtil.setInt( 1, nIdTask );
-    
+
             daoUtil.executeQuery( );
             if ( daoUtil.next( ) )
             {
@@ -113,7 +113,7 @@ public class TaskNotifyCrmConfigDAO implements ITaskConfigDAO<TaskNotifyCrmConfi
                 config.setObject( daoUtil.getString( nIndex++ ) );
                 config.setMessage( daoUtil.getString( nIndex++ ) );
                 config.setSender( daoUtil.getString( nIndex++ ) );
-    
+
             }
         }
         return config;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment(resourceHistory.getIdResource( ) );
+        AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
 
         Map<String, String [ ]> parameters = request.getParameterMap( );
         String strCancelMotif = null;

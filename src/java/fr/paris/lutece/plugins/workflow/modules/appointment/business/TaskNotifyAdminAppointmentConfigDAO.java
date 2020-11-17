@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setInt( nIndex++, config.getIdTask( ) );
             daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
             daoUtil.setString( nIndex++, config.getSenderName( ) );
@@ -75,7 +75,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
             daoUtil.setBoolean( nIndex++, config.getSendICalNotif( ) );
             daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
             daoUtil.setString( nIndex, config.getLocation( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -101,7 +101,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
             daoUtil.setBoolean( nIndex++, config.getSendICalNotif( ) );
             daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
             daoUtil.setString( nIndex++, config.getLocation( ) );
-    
+
             daoUtil.setInt( nIndex, config.getIdTask( ) );
             daoUtil.executeUpdate( );
         }
@@ -117,7 +117,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             daoUtil.setInt( 1, nIdTask );
-    
+
             daoUtil.executeQuery( );
             if ( daoUtil.next( ) )
             {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -125,7 +125,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         {
             return null;
         }
-        
+
         if ( StringUtils.isEmpty( notifyAppointmentDTO.getSenderEmail( ) ) || !StringUtil.checkEmail( notifyAppointmentDTO.getSenderEmail( ) ) )
         {
             notifyAppointmentDTO.setSenderEmail( MailService.getNoReplyEmail( ) );
@@ -136,16 +136,15 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         }
         Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, locale );
         String strSubject = AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject( ), locale, model ).getHtml( );
-        boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc( ) ) || StringUtils.isNotBlank( notifyAppointmentDTO
-                .getRecipientsCc( ) ) );
-        String strContent = AppTemplateService.getTemplateFromStringFtl(
-                AppTemplateService.getTemplate( notifyAppointmentDTO.getIsSms( ) ? TEMPLATE_TASK_NOTIFY_SMS : TEMPLATE_TASK_NOTIFY_MAIL, locale, model )
-                        .getHtml( ), locale, model ).getHtml( );
+        boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc( ) )
+                || StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsCc( ) ) );
+        String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService
+                .getTemplate( notifyAppointmentDTO.getIsSms( ) ? TEMPLATE_TASK_NOTIFY_SMS : TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml( ), locale,
+                model ).getHtml( );
         if ( notifyAppointmentDTO.getSendICalNotif( ) )
         {
-            getICalService( ).sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject, strContent,
-                    notifyAppointmentDTO.getLocation( ), notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), appointment,
-                    notifyAppointmentDTO.getCreateNotif( ) );
+            getICalService( ).sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject, strContent, notifyAppointmentDTO.getLocation( ),
+                    notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), appointment, notifyAppointmentDTO.getCreateNotif( ) );
         }
         else
         {
@@ -156,8 +155,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
             }
             else
             {
-                MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), strSubject,
-                        strContent );
+                MailService.sendMailHtml( strEmail, notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), strSubject, strContent );
             }
         }
         return new EmailDTO( strSubject, strContent );
@@ -178,7 +176,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      *            The locale
      * @return The model with data
      */
-    public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, AppointmentDTO appointment,  Locale locale )
+    public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, AppointmentDTO appointment, Locale locale )
     {
         Map<String, Object> model = new HashMap<>( );
         User user = UserService.findUserById( appointment.getIdUser( ) );
@@ -186,17 +184,17 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_LASTNAME, user.getLastName( ) );
         model.put( MARK_EMAIL, user.getEmail( ) );
         model.put( MARK_REFERENCE, appointment.getReference( ) );
-        model.put( MARK_DATE_APPOINTMENT, appointment.getSlot().get( 0 ).getDate( ) );
+        model.put( MARK_DATE_APPOINTMENT, appointment.getSlot( ).get( 0 ).getDate( ) );
         model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif( ) );
         model.put( MARK_TIME_APPOINTMENT, appointment.getStartingTime( ) );
         model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage( ) );
         List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
-        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList< >( listResponse.size( ) );
+        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<>( listResponse.size( ) );
         for ( Response response : listResponse )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
-            listResponseRecapDTO.add( new ResponseRecapDTO( response, entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response,
-                    locale ) ) );
+            listResponseRecapDTO
+                    .add( new ResponseRecapDTO( response, entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response, locale ) ) );
         }
         model.put( MARK_LIST_RESPONSE, listResponseRecapDTO );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP, locale, model );
@@ -219,7 +217,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         entryFilter.setResourceType( AppointmentFormDTO.RESOURCE_TYPE );
         entryFilter.setFieldDependNull( EntryFilter.FILTER_TRUE );
         List<Integer> listIdResponse = AppointmentResponseService.findListIdResponse( appointment.getIdAppointment( ) );
-        
+
         List<Response> listResponses = listIdResponse.stream( ).map( ResponseHome::findByPrimaryKey ).collect( Collectors.toList( ) );
         List<Entry> listEntries = EntryHome.getEntryList( entryFilter );
         for ( Entry entry : listEntries )

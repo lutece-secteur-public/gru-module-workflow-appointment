@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -120,7 +120,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         {
             strEmail = user.getEmail( );
         }
-        
+
         if ( StringUtils.isBlank( strEmail ) )
         {
             return;
@@ -137,8 +137,8 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
             config.setMessage( ERROR_CANCEL_APPOINTMENT_MSG );
         }
 
-        if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null 
-                && config.getIdActionCancel( ) > 0 && config.getIdActionCancel( ) != appointment.getIdActionCancelled( ) )
+        if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null && config.getIdActionCancel( ) > 0
+                && config.getIdActionCancel( ) != appointment.getIdActionCancelled( ) )
         {
             appointment.setIdActionCancelled( config.getIdActionCancel( ) );
             AppointmentService.updateAppointment( appointment );
@@ -175,9 +175,9 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
      */
     @Override
     public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO, AppointmentDTO appointment,
-             Locale locale )
+            Locale locale )
     {
-        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment,  locale );
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, locale );
         model.put( MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
 
         return model;

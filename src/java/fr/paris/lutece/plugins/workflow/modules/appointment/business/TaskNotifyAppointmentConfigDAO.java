@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setInt( nIndex++, config.getIdTask( ) );
             daoUtil.setString( nIndex++, config.getSenderName( ) );
             daoUtil.setString( nIndex++, config.getSenderEmail( ) );
@@ -76,7 +76,7 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
             daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
             daoUtil.setString( nIndex++, config.getLocation( ) );
             daoUtil.setBoolean( nIndex, config.getIsSms( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -90,7 +90,7 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setString( nIndex++, config.getSenderName( ) );
             daoUtil.setString( nIndex++, config.getSenderEmail( ) );
             daoUtil.setString( nIndex++, config.getSubject( ) );
@@ -102,7 +102,7 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
             daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
             daoUtil.setString( nIndex++, config.getLocation( ) );
             daoUtil.setBoolean( nIndex++, config.getIsSms( ) );
-    
+
             daoUtil.setInt( nIndex, config.getIdTask( ) );
             daoUtil.executeUpdate( );
         }
@@ -118,7 +118,7 @@ public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotify
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             daoUtil.setInt( 1, nIdTask );
-    
+
             daoUtil.executeQuery( );
             if ( daoUtil.next( ) )
             {

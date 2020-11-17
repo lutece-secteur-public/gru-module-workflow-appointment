@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,8 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
             + "FROM workflow_task_manual_app_notify WHERE id_notif=?";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = "SELECT id_notif,id_history,id_appointment,email,subject,message "
             + "FROM workflow_task_manual_app_notify WHERE id_history=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_manual_app_notify( "
-            + "id_notif,id_history,id_appointment,email,subject,message)" + "VALUES (?,?,?,?,?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_manual_app_notify( " + "id_notif,id_history,id_appointment,email,subject,message)"
+            + "VALUES (?,?,?,?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_manual_app_notify WHERE id_notif = ? ";
     private static final String SQL_QUERY_DELETE_BY_ID_APPOINTMENT = "DELETE FROM workflow_task_manual_app_notify WHERE id_appointment = ? ";
     private static final String SQL_QUEERY_NEW_PRIMARY_KEY = "SELECT MAX(id_notif) FROM workflow_task_manual_app_notify";
@@ -107,7 +107,7 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
         {
             daoUtil.setInt( 1, nIdNotif );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 int nIndex = 1;
