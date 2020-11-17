@@ -60,18 +60,15 @@ public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointment
      */
     private int newPrimaryKey( Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUEERY_NEW_PRIMARY_KEY, plugin );
-        daoUtil.executeQuery( );
-
         int nRes = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUEERY_NEW_PRIMARY_KEY, plugin ) )
         {
-            nRes = daoUtil.getInt( 1 ) + 1;
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                nRes = daoUtil.getInt( 1 ) + 1;
+            }
         }
-
-        daoUtil.free( );
-
         return nRes;
     }
 
@@ -82,15 +79,15 @@ public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointment
     public synchronized void create( UpdateAdminAppointmentHistory history, Plugin plugin )
     {
         history.setIdUpdate( newPrimaryKey( plugin ) );
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, history.getIdUpdate( ) );
-        daoUtil.setInt( nIndex++, history.getIdHistory( ) );
-        daoUtil.setInt( nIndex++, history.getIdAppointment( ) );
-        daoUtil.setInt( nIndex, history.getIdAdminUser( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, history.getIdUpdate( ) );
+            daoUtil.setInt( nIndex++, history.getIdHistory( ) );
+            daoUtil.setInt( nIndex++, history.getIdAppointment( ) );
+            daoUtil.setInt( nIndex, history.getIdAdminUser( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -99,28 +96,21 @@ public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointment
     @Override
     public UpdateAdminAppointmentHistory findByPrimaryKey( int nIdNotif, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-        daoUtil.setInt( 1, nIdNotif );
-        daoUtil.executeQuery( );
-
-        UpdateAdminAppointmentHistory history;
-
-        if ( daoUtil.next( ) )
+        UpdateAdminAppointmentHistory history = null;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            int nIndex = 1;
-            history = new UpdateAdminAppointmentHistory( );
-            history.setIdUpdate( nIdNotif );
-            history.setIdHistory( daoUtil.getInt( nIndex++ ) );
-            history.setIdAppointment( daoUtil.getInt( nIndex++ ) );
-            history.setIdAdminUser( daoUtil.getInt( nIndex ) );
+            daoUtil.setInt( 1, nIdNotif );
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                int nIndex = 1;
+                history = new UpdateAdminAppointmentHistory( );
+                history.setIdUpdate( nIdNotif );
+                history.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                history.setIdAppointment( daoUtil.getInt( nIndex++ ) );
+                history.setIdAdminUser( daoUtil.getInt( nIndex ) );
+            }
         }
-        else
-        {
-            history = null;
-        }
-
-        daoUtil.free( );
-
         return history;
     }
 
@@ -130,10 +120,11 @@ public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointment
     @Override
     public void delete( int nIdNotif, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nIdNotif );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdNotif );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -142,25 +133,23 @@ public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointment
     @Override
     public List<UpdateAdminAppointmentHistory> findByIdHistory( int nIdHistory, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, plugin );
-        daoUtil.setInt( 1, nIdHistory );
-        daoUtil.executeQuery( );
-
-        List<UpdateAdminAppointmentHistory> listHistory = new ArrayList<UpdateAdminAppointmentHistory>( );
-
-        if ( daoUtil.next( ) )
+        List<UpdateAdminAppointmentHistory> listHistory = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, plugin ) )
         {
-            int nIndex = 1;
-            UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory( );
-            history.setIdUpdate( daoUtil.getInt( nIndex++ ) );
-            history.setIdHistory( daoUtil.getInt( nIndex++ ) );
-            history.setIdAppointment( daoUtil.getInt( nIndex++ ) );
-            history.setIdAdminUser( daoUtil.getInt( nIndex ) );
-            listHistory.add( history );
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                int nIndex = 1;
+                UpdateAdminAppointmentHistory history = new UpdateAdminAppointmentHistory( );
+                history.setIdUpdate( daoUtil.getInt( nIndex++ ) );
+                history.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                history.setIdAppointment( daoUtil.getInt( nIndex++ ) );
+                history.setIdAdminUser( daoUtil.getInt( nIndex ) );
+                listHistory.add( history );
+            }
         }
-
-        daoUtil.free( );
-
         return listHistory;
     }
 
@@ -170,9 +159,10 @@ public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointment
     @Override
     public void deleteByIdAppointment( int nIdAppointment, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_APPOINTMENT, plugin );
-        daoUtil.setInt( 1, nIdAppointment );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_APPOINTMENT, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdAppointment );
+            daoUtil.executeUpdate( );
+        }
     }
 }

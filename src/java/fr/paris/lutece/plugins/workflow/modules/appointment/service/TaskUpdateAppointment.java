@@ -75,9 +75,6 @@ public class TaskUpdateAppointment extends SimpleTask
 	private static final String PARAMETER_LAST_NAME = "lastname";
 	private static final String PARAMETER_FIRST_NAME = "firstname";
 
-
- 
-
     // MESSAGES
     private static final String MESSAGE_UPDATE_APPOINTMENT = "module.workflow.appointment.task_update_appointment_config.title";
 

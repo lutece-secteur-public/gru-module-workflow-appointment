@@ -41,12 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
-import fr.paris.lutece.plugins.appointment.business.slot.Slot;
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
-import fr.paris.lutece.plugins.appointment.service.SlotService;
-import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.crmclient.service.ICRMClientService;
 import fr.paris.lutece.plugins.crmclient.util.CRMException;
@@ -55,6 +51,7 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 public class TaskNotifyAppointementCrm extends SimpleTask
 {
@@ -99,7 +96,7 @@ public class TaskNotifyAppointementCrm extends SimpleTask
             }
             catch( CRMException e )
             {
-                e.printStackTrace( );
+                AppLogService.error( e );
             }
         }
         if ( strIdDemand != null )
@@ -141,9 +138,7 @@ public class TaskNotifyAppointementCrm extends SimpleTask
 
         String message = ( msg.replace( MARK_FIRSTNAME, user.getFirstName( ) ) ).replace( MARK_LASTNAME, user.getLastName( ) );
         String m = message.replace( MARK_REFERENCE, appointment.getReference( ) );
-        String messag = m.replace( MARK_DATE_APPOINTMENT, appointment.getDateOfTheAppointment( ) );
-
-        return messag;
+        return m.replace( MARK_DATE_APPOINTMENT, appointment.getDateOfTheAppointment( ) );
     }
 
 }

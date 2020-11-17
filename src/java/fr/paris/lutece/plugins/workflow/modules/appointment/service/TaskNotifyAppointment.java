@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyA
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
@@ -79,7 +80,6 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings( "unchecked" )
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
@@ -87,6 +87,11 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
+        if ( config == null )
+        {
+            AppLogService.error( "Error: No config for Task " + this.getId( ) );
+            return;
+        }
         AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
         User user = appointment.getUser( );
         if ( request != null )
@@ -107,7 +112,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
         String strEmail;
 
-        if ( config != null && config.getIsSms( ) )
+        if ( config.getIsSms( ) )
         {
             strEmail = getEmailForSmsFromAppointment( appointment );
         }
@@ -115,32 +120,28 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         {
             strEmail = user.getEmail( );
         }
-
-        if ( StringUtils.isNotBlank( strEmail ) )
+        
+        if ( StringUtils.isBlank( strEmail ) )
         {
-            Locale lEmailLocale = null;
-            if ( !sServerMailLang.isEmpty( ) )
-            {
-                lEmailLocale = new Locale( sServerMailLang.split( "_" ) [0], sServerMailLang.split( "_" ) [1] );
-            }
-            else
-            {
-                lEmailLocale = locale;
-            }
+            return;
+        }
 
-            if ( appointment.getIsCancelled( ) && StringUtils.isNotEmpty( config.getCancelMotif( ) ) )
-            {
-                config.setMessage( ERROR_CANCEL_APPOINTMENT_MSG );
-            }
+        Locale lEmailLocale = locale;
+        if ( !sServerMailLang.isEmpty( ) )
+        {
+            lEmailLocale = new Locale( sServerMailLang.split( "_" ) [0], sServerMailLang.split( "_" ) [1] );
+        }
 
-            if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null )
-            {
-                if ( ( config.getIdActionCancel( ) > 0 ) && ( config.getIdActionCancel( ) != appointment.getIdActionCancelled( ) ) )
-                {
-                    appointment.setIdActionCancelled( config.getIdActionCancel( ) );
-                    AppointmentService.updateAppointment( appointment );
-                }
-            }
+        if ( appointment.getIsCancelled( ) && StringUtils.isNotEmpty( config.getCancelMotif( ) ) )
+        {
+            config.setMessage( ERROR_CANCEL_APPOINTMENT_MSG );
+        }
+
+        if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null 
+                && config.getIdActionCancel( ) > 0 && config.getIdActionCancel( ) != appointment.getIdActionCancelled( ) )
+        {
+            appointment.setIdActionCancelled( config.getIdActionCancel( ) );
+            AppointmentService.updateAppointment( appointment );
         }
     }
 

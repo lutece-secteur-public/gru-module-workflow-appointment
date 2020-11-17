@@ -58,26 +58,26 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
     @Override
     public synchronized void insert( TaskNotifyAdminAppointmentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        int nIndex = 1;
-
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
-        daoUtil.setString( nIndex++, config.getSenderName( ) );
-        daoUtil.setString( nIndex++, config.getSenderEmail( ) );
-        daoUtil.setString( nIndex++, config.getSubject( ) );
-        daoUtil.setString( nIndex++, config.getMessage( ) );
-        daoUtil.setString( nIndex++, config.getRecipientsCc( ) );
-        daoUtil.setString( nIndex++, config.getRecipientsBcc( ) );
-        daoUtil.setInt( nIndex++, config.getIdActionCancel( ) );
-        daoUtil.setInt( nIndex++, config.getIdActionValidate( ) );
-        daoUtil.setBoolean( nIndex++, config.getSendICalNotif( ) );
-        daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
-        daoUtil.setString( nIndex, config.getLocation( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
+    
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
+            daoUtil.setString( nIndex++, config.getSenderName( ) );
+            daoUtil.setString( nIndex++, config.getSenderEmail( ) );
+            daoUtil.setString( nIndex++, config.getSubject( ) );
+            daoUtil.setString( nIndex++, config.getMessage( ) );
+            daoUtil.setString( nIndex++, config.getRecipientsCc( ) );
+            daoUtil.setString( nIndex++, config.getRecipientsBcc( ) );
+            daoUtil.setInt( nIndex++, config.getIdActionCancel( ) );
+            daoUtil.setInt( nIndex++, config.getIdActionValidate( ) );
+            daoUtil.setBoolean( nIndex++, config.getSendICalNotif( ) );
+            daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
+            daoUtil.setString( nIndex, config.getLocation( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -86,25 +86,25 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
     @Override
     public void store( TaskNotifyAdminAppointmentConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
-        daoUtil.setString( nIndex++, config.getSenderName( ) );
-        daoUtil.setString( nIndex++, config.getSenderEmail( ) );
-        daoUtil.setString( nIndex++, config.getSubject( ) );
-        daoUtil.setString( nIndex++, config.getMessage( ) );
-        daoUtil.setString( nIndex++, config.getRecipientsCc( ) );
-        daoUtil.setString( nIndex++, config.getRecipientsBcc( ) );
-        daoUtil.setInt( nIndex++, config.getIdActionCancel( ) );
-        daoUtil.setInt( nIndex++, config.getIdActionValidate( ) );
-        daoUtil.setBoolean( nIndex++, config.getSendICalNotif( ) );
-        daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
-        daoUtil.setString( nIndex++, config.getLocation( ) );
-
-        daoUtil.setInt( nIndex, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
+            daoUtil.setString( nIndex++, config.getSenderName( ) );
+            daoUtil.setString( nIndex++, config.getSenderEmail( ) );
+            daoUtil.setString( nIndex++, config.getSubject( ) );
+            daoUtil.setString( nIndex++, config.getMessage( ) );
+            daoUtil.setString( nIndex++, config.getRecipientsCc( ) );
+            daoUtil.setString( nIndex++, config.getRecipientsBcc( ) );
+            daoUtil.setInt( nIndex++, config.getIdActionCancel( ) );
+            daoUtil.setInt( nIndex++, config.getIdActionValidate( ) );
+            daoUtil.setBoolean( nIndex++, config.getSendICalNotif( ) );
+            daoUtil.setBoolean( nIndex++, config.getCreateNotif( ) );
+            daoUtil.setString( nIndex++, config.getLocation( ) );
+    
+            daoUtil.setInt( nIndex, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -114,34 +114,30 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
     public TaskNotifyAdminAppointmentConfig load( int nIdTask )
     {
         TaskNotifyAdminAppointmentConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
-            config = new TaskNotifyAdminAppointmentConfig( );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setIdAdminUser( daoUtil.getInt( nIndex++ ) );
-            config.setSenderName( daoUtil.getString( nIndex++ ) );
-            config.setSenderEmail( daoUtil.getString( nIndex++ ) );
-            config.setSubject( daoUtil.getString( nIndex++ ) );
-            config.setMessage( daoUtil.getString( nIndex++ ) );
-            config.setRecipientsCc( daoUtil.getString( nIndex++ ) );
-            config.setRecipientsBcc( daoUtil.getString( nIndex++ ) );
-            config.setIdActionCancel( daoUtil.getInt( nIndex++ ) );
-            config.setIdActionValidate( daoUtil.getInt( nIndex++ ) );
-            config.setSendICalNotif( daoUtil.getBoolean( nIndex++ ) );
-            config.setCreateNotif( daoUtil.getBoolean( nIndex++ ) );
-            config.setLocation( daoUtil.getString( nIndex ) );
+            daoUtil.setInt( 1, nIdTask );
+    
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                int nIndex = 1;
+                config = new TaskNotifyAdminAppointmentConfig( );
+                config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setIdAdminUser( daoUtil.getInt( nIndex++ ) );
+                config.setSenderName( daoUtil.getString( nIndex++ ) );
+                config.setSenderEmail( daoUtil.getString( nIndex++ ) );
+                config.setSubject( daoUtil.getString( nIndex++ ) );
+                config.setMessage( daoUtil.getString( nIndex++ ) );
+                config.setRecipientsCc( daoUtil.getString( nIndex++ ) );
+                config.setRecipientsBcc( daoUtil.getString( nIndex++ ) );
+                config.setIdActionCancel( daoUtil.getInt( nIndex++ ) );
+                config.setIdActionValidate( daoUtil.getInt( nIndex++ ) );
+                config.setSendICalNotif( daoUtil.getBoolean( nIndex++ ) );
+                config.setCreateNotif( daoUtil.getBoolean( nIndex++ ) );
+                config.setLocation( daoUtil.getString( nIndex ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -151,10 +147,10 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

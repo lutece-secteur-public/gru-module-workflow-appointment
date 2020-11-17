@@ -76,17 +76,12 @@ public class NotifyCrmTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         TaskNotifyCrmConfig config = _taskNotifyAppointmentCrmConfigService.findByPrimaryKey( task.getId( ) );
 
         model.put( MARK_CONFIG, config );
-        // model.put( MARK_LOCALE, locale );
-        // model.put( MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail( )
-        // );
-
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFY_CRM, locale, model );
-
         return template.getHtml( );
 
     }
@@ -101,7 +96,6 @@ public class NotifyCrmTaskComponent extends NoFormTaskComponent
     @Override
     public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -120,7 +114,7 @@ public class NotifyCrmTaskComponent extends NoFormTaskComponent
         String strSender = request.getParameter( PARAMETER_SENDER );
 
         TaskNotifyCrmConfig config = _taskNotifyAppointmentCrmConfigService.findByPrimaryKey( task.getId( ) );
-        Boolean bCreate = false;
+        boolean bCreate = false;
 
         if ( config == null )
         {

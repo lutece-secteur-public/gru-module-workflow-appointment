@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
@@ -83,7 +84,7 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, locale );
@@ -119,9 +120,9 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
     {
         List<ManualAppointmentNotificationHistory> listHistory = ManualAppointmentNotificationHistoryHome.findByIdHistory( nIdHistory );
 
-        if ( listHistory.size( ) > 0 )
+        if ( CollectionUtils.isNotEmpty( listHistory ) )
         {
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<>( );
             model.put( MARK_HISTORY_LIST, listHistory );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY, locale, model );

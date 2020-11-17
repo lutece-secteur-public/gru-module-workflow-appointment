@@ -124,7 +124,7 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
             refListActions.addItem( actionFound.getId( ), actionFound.getName( ) );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_LIST_ACTIONS, refListActions );
         model.put( MARK_CONFIG, config );
 

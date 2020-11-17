@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.service.UserService;
@@ -81,7 +80,6 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings( "unchecked" )
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
@@ -106,7 +104,7 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
         String strBcc = request.getParameter( PARAMETER_BCC );
         String strMessage = request.getParameter( PARAMETER_MESSAGE );
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
-        boolean bSendICalNotif = Boolean.valueOf( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
+        boolean bSendICalNotif = Boolean.parseBoolean( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
 
         if ( StringUtils.isBlank( strSenderName ) )
         {

@@ -54,15 +54,13 @@ public class TaskChangeAppointmentStatusConfigDAO implements ITaskConfigDAO<Task
     @Override
     public synchronized void insert( TaskChangeAppointmentStatusConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        int nPos = 0;
-
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.setInt( ++nPos, config.getAppointmentStatus( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.setInt( ++nPos, config.getAppointmentStatus( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -71,15 +69,13 @@ public class TaskChangeAppointmentStatusConfigDAO implements ITaskConfigDAO<Task
     @Override
     public void store( TaskChangeAppointmentStatusConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        int nPos = 0;
-
-        daoUtil.setInt( ++nPos, config.getAppointmentStatus( ) );
-
-        daoUtil.setInt( ++nPos, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, config.getAppointmentStatus( ) );
+            daoUtil.setInt( ++nPos, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -89,23 +85,19 @@ public class TaskChangeAppointmentStatusConfigDAO implements ITaskConfigDAO<Task
     public TaskChangeAppointmentStatusConfig load( int nIdTask )
     {
         TaskChangeAppointmentStatusConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nPos = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
-            config = new TaskChangeAppointmentStatusConfig( );
-            config.setIdTask( daoUtil.getInt( ++nPos ) );
-            config.setAppointmentStatus( daoUtil.getInt( ++nPos ) );
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                int nPos = 0;
+                config = new TaskChangeAppointmentStatusConfig( );
+                config.setIdTask( daoUtil.getInt( ++nPos ) );
+                config.setAppointmentStatus( daoUtil.getInt( ++nPos ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -115,10 +107,10 @@ public class TaskChangeAppointmentStatusConfigDAO implements ITaskConfigDAO<Task
     @Override
     public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowAppointmentPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdState );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdState );
+            daoUtil.executeUpdate( );
+        }
     }
 }

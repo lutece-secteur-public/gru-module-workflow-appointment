@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -122,7 +121,7 @@ public class ExecuteWorkflowAction
 
             if ( nLinkLimitValidity > 0 )
             {
-                Calendar calendar = GregorianCalendar.getInstance( WorkflowAppointmentPlugin.getPluginLocale( Locale.getDefault( ) ) );
+                Calendar calendar = Calendar.getInstance( WorkflowAppointmentPlugin.getPluginLocale( Locale.getDefault( ) ) );
                 calendar.add( Calendar.DAY_OF_WEEK, -1 * nLinkLimitValidity );
 
                 if ( calendar.getTimeInMillis( ) > lTimestamp )
@@ -146,15 +145,10 @@ public class ExecuteWorkflowAction
             {
                 AdminAuthenticationService.getInstance( ).registerUser( request, user );
             }
-            catch( AccessDeniedException e )
+            catch( UserNotSignedException | AccessDeniedException e )
             {
                 AppLogService.error( e.getMessage( ), e );
             }
-            catch( UserNotSignedException e )
-            {
-                AppLogService.error( e.getMessage( ), e );
-            }
-
             return AppointmentJspBean.getUrlExecuteWorkflowAction( request, strIdResource, strIdAction );
         }
 

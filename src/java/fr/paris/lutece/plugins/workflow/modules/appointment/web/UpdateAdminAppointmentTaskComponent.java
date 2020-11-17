@@ -86,7 +86,7 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         Collection<AdminUser> listAdminUser = AdminUserHome.findUserList( );
         ReferenceList refListAdmins = new ReferenceList( );

@@ -66,14 +66,14 @@ public class WorkflowAppointmentListener implements IAppointmentListener
     }
 
 	@Override
-	public void notifyAppointmentCreated(int nIdAppointment) {
+	public void notifyAppointmentCreated(int nIdAppointment)
+	{
 		 // Do nothing
-		
 	}
 
 	@Override
-	public void notifyAppointmentUpdated(int nIdAppointment) {
+	public void notifyAppointmentUpdated(int nIdAppointment)
+	{
 		 // Do nothing
-		
 	}
 }

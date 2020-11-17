@@ -123,8 +123,10 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         model.put( PARAMETER_DATE_OF_DISPLAY, appointmentDTO.getStartingDateTime().toLocalDate( ) );
         
         HtmlTemplate template = null;
-    	if ( !isAdminUser( request ) ) {
-    		try {
+    	if ( !isAdminUser( request ) )
+    	{
+    		try
+    		{
     	        List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), true );
     	        for ( Entry entry : listEntryFirstLevel )
     	        {
@@ -135,13 +137,15 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     			template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_FO, locale, model );
     			SecurityService.getInstance( ).getRemoteUser( request );
 			
-    		} catch (UserNotSignedException e) {
-				
+    		}
+    		catch (UserNotSignedException e)
+    		{
 				AppLogService.error(e.getMessage( ), e);
 				return null;
 			}
-    	} else {
-    		
+    	}
+    	else
+    	{
             List<Entry> listEntryFirstLevel = EntryService.getFilter( form.getIdForm( ), false );
             for ( Entry entry : listEntryFirstLevel )
             {
@@ -174,16 +178,17 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), appointmentForm, locale, listFormErrors );
         
-        if( isAdminUser( request ) ) {
-        	
+        if( isAdminUser( request ) ) 
+        {
             AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, true );
             if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
                 return buildErrorUrl(listFormErrors, request);
             }
 
-        }else {
-           
+        }
+        else 
+        {
         	AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
         	if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
@@ -226,8 +231,8 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     {
     	int i=0;
         Object [ ] listMessageParameters = new Object[listError.size()];
-        for( GenericAttributeError error:listError ) {
-        	
+        for( GenericAttributeError error:listError )
+        {
         	listMessageParameters[i]=error.getErrorMessage( );
         	i++;
         }
@@ -239,12 +244,8 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
      * @param request
      * @return true if is admin user
      */
-    private boolean isAdminUser( HttpServletRequest request) {
-    
-    	if ( AdminUserService.getAdminUser( request ) != null ) {
-    		
-    		return true;
-    	}
-    	return false;
+    private boolean isAdminUser( HttpServletRequest request) 
+    {
+        return AdminUserService.getAdminUser( request ) != null;
     }
 }
