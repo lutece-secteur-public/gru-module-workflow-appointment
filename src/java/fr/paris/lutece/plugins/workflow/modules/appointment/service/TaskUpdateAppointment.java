@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentUtilities;
 import fr.paris.lutece.plugins.appointment.service.FormService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
@@ -114,7 +116,10 @@ public class TaskUpdateAppointment extends SimpleTask
         	user.setLastName(appointmentDTO.getLastName());
         	user.setPhoneNumber(appointmentDTO.getPhoneNumber());
 	        UserHome.update( user);
-	        AppointmentResponseService.removeResponsesByIdAppointment( appointment.getIdAppointment( ) );
+	        List<Integer> entryIdToDelete = appointmentDTO.getListResponse( ).stream( ).map( Response::getEntry )
+	                .map( Entry::getIdEntry ).collect( Collectors.toList( ) );
+	        
+	        AppointmentResponseService.removeResponsesByIdAppointmentAndListEntryId( appointment.getIdAppointment( ), entryIdToDelete );
 	        if ( CollectionUtils.isNotEmpty( appointmentDTO.getListResponse( ) ) )
 	        {
 	        	for ( Response response : appointmentDTO.getListResponse( ) )
