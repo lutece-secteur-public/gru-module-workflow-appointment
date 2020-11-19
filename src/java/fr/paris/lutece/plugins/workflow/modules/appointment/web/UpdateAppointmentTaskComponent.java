@@ -161,7 +161,9 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        List<GenericAttributeError> listFormErrors = new ArrayList<>( );
+
+        List<GenericAttributeError> listFormErrors = new ArrayList< >( );
+		StringBuilder builder= new StringBuilder();
 
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
         String strIdAppointment = request.getParameter( PARAMETER_ID_APPOINTMENT );
@@ -187,7 +189,13 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
             AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, false );
             if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
-                return listFormErrors.get( 0 ).getErrorMessage( );
+
+        		for( GenericAttributeError error: listFormErrors ) {
+        			
+        			builder.append( error.getErrorMessage( ) );
+        			builder.append( "\n" );
+        		}
+                return builder.toString( );
             }
 
         }
