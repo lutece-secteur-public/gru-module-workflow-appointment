@@ -112,12 +112,11 @@ public class TaskUpdateAppointment extends SimpleTask
             user.setLastName( appointmentDTO.getLastName( ) );
             user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );
             UserHome.update( user );
-            List<Integer> entryIdToDelete = appointmentDTO.getListResponse( ).stream( ).map( Response::getEntry ).map( Entry::getIdEntry )
-                    .collect( Collectors.toList( ) );
-
-            AppointmentResponseService.removeResponsesByIdAppointmentAndListEntryId( appointment.getIdAppointment( ), entryIdToDelete );
             if ( CollectionUtils.isNotEmpty( appointmentDTO.getListResponse( ) ) )
             {
+            	List<Integer> entryIdToDelete = appointmentDTO.getListResponse( ).stream( ).map( Response::getEntry ).map( Entry::getIdEntry )
+                    .collect( Collectors.toList( ) );
+            	AppointmentResponseService.removeResponsesByIdAppointmentAndListEntryId( appointment.getIdAppointment( ), entryIdToDelete );         
                 for ( Response response : appointmentDTO.getListResponse( ) )
                 {
                     ResponseHome.create( response );
