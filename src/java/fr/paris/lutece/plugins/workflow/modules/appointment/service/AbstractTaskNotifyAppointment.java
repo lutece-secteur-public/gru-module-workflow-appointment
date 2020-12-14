@@ -184,7 +184,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_LASTNAME, user.getLastName( ) );
         model.put( MARK_EMAIL, user.getEmail( ) );
         model.put( MARK_REFERENCE, appointment.getReference( ) );
-        model.put( MARK_DATE_APPOINTMENT, appointment.getSlot( ).get( 0 ).getDate( ) );
+        model.put( MARK_DATE_APPOINTMENT, appointment.getDateOfTheAppointment( ) );
         model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif( ) );
         model.put( MARK_TIME_APPOINTMENT, appointment.getStartingTime( ) );
         model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage( ) );
