@@ -92,7 +92,7 @@ public class TaskUpdateAppointment extends SimpleTask
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
-        AppointmentFormDTO form = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0, 0 );
+        AppointmentFormDTO form = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0 );
 
         List<GenericAttributeError> listFormErrors = new ArrayList<>( );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), form, locale, listFormErrors );

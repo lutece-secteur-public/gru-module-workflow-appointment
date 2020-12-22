@@ -104,7 +104,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         Map<String, Object> model = new HashMap<>( );
 
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( nIdResource );
-        AppointmentFormDTO form = FormService.buildAppointmentForm( appointmentDTO.getIdForm( ), 0, 0 );
+        AppointmentFormDTO form = FormService.buildAppointmentForm( appointmentDTO.getIdForm( ), 0 );
         FormMessage formMessages = FormMessageService.findFormMessageByIdForm( form.getIdForm( ) );
 
         appointmentDTO.setListResponse( AppointmentResponseService.findAndBuildListResponse( nIdResource, request ) );
@@ -170,7 +170,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( Integer.parseInt( strIdAppointment ) );
 
-        AppointmentFormDTO appointmentForm = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0, 0 );
+        AppointmentFormDTO appointmentForm = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0 );
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), appointmentForm, locale, listFormErrors );
