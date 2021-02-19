@@ -8,7 +8,7 @@
 		</#if>
 		<@select name='id_action_cancel' items=list_actions default_value=default_value />
 	</@formGroup>
-	<@formGroup labelFor='id_action_report' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_action}'>
+	<@formGroup labelFor='id_action_report' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_action_report}'>
 		<#if (config.idActionCancel)??>
 			<#assign default_value = config.idActionReport?string>
 		<#else>

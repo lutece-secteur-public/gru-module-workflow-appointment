@@ -135,5 +135,16 @@
  	<bean id="workflow-appointment.updateAppointmentTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.appointment.web.UpdateAppointmentTaskComponent"
 		p:taskType-ref="workflow-appointment.taskTypeUpdateAppointment" />
 	
+	<!-- Task update appointment -->	
+	 <bean id="workflow-appointment.taskReportAppointment"
+        class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskReportAppointment"
+        scope="prototype" />
+     <bean id="workflow-appointment.taskTypeReportAppointment" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+ 		p:key="taskReportAppointment"
+ 		p:titleI18nKey="module.workflow.appointment.task_report_appointment.title"
+ 		p:beanName="workflow-appointment.taskReportAppointment"
+ 		p:configRequired="false"
+ 		p:taskForAutomaticAction="false" 
+ 		p:formTaskRequired="true" />
 	
 </beans>
