@@ -52,7 +52,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * TaskUpdateAppointmentCancelAction
  */
-public class TaskUpdateAppointmentCancelAction extends SimpleTask
+public class TaskUpdateAppointmentCancelReportAction extends SimpleTask
 {
     /**
      * Name of the bean of the config service of this task
@@ -79,6 +79,8 @@ public class TaskUpdateAppointmentCancelAction extends SimpleTask
         TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId( ) );
         Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
         appointment.setIdActionCancelled( config.getIdActionCancel( ) );
+        appointment.setIdActionReported( config.getIdActionReport( ) );
+
         AppointmentHome.update( appointment );
     }
 

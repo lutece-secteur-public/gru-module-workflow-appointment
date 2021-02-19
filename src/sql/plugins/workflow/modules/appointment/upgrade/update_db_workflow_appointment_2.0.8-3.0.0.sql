@@ -1,0 +1,1 @@
+ALTER TABLE workflow_task_update_appointment_cancel_cf  ADD id_action_report INT DEFAULT NULL;

@@ -89,14 +89,14 @@
 	
 	<!-- Task update appointment cancel action -->
 	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfigDAO"/>
-	<bean id="workflow-appointment.taskUpdateAppointmentCancelAction" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointmentCancelAction" scope="prototype" />
+	<bean id="workflow-appointment.taskUpdateAppointmentCancelReportAction" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointmentCancelReportAction" scope="prototype" />
  	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfig" scope="prototype" />
 	<bean id="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.AppointmentConfigService"
 		p:taskConfigDAO-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigDAO" />
 	<bean id="workflow-appointment.taskTypeUpdateAppointmentCancelAction" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
  		p:key="taskUpdateAppointmentCancelAction"
  		p:titleI18nKey="module.workflow.appointment.task_update_appointment_cancel_action_config.title"
- 		p:beanName="workflow-appointment.taskUpdateAppointmentCancelAction"
+ 		p:beanName="workflow-appointment.taskUpdateAppointmentCancelReportAction"
  		p:configBeanName="workflow-appointment.taskUpdateAppointmentCancelActionConfig"
  		p:configRequired="true"
  		p:taskForAutomaticAction="true" />

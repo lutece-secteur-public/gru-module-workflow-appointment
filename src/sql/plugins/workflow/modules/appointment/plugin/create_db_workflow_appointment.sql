@@ -61,6 +61,7 @@ CREATE TABLE workflow_task_notify_admin_appointment_cf(
 CREATE TABLE workflow_task_update_appointment_cancel_cf(
   id_task INT NOT NULL,
   id_action_cancel INT DEFAULT NULL,
+  id_action_report INT DEFAULT NULL,
   PRIMARY KEY  (id_task)
 );
 

@@ -45,7 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskUpdateAppointmentCancelActionConfig;
-import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointmentCancelAction;
+import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAppointmentCancelReportAction;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
@@ -73,6 +73,8 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
     private static final String MESSAGE_CANCEL_ACTION_UPDATED = "module.workflow.appointment.message.cancelActionUpdated";
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
     private static final String FIELD_CANCEL_ACTION = "task_notify_appointment_config.label_action";
+    private static final String FIELD_REPORT_ACTION = "task_notify_appointment_config.label_action_report";
+
 
     // MARKS
     private static final String MARK_LIST_ACTIONS = "list_actions";
@@ -80,10 +82,11 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
 
     // PARAMETERS
     private static final String PARAMETER_ID_ACTION_CANCEL = "id_action_cancel";
+    private static final String PARAMETER_ID_ACTION_REPORT = "id_action_report";
 
     // SERVICES
     @Inject
-    @Named( TaskUpdateAppointmentCancelAction.CONFIG_SERVICE_BEAN_NAME )
+    @Named( TaskUpdateAppointmentCancelReportAction.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
@@ -150,7 +153,11 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
         }
 
         String strIdActionCancel = request.getParameter( PARAMETER_ID_ACTION_CANCEL );
-        int nIdActionCancel = 0;
+        String strIdActionReport = request.getParameter( PARAMETER_ID_ACTION_REPORT );
+
+        int nIdActionCancel = 0;        
+        int nIdActionReport = 0;
+
 
         if ( StringUtils.isEmpty( strIdActionCancel ) || !StringUtils.isNumeric( strIdActionCancel ) )
         {
@@ -160,9 +167,19 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
+        if ( StringUtils.isEmpty( strIdActionReport ) || !StringUtils.isNumeric( strIdActionReport ) )
+        {
+            Object [ ] tabRequiredFields = {
+                    I18nService.getLocalizedString( FIELD_REPORT_ACTION, locale )
+            };
+
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
+        }
 
         nIdActionCancel = Integer.parseInt( strIdActionCancel );
+        nIdActionReport = Integer.parseInt( strIdActionReport );
         config.setIdActionCancel( nIdActionCancel );
+        config.setIdActionReport( nIdActionReport );
 
         if ( bCreate )
         {

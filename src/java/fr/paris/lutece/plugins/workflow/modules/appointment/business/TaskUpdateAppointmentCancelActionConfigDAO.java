@@ -44,10 +44,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDAO<TaskUpdateAppointmentCancelActionConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_action_cancel "
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_action_cancel, id_action_report "
             + "FROM workflow_task_update_appointment_cancel_cf WHERE id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_update_appointment_cancel_cf( " + "id_task,id_action_cancel)" + "VALUES (?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_update_appointment_cancel_cf " + " SET id_action_cancel = ? WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_update_appointment_cancel_cf( " + "id_task,id_action_cancel, id_action_report)" + "VALUES (?, ?, ?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_update_appointment_cancel_cf " + " SET id_action_cancel = ?, id_action_report = ? WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_update_appointment_cancel_cf WHERE id_task = ? ";
 
     /**
@@ -62,6 +62,7 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
 
             daoUtil.setInt( ++nPos, config.getIdTask( ) );
             daoUtil.setInt( ++nPos, config.getIdActionCancel( ) );
+            daoUtil.setInt( ++nPos, config.getIdActionReport( ) );
 
             daoUtil.executeUpdate( );
         }
@@ -78,6 +79,7 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
             int nPos = 0;
 
             daoUtil.setInt( ++nPos, config.getIdActionCancel( ) );
+            daoUtil.setInt( ++nPos, config.getIdActionReport( ) );
 
             daoUtil.setInt( ++nPos, config.getIdTask( ) );
             daoUtil.executeUpdate( );
@@ -104,6 +106,8 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
                 config = new TaskUpdateAppointmentCancelActionConfig( );
                 config.setIdTask( daoUtil.getInt( ++nPos ) );
                 config.setIdActionCancel( daoUtil.getInt( ++nPos ) );
+                config.setIdActionReport( daoUtil.getInt( ++nPos ) );
+
             }
         }
         return config;
