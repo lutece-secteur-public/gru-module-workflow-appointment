@@ -42,8 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
-import fr.paris.lutece.plugins.appointment.business.appointment.AppointmentHome;
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.business.user.UserHome;
 import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
@@ -87,8 +85,7 @@ public class TaskUpdateAppointment extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
-        AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( appointment.getIdAppointment( ) );
+        AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
@@ -110,17 +107,15 @@ public class TaskUpdateAppointment extends SimpleTask
             user.setLastName( appointmentDTO.getLastName( ) );
             user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );
             UserHome.update( user );
-            AppointmentResponseService.removeResponsesByIdAppointmentAndBoOnly( appointment.getIdAppointment( ), AdminUserService.getAdminUser( request ) != null );
+            AppointmentResponseService.removeResponsesByIdAppointmentAndBoOnly( appointmentDTO.getIdAppointment( ), AdminUserService.getAdminUser( request ) != null );
             if ( CollectionUtils.isNotEmpty( appointmentDTO.getListResponse( ) ) )
             {
                 for ( Response response : appointmentDTO.getListResponse( ) )
                 {
                     ResponseHome.create( response );
-                    AppointmentResponseService.insertAppointmentResponse( appointment.getIdAppointment( ), response.getIdResponse( ) );
+                    AppointmentResponseService.insertAppointmentResponse( appointmentDTO.getIdAppointment( ), response.getIdResponse( ) );
                 }
             }
-
-            AppointmentHome.update( appointment );
         }
     }
 

@@ -93,7 +93,6 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     private static final String PARAMETER_EMAIL = "email";
     private static final String PARAMETER_EMAIL_CONFIRMATION = "emailConfirm";
     private static final String PARAMETER_ID_FORM = "id_form";
-    private static final String PARAMETER_ID_APPOINTMENT = "id_appointment";
 
     /**
      * {@inheritDoc}
@@ -166,9 +165,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 		StringBuilder builder= new StringBuilder();
 
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
-        String strIdAppointment = request.getParameter( PARAMETER_ID_APPOINTMENT );
-
-        AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( Integer.parseInt( strIdAppointment ) );
+        AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( nIdResource );
 
         AppointmentFormDTO appointmentForm = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0 );
 
