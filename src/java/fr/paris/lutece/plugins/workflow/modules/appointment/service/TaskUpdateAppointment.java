@@ -43,16 +43,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.appointment.business.user.User;
-import fr.paris.lutece.plugins.appointment.business.user.UserHome;
-import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.service.AppointmentUtilities;
 import fr.paris.lutece.plugins.appointment.service.FormService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
@@ -105,17 +101,9 @@ public class TaskUpdateAppointment extends SimpleTask
             user.setEmail( appointmentDTO.getEmail( ) );
             user.setFirstName( appointmentDTO.getFirstName( ) );
             user.setLastName( appointmentDTO.getLastName( ) );
-            user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );
-            UserHome.update( user );
-            AppointmentResponseService.removeResponsesByIdAppointmentAndBoOnly( appointmentDTO.getIdAppointment( ), AdminUserService.getAdminUser( request ) != null );
-            if ( CollectionUtils.isNotEmpty( appointmentDTO.getListResponse( ) ) )
-            {
-                for ( Response response : appointmentDTO.getListResponse( ) )
-                {
-                    ResponseHome.create( response );
-                    AppointmentResponseService.insertAppointmentResponse( appointmentDTO.getIdAppointment( ), response.getIdResponse( ) );
-                }
-            }
+            user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );            
+            AppointmentService.updateAppointmentDTO(  appointmentDTO.getIdAppointment( ), user, appointmentDTO.getListResponse( ), AdminUserService.getAdminUser( request ) != null  );
+            
         }
     }
 
