@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,6 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
     private static final String FIELD_CANCEL_ACTION = "task_notify_appointment_config.label_action";
     private static final String FIELD_REPORT_ACTION = "task_notify_appointment_config.label_action_report";
-
 
     // MARKS
     private static final String MARK_LIST_ACTIONS = "list_actions";
@@ -155,9 +154,8 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
         String strIdActionCancel = request.getParameter( PARAMETER_ID_ACTION_CANCEL );
         String strIdActionReport = request.getParameter( PARAMETER_ID_ACTION_REPORT );
 
-        int nIdActionCancel = 0;        
+        int nIdActionCancel = 0;
         int nIdActionReport = 0;
-
 
         if ( StringUtils.isEmpty( strIdActionCancel ) || !StringUtils.isNumeric( strIdActionCancel ) )
         {

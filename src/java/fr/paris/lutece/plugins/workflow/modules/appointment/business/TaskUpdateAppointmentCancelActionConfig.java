@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,24 +63,25 @@ public class TaskUpdateAppointmentCancelActionConfig extends TaskConfig
     {
         this._nIdActionCancel = nIdActionCancel;
     }
-   /**
-    * Get the id of the workflow action to report the appointment
-    * 
-    * @return The id of the workflow action to report the appointment
-    */
-   public int getIdActionReport( )
-   {
-       return _nIdActionReport;
-   }
 
-   /**
-    * Set the id of the workflow action to report the appointment
-    * 
-    * @param nIdActionReport
-    *            The id of the workflow action to report the appointment
-    */
-   public void setIdActionReport( int nIdActionReport )
-   {
-       this._nIdActionReport = nIdActionReport;
-   }
+    /**
+     * Get the id of the workflow action to report the appointment
+     * 
+     * @return The id of the workflow action to report the appointment
+     */
+    public int getIdActionReport( )
+    {
+        return _nIdActionReport;
+    }
+
+    /**
+     * Set the id of the workflow action to report the appointment
+     * 
+     * @param nIdActionReport
+     *            The id of the workflow action to report the appointment
+     */
+    public void setIdActionReport( int nIdActionReport )
+    {
+        this._nIdActionReport = nIdActionReport;
+    }
 }

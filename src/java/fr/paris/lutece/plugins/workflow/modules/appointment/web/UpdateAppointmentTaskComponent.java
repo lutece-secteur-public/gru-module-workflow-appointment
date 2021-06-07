@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -161,8 +161,8 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
 
-        List<GenericAttributeError> listFormErrors = new ArrayList< >( );
-		StringBuilder builder= new StringBuilder();
+        List<GenericAttributeError> listFormErrors = new ArrayList<>( );
+        StringBuilder builder = new StringBuilder( );
 
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( nIdResource );
@@ -187,11 +187,12 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
             if ( CollectionUtils.isNotEmpty( listFormErrors ) )
             {
 
-        		for( GenericAttributeError error: listFormErrors ) {
-        			
-        			builder.append( error.getErrorMessage( ) );
-        			builder.append( "\n" );
-        		}
+                for ( GenericAttributeError error : listFormErrors )
+                {
+
+                    builder.append( error.getErrorMessage( ) );
+                    builder.append( "\n" );
+                }
                 return builder.toString( );
             }
 

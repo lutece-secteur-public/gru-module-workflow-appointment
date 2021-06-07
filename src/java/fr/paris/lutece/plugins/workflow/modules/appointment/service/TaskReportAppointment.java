@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ public class TaskReportAppointment extends SimpleTask
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-       //Redirection to the appointment report page, this method will never be executed
+        // Redirection to the appointment report page, this method will never be executed
     }
 
     /**
@@ -63,7 +63,7 @@ public class TaskReportAppointment extends SimpleTask
     @Override
     public void doRemoveConfig( )
     {
-    	// No configuration needed
+        // No configuration needed
     }
 
     /**

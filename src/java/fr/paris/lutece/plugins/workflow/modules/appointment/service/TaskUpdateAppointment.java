@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,9 +101,10 @@ public class TaskUpdateAppointment extends SimpleTask
             user.setEmail( appointmentDTO.getEmail( ) );
             user.setFirstName( appointmentDTO.getFirstName( ) );
             user.setLastName( appointmentDTO.getLastName( ) );
-            user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );            
-            AppointmentService.updateAppointmentDTO(  appointmentDTO.getIdAppointment( ), user, appointmentDTO.getListResponse( ), AdminUserService.getAdminUser( request ) != null  );
-            
+            user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );
+            AppointmentService.updateAppointmentDTO( appointmentDTO.getIdAppointment( ), user, appointmentDTO.getListResponse( ),
+                    AdminUserService.getAdminUser( request ) != null );
+
         }
     }
 

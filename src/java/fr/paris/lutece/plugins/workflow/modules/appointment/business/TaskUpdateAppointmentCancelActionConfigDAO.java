@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,10 @@ public class TaskUpdateAppointmentCancelActionConfigDAO implements ITaskConfigDA
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_action_cancel, id_action_report "
             + "FROM workflow_task_update_appointment_cancel_cf WHERE id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_update_appointment_cancel_cf( " + "id_task,id_action_cancel, id_action_report)" + "VALUES (?, ?, ?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_update_appointment_cancel_cf " + " SET id_action_cancel = ?, id_action_report = ? WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_update_appointment_cancel_cf( " + "id_task,id_action_cancel, id_action_report)"
+            + "VALUES (?, ?, ?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_update_appointment_cancel_cf "
+            + " SET id_action_cancel = ?, id_action_report = ? WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_update_appointment_cancel_cf WHERE id_task = ? ";
 
     /**
