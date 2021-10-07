@@ -199,13 +199,4 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
     {
         return I18nService.getLocalizedString( MESSAGE_CANCEL_ACTION_UPDATED, locale );
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

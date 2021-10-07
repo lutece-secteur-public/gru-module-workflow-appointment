@@ -93,12 +93,6 @@ public class NotifyCrmTaskComponent extends NoFormTaskComponent
         return I18nService.getLocalizedString( "module.workflow.appointment.taskNotifyAppointmentCrm.title", locale );
     }
 
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
-
     /**
      * {@inheritDoc}
      */

@@ -132,13 +132,4 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
 
         return StringUtils.EMPTY;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

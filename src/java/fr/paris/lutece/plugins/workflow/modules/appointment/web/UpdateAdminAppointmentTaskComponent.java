@@ -151,13 +151,4 @@ public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
 
         return sbHistory.toString( );
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

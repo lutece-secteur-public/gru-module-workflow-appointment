@@ -89,13 +89,4 @@ public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointme
     {
         return I18nService.getLocalizedString( MESSAGE_EMAIL_SENT_TO_ADMIN_USER, locale );
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }

@@ -197,13 +197,4 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
         }
         return I18nService.getLocalizedString( strInformation, locale );
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
 }
