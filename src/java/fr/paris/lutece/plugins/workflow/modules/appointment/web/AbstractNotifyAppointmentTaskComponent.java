@@ -137,6 +137,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         TaskNotifyAppointmentConfig config = taskConfigService.findByPrimaryKey( task.getId( ) );
 
         ActionFilter filter = new ActionFilter( );
+        filter.setAutomaticReflexiveAction( false );
         Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
         filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 

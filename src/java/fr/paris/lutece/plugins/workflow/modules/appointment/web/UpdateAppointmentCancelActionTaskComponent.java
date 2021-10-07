@@ -100,6 +100,7 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
         TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( task.getId( ) );
 
         ActionFilter filter = new ActionFilter( );
+        filter.setAutomaticReflexiveAction( false );
         Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
         filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 
