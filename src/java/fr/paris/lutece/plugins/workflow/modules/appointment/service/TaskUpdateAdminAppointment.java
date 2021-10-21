@@ -38,7 +38,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;

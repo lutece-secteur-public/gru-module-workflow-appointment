@@ -39,7 +39,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.web.AppointmentJspBean;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;

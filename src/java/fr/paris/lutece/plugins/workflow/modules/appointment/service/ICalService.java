@@ -38,7 +38,7 @@ import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
