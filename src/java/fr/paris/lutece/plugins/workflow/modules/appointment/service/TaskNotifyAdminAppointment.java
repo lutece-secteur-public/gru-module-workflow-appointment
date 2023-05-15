@@ -70,6 +70,7 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
     private static final String MARK_URL_CANCEL = "url_cancel";
     private static final String MARK_URL_VALIDATE = "url_validate";
 
+    private static final String PARAMETER_ID_ADMIN_USER = "id_admin_user";
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
@@ -99,7 +100,9 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
                     }
                     else
                     {
-                        adminUser = AdminUserHome.findByPrimaryKey( appointment.getIdAdminUser( ) );
+                        String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
+                        int nIdAdminUser = Integer.parseInt( strIdAdminUser );
+                        adminUser = AdminUserHome.findByPrimaryKey(nIdAdminUser);
                     }
                     if ( adminUser != null )
                     {
