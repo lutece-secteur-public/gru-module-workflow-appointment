@@ -105,8 +105,9 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
         filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 
         List<Action> listActions = _actionService.getListActionByFilter( filter );
+        List<Integer> listIdStateBefore = action.getListIdStateBefore();
 
-        if ( action.getStateAfter( ).getId( ) == action.getListIdStateBefore().get(0) )
+        if ( listIdStateBefore.contains(action.getStateAfter().getId()) )
         {
             for ( Action actionFound : listActions )
             {
