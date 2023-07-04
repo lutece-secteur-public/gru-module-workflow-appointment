@@ -84,13 +84,14 @@ public class TaskUpdateAppointment extends SimpleTask
         AppointmentDTO appointmentDTO = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
+        String strEmailConfirm = request.getParameter( PARAMETER_EMAIL_CONFIRMATION );
         String strIdForm = request.getParameter( PARAMETER_ID_FORM );
         AppointmentFormDTO form = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0 );
 
         List<GenericAttributeError> listFormErrors = new ArrayList<>( );
-        AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), form, locale, listFormErrors );
-        AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, request.getParameter( PARAMETER_FIRST_NAME ),
-                request.getParameter( PARAMETER_LAST_NAME ) );
+        AppointmentUtilities.checkEmail( strEmail, strEmailConfirm, form, locale, listFormErrors );
+        AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, strEmailConfirm ,
+                request.getParameter( PARAMETER_FIRST_NAME ), request.getParameter( PARAMETER_LAST_NAME ));
 
         AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, AdminUserService.getAdminUser( request ) != null );
         AppointmentUtilities.fillInListResponseWithMapResponse( appointmentDTO );

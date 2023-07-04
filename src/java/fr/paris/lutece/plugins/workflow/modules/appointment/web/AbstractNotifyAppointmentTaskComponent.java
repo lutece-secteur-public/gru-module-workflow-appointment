@@ -142,8 +142,11 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         filter.setIdStateBefore( action.getStateAfter( ).getId( ) );
 
         List<Action> listActions = _actionService.getListActionByFilter( filter );
+        List<Integer> listIdStateBefore = action.getListIdStateBefore();
+        int stateAfterId = action.getStateAfter().getId();
+        int alternativeStateAfterId = action.getStateAfter().getId();
 
-        if ( action.getStateAfter( ).getId( ) == action.getStateBefore( ).getId( ) )
+        if (listIdStateBefore.contains(stateAfterId) || listIdStateBefore.contains(alternativeStateAfterId))
         {
             for ( Action actionFound : listActions )
             {
