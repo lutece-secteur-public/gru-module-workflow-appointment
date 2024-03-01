@@ -1,6 +1,13 @@
-<fieldset>
-	<legend>#i18n{module.workflow.appointment.task_update_admin_appointment_config.title}</legend>
-	<@formGroup labelFor='id_admin_user' labelKey='#i18n{module.workflow.appointment.task_update_admin_appointment_config.label_admin_user}' mandatory=true>
-		<@select items=list_admin_users name='id_admin_user' default_value='' />
-	</@formGroup>
-</fieldset>
+<@box>
+	<@boxBody>
+		<@fieldSet legend='#i18n{module.workflow.appointment.task_update_admin_appointment_config.title}'>
+			<#if list_admin_users?size gt 0>
+				<@formGroup labelFor='id_admin_user' labelKey='#i18n{module.workflow.appointment.task_update_admin_appointment_config.label_admin_user}' mandatory=true>
+					<@select items=list_admin_users name='id_admin_user' default_value='' />
+				</@formGroup>
+			<#else>
+				<@empty class='d-flex justify-content-center flex-column align-items-center' title='#i18n{module.workflow.appointment.task_update_admin_appointment_config.adminUserListIsEmpty}' subtitle='#i18n{module.workflow.appointment.task_update_admin_appointment_config.adminUserListIsEmpty.help}' iconName='list' />
+			</#if>
+		</@fieldSet>
+	</@boxBody>
+</@box>
