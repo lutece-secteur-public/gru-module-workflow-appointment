@@ -54,6 +54,7 @@ import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -61,6 +62,7 @@ import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.parameter.PartStat;
 import net.fortuna.ical4j.model.parameter.Role;
 import net.fortuna.ical4j.model.parameter.Rsvp;
+import net.fortuna.ical4j.model.parameter.XParameter;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
@@ -73,6 +75,7 @@ import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 
 /**
  * Service to send iCal appointments by email
@@ -169,6 +172,9 @@ public class ICalService
         event.getProperties( ).add( dtEnd );
         event.getProperties( ).add( new Summary( ( strSubject != null ) ? strSubject : StringUtils.EMPTY ) );
 
+        // Format the description that goes in the ICalendar
+        String formatedIcalendarDescription = formatICalendarDescription( strBodyContent );
+
         try
         {
             event.getProperties( ).add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment( ) ) );
@@ -193,7 +199,9 @@ public class ICalService
             organizer.getParameters( ).add( new Cn( strSenderName ) );
             event.getProperties( ).add( organizer );
             event.getProperties( ).add( new Location( strLocation ) );
-            event.getProperties( ).add( new Description( strBodyContent ) );
+            event.getProperties( ).add( new Description( formatedIcalendarDescription ) );
+            // Add an alternative description to properly render HTML content
+            addAlternativeHtmlDescription( event, formatedIcalendarDescription );
         }
         catch( URISyntaxException e )
         {
@@ -205,6 +213,7 @@ public class ICalService
         iCalendar.getProperties( ).add( Version.VERSION_2_0 );
         iCalendar.getProperties( ).add( CalScale.GREGORIAN );
         iCalendar.getComponents( ).add( event );
+
         MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
                 ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent, iCalendar.toString( ), bCreate );
     }
@@ -228,4 +237,73 @@ public class ICalService
         event.getProperties( ).add( attendee );
     }
 
+    /**
+     * Format the String containing the description of a calendar invite to respect the ICalendar specifications: 75 characters per line, CRLF + white-space at
+     * the start of new lines... ( c.f. <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.1">iCalendar RFC5545</a> )
+     * 
+     * @param strDescription
+     *            The calendar's invite description to format
+     * @return the formated description, or the value of the original description if the formatting was not necessary
+     */
+    public static String formatICalendarDescription( String strDescription )
+    {
+        // ICalendar specific properties. The folding symbol is a return to next line + a white-space
+        String foldingSymbol = "\r ";
+        int lineMaxLength = 75;
+
+        int descriptionLength = strDescription.length( );
+
+        if ( descriptionLength <= lineMaxLength )
+        {
+            return strDescription;
+        }
+
+        strDescription = strDescription.replaceAll( "\n", foldingSymbol );
+
+        StringBuilder formatedDesctiption = new StringBuilder( strDescription.substring( 0, lineMaxLength ) );
+
+        // Use ICalendar's folding method ( CRLF + white-space ) after every 75 characters
+        for ( int i = lineMaxLength; i < descriptionLength; i += lineMaxLength )
+        {
+            if ( i + lineMaxLength < descriptionLength )
+            {
+                // Add the folding symbol followed by the next 75 characters of the description
+                formatedDesctiption.append( foldingSymbol ).append( strDescription.substring( i, i + lineMaxLength ) );
+            }
+            else
+            {
+                // Add the remaining characters and stop the process
+                formatedDesctiption.append( foldingSymbol ).append( strDescription.substring( i ) );
+                break;
+            }
+        }
+        return formatedDesctiption.toString( );
+    }
+
+    /**
+     * Add an alternative description to process and render HTML content properly. This should only be used if there is HTML in the description
+     * 
+     * @param event
+     *            The Calendar Event being created
+     * @param description
+     *            The description of the Event
+     */
+    public void addAlternativeHtmlDescription( VEvent event, String description )
+    {
+        // HTML regex pattern
+        String patternHtml = "[\\S\\s]*\\<\\D+[\\S\\s]*\\>[\\S\\s]*\\<\\/\\D+[\\S\\s]*\\>[\\S\\s]*";
+
+        // Check if the description contains HTML elements
+        if ( description.matches( patternHtml ) )
+        {
+            // Create the alternative calendar description with the "X-ALT-DESC" property
+            ParameterList htmlParameters = new ParameterList( );
+            XParameter fmtTypeParameter = new XParameter( "FMTTYPE", "text/html" );
+            htmlParameters.add( fmtTypeParameter );
+            XProperty htmlProp = new XProperty( "X-ALT-DESC", htmlParameters, description );
+
+            // Add the alternative description to the event
+            event.getProperties( ).add( htmlProp );
+        }
+    }
 }
