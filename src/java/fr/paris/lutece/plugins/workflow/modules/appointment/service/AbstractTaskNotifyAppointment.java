@@ -96,6 +96,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     private static final String MARK_REFERENCE = "reference";
     private static final String MARK_DATE_APPOINTMENT = "date_appointment";
     private static final String MARK_TIME_APPOINTMENT = "time_appointment";
+    private static final String MARK_END_TIME_APPOINTMENT = "end_time_appointment";
     private static final String MARK_RECAP = "recap";
     private static final String MARK_CANCEL_MOTIF = "cancelMotif";
     private ICalService _iCalService;
@@ -187,6 +188,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         model.put( MARK_DATE_APPOINTMENT, appointment.getDateOfTheAppointment( ) );
         model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif( ) );
         model.put( MARK_TIME_APPOINTMENT, appointment.getStartingTime( ) );
+        model.put( MARK_END_TIME_APPOINTMENT, appointment.getEndingTime( ) );
         model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage( ) );
         List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
         List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<>( listResponse.size( ) );
