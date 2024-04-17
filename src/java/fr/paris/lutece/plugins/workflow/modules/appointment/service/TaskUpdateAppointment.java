@@ -95,6 +95,7 @@ public class TaskUpdateAppointment extends SimpleTask
 
         AppointmentUtilities.validateFormAndEntries( appointmentDTO, request, listFormErrors, AdminUserService.getAdminUser( request ) != null );
         AppointmentUtilities.fillInListResponseWithMapResponse( appointmentDTO );
+        AppointmentUtilities.setAppointmentPhoneNumberValuesFromResponse( appointmentDTO );
 
         if ( CollectionUtils.isEmpty( listFormErrors ) )
         {
