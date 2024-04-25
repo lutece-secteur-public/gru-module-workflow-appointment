@@ -1,0 +1,51 @@
+<#macro marker_descriptions>
+<h3>#i18n{module.workflow.appointment.markers.label_table_title}</h3>
+<@table>
+	<@tr>
+		<@th>#i18n{module.workflow.appointment.markers.label_description}</@th>
+		<@th>#i18n{module.workflow.appointment.markers.label_marker}</@th>
+	</@tr>
+	<#if list_markers?exists>
+		<#list list_markers as marker>
+			<@tr>
+				<@td class='marker'>
+					<#if marker.description ??>
+						<#assign description = i18n(marker.description) />
+						<#if description?has_content>${description}<#else>${marker.description!''}</#if>
+					</#if>
+				</@td>
+				<@td>
+					<@span class='copy-content marker'>${"${"+marker.marker+"!}"}</@span>
+				</@td>
+			</@tr>
+		</#list>
+	<#else>
+		<@tr>
+			<@td colspan=3></@td>
+		</@tr>
+	</#if>
+</@table>
+<@copyElementToClipboard selector='.copy-content' class='"copy-icon"' showMsg=false />
+<style>
+	.marker:hover:hover {
+		cursor: pointer;
+		opacity: .8
+	}
+
+	.marker:nth-child(even) td {
+		background: #777;
+		color: #fff
+	}
+</style>
+<script>
+	$('.marker').on( 'dblclick', function(e){
+	if( $( '.richtext' ).length > 0 ){
+		var c = '<p>' + $(this).text() + '</p>';
+		tinymce.activeEditor.insertContent( '<p>' + c + '</p>' );
+	} else {
+		var c = $(this).text().replace(/\s+/g, ' ');
+		$('textarea').val( c );
+	}
+});
+</script>
+</#macro>
