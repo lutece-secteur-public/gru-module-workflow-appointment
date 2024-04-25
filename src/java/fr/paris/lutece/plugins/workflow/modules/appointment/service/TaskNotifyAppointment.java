@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.web.AppointmentApp;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentWorkflowConstants;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
@@ -63,7 +64,6 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskNotifyAppointmentConfigService";
 
     // TEMPLATES
-    private static final String MARK_URL_CANCEL = "url_cancel";
     private static final String MARK_MOTIF_CANCEL = "comment_value_";
 
     private static final String PROPERTY_MAIL_LANG_SERVER = "workflow-appointment.server.mail.lang";
@@ -177,9 +177,27 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
     public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAppointmentConfig notifyAppointmentDTO, AppointmentDTO appointment,
             Locale locale )
     {
+        // Get the <key, value> model containing a standard appointment's data (user's first name, last name, e-mail, date...)
         Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, locale );
-        model.put( MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
+        // Add values specific to the user in the model
+        addUserValuesToModel( request, model, appointment );
 
         return model;
+    }
+
+    /**
+     * Add specific values to the model, when the recipient of the notification is a user
+     * 
+     * @param request
+     *            The request
+     * @param model
+     *            The model to fill with extra values
+     * @param appointment
+     *            The appointment to get data from
+     */
+    private void addUserValuesToModel( HttpServletRequest request, Map<String, Object> model, AppointmentDTO appointment )
+    {
+        // Add a URL to cancel the appointment
+        model.put( AppointmentWorkflowConstants.MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
     }
 }

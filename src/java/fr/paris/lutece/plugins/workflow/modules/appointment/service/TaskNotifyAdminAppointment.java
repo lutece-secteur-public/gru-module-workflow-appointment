@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentWorkflowConstants;
 import fr.paris.lutece.plugins.workflow.modules.appointment.web.ExecuteWorkflowAction;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -65,10 +66,6 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
      * Name of the bean of the config service of this task
      */
     public static final String CONFIG_SERVICE_BEAN_NAME = "workflow-appointment.taskNotifyAdminAppointmentConfigService";
-
-    // TEMPLATES
-    private static final String MARK_URL_CANCEL = "url_cancel";
-    private static final String MARK_URL_VALIDATE = "url_validate";
 
     // SERVICES
     @Inject
@@ -142,12 +139,34 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
     public Map<String, Object> fillModel( HttpServletRequest request, TaskNotifyAdminAppointmentConfig notifyAppointmentDTO, AppointmentDTO appointment,
             Locale locale )
     {
+        // Get the <key, value> model containing a standard appointment's data (user's first name, last name, e-mail, date...)
         Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, locale );
-        model.put( MARK_URL_CANCEL, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionCancel( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
-        model.put( MARK_URL_VALIDATE, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionValidate( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
+        // Add values specific to the admin in the model
+        addAdminValuesToModel( request, model, notifyAppointmentDTO, appointment );
 
         return model;
+    }
+
+    /**
+     * Add specific values to the model, when the recipient of the notification is an administrator
+     * 
+     * @param request
+     *            The request
+     * @param model
+     *            The model to fill with extra values
+     * @param notifyAppointmentDTO
+     *            The configuration of the task
+     * @param appointment
+     *            The appointment to get data from
+     */
+    private void addAdminValuesToModel( HttpServletRequest request, Map<String, Object> model, TaskNotifyAdminAppointmentConfig notifyAppointmentDTO,
+            AppointmentDTO appointment )
+    {
+        // Add a URL to cancel the appointment through a Workflow Action
+        model.put( AppointmentWorkflowConstants.MARK_URL_CANCEL, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
+                notifyAppointmentDTO.getIdActionCancel( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
+        // Add a URL to validate the appointment through a Workflow Action
+        model.put( AppointmentWorkflowConstants.MARK_URL_VALIDATE, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
+                notifyAppointmentDTO.getIdActionValidate( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
     }
 }

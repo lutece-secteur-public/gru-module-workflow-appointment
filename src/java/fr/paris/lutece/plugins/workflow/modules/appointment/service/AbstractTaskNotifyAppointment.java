@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,7 +62,10 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentNotificationMarkers;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentWorkflowConstants;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -87,18 +91,6 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     private static final String TEMPLATE_TASK_NOTIFY_SMS = "admin/plugins/workflow/modules/appointment/task_notify_appointment_sms.html";
     private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP = "admin/plugins/workflow/modules/appointment/task_notify_appointment_recap.html";
 
-    // MARKS
-    private static final String MARK_MESSAGE = "message";
-    private static final String MARK_LIST_RESPONSE = "listResponse";
-    private static final String MARK_FIRSTNAME = "firstName";
-    private static final String MARK_LASTNAME = "lastName";
-    private static final String MARK_EMAIL = "email";
-    private static final String MARK_REFERENCE = "reference";
-    private static final String MARK_DATE_APPOINTMENT = "date_appointment";
-    private static final String MARK_TIME_APPOINTMENT = "time_appointment";
-    private static final String MARK_END_TIME_APPOINTMENT = "end_time_appointment";
-    private static final String MARK_RECAP = "recap";
-    private static final String MARK_CANCEL_MOTIF = "cancelMotif";
     private ICalService _iCalService;
 
     /**
@@ -163,45 +155,36 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     }
 
     /**
-     * Get a model to generate email content for a given appointment and a given task.
+     * Get a model to generate email content for a given appointment and a given task
      * 
      * @param request
      *            The request
      * @param notifyAppointmentDTO
-     *            The configuration of the task.
+     *            The configuration of the task
      * @param appointment
-     *            The appointment to get data from
-     * @param appointmentSlot
-     *            The slot associated with the appointment
+     *            The appointment to process
      * @param locale
      *            The locale
-     * @return The model with data
+     * @return The model filled with data
      */
     public Map<String, Object> fillModel( HttpServletRequest request, T notifyAppointmentDTO, AppointmentDTO appointment, Locale locale )
     {
-        Map<String, Object> model = new HashMap<>( );
-        User user = UserService.findUserById( appointment.getIdUser( ) );
-        model.put( MARK_FIRSTNAME, user.getFirstName( ) );
-        model.put( MARK_LASTNAME, user.getLastName( ) );
-        model.put( MARK_EMAIL, user.getEmail( ) );
-        model.put( MARK_REFERENCE, appointment.getReference( ) );
-        model.put( MARK_DATE_APPOINTMENT, appointment.getDateOfTheAppointment( ) );
-        model.put( MARK_CANCEL_MOTIF, notifyAppointmentDTO.getCancelMotif( ) );
-        model.put( MARK_TIME_APPOINTMENT, appointment.getStartingTime( ) );
-        model.put( MARK_END_TIME_APPOINTMENT, appointment.getEndingTime( ) );
-        model.put( MARK_MESSAGE, notifyAppointmentDTO.getMessage( ) );
-        List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
-        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<>( listResponse.size( ) );
-        for ( Response response : listResponse )
-        {
-            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
-            listResponseRecapDTO
-                    .add( new ResponseRecapDTO( response, entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response, locale ) ) );
-        }
-        model.put( MARK_LIST_RESPONSE, listResponseRecapDTO );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP, locale, model );
-        model.put( MARK_RECAP, template.getHtml( ) );
-        return model;
+        // Create the Object providing the notification's markers
+        AppointmentNotificationMarkers notificationMarkers = new AppointmentNotificationMarkers( appointment, notifyAppointmentDTO );
+
+        // Get the Collection of available markers and their values
+        Collection<InfoMarker> collectionNotifyMarkers = notificationMarkers.getMarkerValues( );
+
+        // Retrieve a List of the appointment's Entry Response values
+        List<ResponseRecapDTO> listResponseRecapDTO = getAppointmentResponseList( request, appointment ); 
+
+        // Create a summary (recap) containing the appointment's responses
+        // then add it to the existing markers collection
+        String appointmentRecap = buildAppointmentRecap( listResponseRecapDTO, locale );
+        AppointmentNotificationMarkers.addAppointmentRecap( collectionNotifyMarkers, appointmentRecap );
+
+        // Return the markers and their values as the model used to fill an HTML template
+        return markersToModel( collectionNotifyMarkers );
     }
 
     /**
@@ -260,5 +243,63 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
             _iCalService = ICalService.getService( );
         }
         return _iCalService;
+    }
+
+    /**
+     * Get an appointment's List of summarized responses
+     * 
+     * @param request
+     *            The request
+     * @param appointment
+     *            The appointment to process
+     * @return the given appointment's List of ResponseRecapDTO
+     */
+    private List<ResponseRecapDTO> getAppointmentResponseList( HttpServletRequest request, AppointmentDTO appointment )
+    {
+        List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
+        List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<>( listResponse.size( ) );
+        for ( Response response : listResponse )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
+            listResponseRecapDTO.add( new ResponseRecapDTO( response,
+                    entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response, request.getLocale( ) ) ) );
+        }
+        return listResponseRecapDTO;
+    }
+
+    /**
+     * Create an appointment's responses summary (recap) by inserting their values in a template
+     * 
+     * @param listResponseRecapDTO
+     *            The List of ResponseRecapDTO to display in the summary
+     * @param locale
+     *            The locale
+     * @return an organized summary containing the given ResponseRecapDTO elements
+     */
+    private String buildAppointmentRecap( List<ResponseRecapDTO> listResponseRecapDTO, Locale locale )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        model.put( AppointmentWorkflowConstants.MARK_LIST_RESPONSE, listResponseRecapDTO );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP, locale, model );
+
+        return template.getHtml( );
+    }
+
+    /**
+     * Converts the specified collection of Appointment Notification markers into a <key,value> Map
+     * 
+     * @param collectionMarkers
+     *            The collection to convert
+     * @return the Map containing the markers and their values
+     */
+    private Map<String, Object> markersToModel( Collection<InfoMarker> collectionMarkers )
+    {
+        Map<String, Object> model = new HashMap<>( );
+
+        for ( InfoMarker marker : collectionMarkers )
+        {
+            model.put( marker.getMarker( ), marker.getValue( ) );
+        }
+        return model;
     }
 }

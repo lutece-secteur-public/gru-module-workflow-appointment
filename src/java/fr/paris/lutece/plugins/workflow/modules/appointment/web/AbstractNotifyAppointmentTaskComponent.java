@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentNotificationMarkers;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -83,6 +84,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     private static final String MARK_NOTIFY_ADMIN = "notify_admin";
     private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
     private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
+    private static final String MARK_LIST_MARKERS = "list_markers";
 
     // PARAMETERS
     private static final String PARAMETER_SUBJECT = "subject";
@@ -191,6 +193,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_LIST_ACTIONS, refListActions );
+        model.put( MARK_LIST_MARKERS, AppointmentNotificationMarkers.getMarkerDescriptions( bNotifyAdmin ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
 
