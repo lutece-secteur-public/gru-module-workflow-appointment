@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentNotificationMarkers;
 import fr.paris.lutece.plugins.workflow.web.task.NoConfigTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.mail.MailService;
@@ -73,6 +74,7 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
+    private static final String MARK_LIST_MARKERS = "list_markers";
 
     // PARAMETERS
     private static final String PARAMETER_MESSAGE = "message";
@@ -89,6 +91,7 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail( ) );
+        model.put( MARK_LIST_MARKERS, AppointmentNotificationMarkers.getMarkerDescriptions( false ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION, locale, model );
 
