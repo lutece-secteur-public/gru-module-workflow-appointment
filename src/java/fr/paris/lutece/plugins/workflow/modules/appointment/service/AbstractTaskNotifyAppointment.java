@@ -176,7 +176,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         Collection<InfoMarker> collectionNotifyMarkers = notificationMarkers.getMarkerValues( );
 
         // Retrieve a List of the appointment's Entry Response values
-        List<ResponseRecapDTO> listResponseRecapDTO = getAppointmentResponseList( request, appointment ); 
+        List<ResponseRecapDTO> listResponseRecapDTO = getAppointmentResponseList( request, appointment, locale );
 
         // Create a summary (recap) containing the appointment's responses
         // then add it to the existing markers collection
@@ -252,9 +252,11 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
      *            The request
      * @param appointment
      *            The appointment to process
+     * @param locale
+     *            The Locale to use
      * @return the given appointment's List of ResponseRecapDTO
      */
-    private List<ResponseRecapDTO> getAppointmentResponseList( HttpServletRequest request, AppointmentDTO appointment )
+    private List<ResponseRecapDTO> getAppointmentResponseList( HttpServletRequest request, AppointmentDTO appointment, Locale locale )
     {
         List<Response> listResponse = AppointmentResponseService.findListResponse( appointment.getIdAppointment( ) );
         List<ResponseRecapDTO> listResponseRecapDTO = new ArrayList<>( listResponse.size( ) );
@@ -262,7 +264,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
             listResponseRecapDTO.add( new ResponseRecapDTO( response,
-                    entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response, request.getLocale( ) ) ) );
+                    entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response, locale ) ) );
         }
         return listResponseRecapDTO;
     }
