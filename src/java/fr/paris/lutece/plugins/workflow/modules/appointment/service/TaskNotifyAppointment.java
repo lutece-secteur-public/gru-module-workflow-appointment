@@ -96,14 +96,14 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         User user = appointment.getUser( );
         if ( request != null )
         {
-            Map<String, String [ ]> parameters = request.getParameterMap( );
+            Map<String, String[]> parameters = request.getParameterMap( );
             String strCancelMotif = null;
-            for ( Map.Entry<String, String [ ]> entry : parameters.entrySet( ) )
+            for ( Map.Entry<String, String[]> entry : parameters.entrySet( ) )
             {
                 if ( entry.getKey( ).startsWith( MARK_MOTIF_CANCEL ) )
                 {
-                    String [ ] tabAllParamsStartedWithCommentValue = entry.getValue( );
-                    strCancelMotif = tabAllParamsStartedWithCommentValue [0];
+                    String[] tabAllParamsStartedWithCommentValue = entry.getValue( );
+                    strCancelMotif = tabAllParamsStartedWithCommentValue[0];
                     config.setCancelMotif( strCancelMotif );
                     break;
                 }
@@ -129,7 +129,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         Locale lEmailLocale = locale;
         if ( !sServerMailLang.isEmpty( ) )
         {
-            lEmailLocale = new Locale( sServerMailLang.split( "_" ) [0], sServerMailLang.split( "_" ) [1] );
+            lEmailLocale = new Locale( sServerMailLang.split( "_" )[0], sServerMailLang.split( "_" )[1] );
         }
 
         if ( appointment.getIsCancelled( ) && StringUtils.isNotEmpty( config.getCancelMotif( ) ) )
@@ -180,24 +180,22 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         // Get the <key, value> model containing a standard appointment's data (user's first name, last name, e-mail, date...)
         Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, locale );
         // Add values specific to the user in the model
-        addUserValuesToModel( request, model, appointment );
+        addUserValuesToModel( model, appointment );
 
         return model;
     }
 
     /**
      * Add specific values to the model, when the recipient of the notification is a user
-     * 
-     * @param request
-     *            The request
+     *
      * @param model
-     *            The model to fill with extra values
+     *         The model to fill with extra values
      * @param appointment
-     *            The appointment to get data from
+     *         The appointment to get data from
      */
-    private void addUserValuesToModel( HttpServletRequest request, Map<String, Object> model, AppointmentDTO appointment )
+    private void addUserValuesToModel( Map<String, Object> model, AppointmentDTO appointment )
     {
         // Add a URL to cancel the appointment
-        model.put( AppointmentWorkflowConstants.MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( request, appointment ) );
+        model.put( AppointmentWorkflowConstants.MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( appointment ) );
     }
 }
