@@ -60,6 +60,7 @@ public final class AppointmentWorkflowConstants
     public static final String MARK_CANCEL_MOTIF = "cancelMotif";
     public static final String MARK_URL_VALIDATE = "url_validate";
     public static final String MARK_RECAP = "recap";
+    public static final String MARK_ENTRY_RESPONSE_PREFIX = "response_";
 
     // CONSTANT MARK DESCRIPTIONS
     public static final String DESCRIPTION_MARK_FIRSTNAME = "module.workflow.appointment.task_notify_appointment_config.label_firstname";
