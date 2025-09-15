@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS workflow_task_notify_appointment_crm;
 
 CREATE TABLE workflow_task_notify_appointment_cf(
   id_task INT NOT NULL,
+  id_appointment_form_selected INT DEFAULT NULL,
   sender_name VARCHAR(255) DEFAULT NULL,
   sender_email VARCHAR(255) DEFAULT NULL,
   subject VARCHAR(255) DEFAULT NULL,
@@ -43,6 +44,7 @@ CREATE INDEX idx_wf_task_manual_app_notify ON workflow_task_manual_app_notify (i
 
 CREATE TABLE workflow_task_notify_admin_appointment_cf(
   id_task INT NOT NULL,
+  id_appointment_form_selected INT DEFAULT NULL,
   id_admin_user INT DEFAULT NULL,
   sender_name VARCHAR(255) DEFAULT NULL,
   sender_email VARCHAR(255) DEFAULT NULL,

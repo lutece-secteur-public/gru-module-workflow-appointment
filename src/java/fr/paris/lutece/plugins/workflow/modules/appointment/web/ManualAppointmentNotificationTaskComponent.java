@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentNotificationMarkers;
@@ -57,7 +58,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  *
- * NotifyAppointmentTaskComponent
+ * Task component used to create and send a custom email
  *
  */
 public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComponent
@@ -91,7 +92,9 @@ public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComp
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_DEFAULT_SENDER_NAME, MailService.getNoReplyEmail( ) );
-        model.put( MARK_LIST_MARKERS, AppointmentNotificationMarkers.getMarkerDescriptions( false ) );
+        // Retrieve the appointment form's ID, to add InfoMarkers specific to its Entries
+        int idAppointmentForm = AppointmentService.buildAppointmentDTOFromIdAppointment( nIdResource ).getIdForm( );
+        model.put( MARK_LIST_MARKERS, AppointmentNotificationMarkers.getMarkerDescriptions( idAppointmentForm, false ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION, locale, model );
 

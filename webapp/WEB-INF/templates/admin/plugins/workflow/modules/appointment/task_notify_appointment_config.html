@@ -3,12 +3,20 @@
 <@row>
 	<@columns>
 		<@div params='style="display:flex;justify-content:space-between;align-items:start;border-bottom:1px solid gainsboro;padding-bottom:5px;margin-bottom:15px"'>
-			<h4>#i18n{module.workflow.appointment.task_notify_appointment_config.title}</h4>
+			<h4>${task_title!''}</h4>
 		</@div>
 	</@columns>
 </@row>
 <@row>
 	<@columns sm=8>
+		<@formGroup labelFor='id_list_appointment_forms' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_selected_appointment_form}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_selected_appointment_form.help}'>
+			<@inputGroup>
+				<@select items=list_appointment_forms name='id_list_appointment_forms' default_value="${id_selected_appointment_form!'0'}" />
+				<@inputGroupItem type='btn'>
+					<@button type='submit' name='apply_appointment_form_selection' value='applyAppointmentFormSelection' title='#i18n{module.workflow.appointment.button.apply}' hideTitle=['all'] buttonIcon='check' />
+				</@inputGroupItem>
+			</@inputGroup>
+		</@formGroup>
 		<#if notify_admin>
 			<@formGroup labelFor='id_admin_user' labelKey='#i18n{module.workflow.appointment.task_notify_admin_appointment_config.label_admin_user}' helpKey='#i18n{module.workflow.appointment.task_notify_admin_appointment_config.label_admin_user_comment}'>
 				<#if (config.idAdminUser)??>

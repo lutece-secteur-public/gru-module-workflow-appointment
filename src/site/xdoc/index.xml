@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Module Workflow Appointment</title>
+    </properties>
+    <head>
+    	<meta name="keywords" content="workflow,appointment,notification,mail,crm,sms"/>
+    </head>
+    <body>
+        <section name="Module Workflow Appointment">
+            <subsection id="introduction" name="Introduction">
+	            <p>
+	            This module allows the use of workflow tasks with the [plugin-appointment](https://github.com/lutece-secteur-public/gru-plugin-appointment), providing a way to execute specific actions on appointments.
+	            </p>
+	            <p>
+	            	<ul>It makes a direct link between the <code>plugin-appointment</code> and the [plugin-workflow](https://github.com/lutece-platform/lutece-wf-plugin-workflow), allowing us to use the generic tasks available with the later:
+		            	<li>(Workflow) Archiving</li>
+		            	<li>Comment</li>
+		            	<li>Notification</li>
+		            	<li>...</li>
+					</ul>
+	            </p>
+	            <p>
+	            Additionally, we can implement our own workflow tasks, specific to appointment resources.
+	            This module comes with multiple tasks, as described in the section [Appointment tasks available](#appointment-tasks-available).
+	            </p>
+            </subsection>
+            <subsection id="appointment-tasks-available" name="Appointment tasks available">
+            	<p>
+            	This is the list of tasks available with the <code>module-workflow-appointment</code>, their description and their potential configuration requirements:
+            	</p>
+            	<p>
+            		<table>
+            			<tr>
+            				<th>Task name</th>
+            				<th>Description</th>
+            				<th>Task requires configuration</th>
+            			</tr>
+            			<tr>
+                			<td>(Workflow) Archiving - Archive appointment</td>
+                			<td>Its configuration offers 2 options to archive appointments (after a given period of time): **1.** Anonymize the appointment's data (user data, form field values, etc.) but keep it **2.** Delete all the appointment's data</td>
+                			<td>Yes</td>
+            			</tr>
+            			<tr>
+                			<td>Associate the appointment with a user</td>
+                			<td>Update the admin user associated with an appointment</td>
+                			<td>No</td>
+            			</tr>
+            			<tr>
+                			<td>Automatically notify a user for an appointment </td>
+                			<td>Send a notification (e-mail or SMS) using a preset template to a user, for an appointment they have taken</td>
+                			<td>Yes</td>
+            			</tr>
+            			<tr>
+                			<td>Change the status of an appointment</td>
+                			<td>Change the status of an appointment when it is validated or canceled ("*Booked*", "*Not booked*", etc.)</td>
+                			<td>Yes</td>
+            			</tr>
+            			<tr>
+                			<td>Modify the appointment</td>
+                			<td>Modify an appointment's informations (name, e-mail, form fields, etc.)</td>
+                			<td>No</td>
+            			</tr>
+            			<tr>
+                			<td>Notify an admin for an appointment</td>
+                			<td>Send an e-mail, using a preset template, to a specific administrator</td>
+                			<td>Yes</td>
+            			</tr>
+            			<tr>
+                			<td>Reschedule the appointment</td>
+                			<td>Modify the date of an appointment</td>
+                			<td>No</td>
+            			</tr>
+            			<tr>
+                			<td>Send a custom e-mail</td>
+                			<td>Send a custom e-mail to an appointment's user</td>
+                			<td>No</td>
+            			</tr>
+            			<tr>
+                			<td>Send a notification to a counter (CRM)</td>
+                			<td>Send a message to a specific counter</td>
+                			<td>Yes</td>
+            			</tr>
+            			<tr>
+                			<td>Update the cancellation and rescheduling action of the appointment</td>
+                			<td>Specify an action to execute whenever an appointment is canceled or rescheduled</td>
+                			<td>Yes</td>
+            			</tr>
+        			</table>
+            	</p>
+            </subsection>
+            <subsection id="usage" name="Usage">
+                <p>
+                Once the module has been enabled in a Lutece site, its tasks can be added to a workflow's action and then configured, if required.
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
