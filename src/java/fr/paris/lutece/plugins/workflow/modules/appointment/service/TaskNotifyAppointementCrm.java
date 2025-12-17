@@ -39,13 +39,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
+import fr.paris.lutece.plugins.grubusiness.business.demand.Demand;
+import fr.paris.lutece.plugins.grubusiness.business.notification.MyDashboardNotification;
+import fr.paris.lutece.plugins.grubusiness.business.notification.Notification;
+import fr.paris.lutece.plugins.librarynotifygru.services.NotificationService;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
-import fr.paris.lutece.plugins.crmclient.service.ICRMClientService;
-import fr.paris.lutece.plugins.crmclient.util.CRMException;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyCrmConfig;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -69,8 +72,6 @@ public class TaskNotifyAppointementCrm extends SimpleTask
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
-    @Inject
-    private ICRMClientService _crmClientService;
 
     @Inject
     @Named( CONFIG_SERVICE_BEAN_NAME )
@@ -84,27 +85,61 @@ public class TaskNotifyAppointementCrm extends SimpleTask
         TaskNotifyCrmConfig config = _taskNotifyAppointmentCrmConfigService.findByPrimaryKey( this.getId( ) );
         AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );
         User user = appointment.getUser( );
-        String strIdDemand = null;
 
-        if ( config != null )
+        if ( config != null && user != null )
         {
+            Notification notification = new Notification( );
+            notification.setDate( System.currentTimeMillis( ) );
+
+            Demand demand = new Demand( );
+            demand.setTypeId( config.getDemandeType( ) );
+            demand.setId( String.valueOf( appointment.getIdAppointment( ) ) );
+            demand.setReference( appointment.getReference( ) );
+
+            Customer customer = new Customer( );
+            customer.setConnectionId( String.valueOf( appointment.getIdUser( ) ) );
+            demand.setCustomer( customer );
+
+            notification.setDemand( demand );
+
+            int nStatusId = -1;
+            try
+            {
+                nStatusId = Integer.parseInt( config.getIdStatusCRM( ) );
+            }
+            catch( NumberFormatException e )
+            {
+                AppLogService.error( "TaskNotifyAppointementCrm : Invalid CRM Status ID for config " + this.getId( ), e );
+            }
+
+            MyDashboardNotification myDashNotification = new MyDashboardNotification( );
+
+            myDashNotification.setStatusId( nStatusId );
+            myDashNotification.setStatusText( config.getStatusText( ) );
+            myDashNotification.setSenderName( config.getSender( ) );
+            myDashNotification.setSubject( config.getObject( ) );
+            myDashNotification.setData( config.getData( ) );
+
+            String strMessage = getMessageAppointment( config.getMessage( ), appointment, user );
+            myDashNotification.setMessage( strMessage );
+
+            notification.setMyDashboardNotification( myDashNotification );
 
             try
             {
-                strIdDemand = _crmClientService.sendCreateDemandByUserGuid( config.getDemandeType( ), Integer.toString( appointment.getIdUser( ) ),
-                        config.getIdStatusCRM( ), config.getStatusText( ), config.getData( ) );
+                NotificationService.send( notification );
             }
-            catch( CRMException e )
+            catch ( Exception e )
             {
-                AppLogService.error( e );
+                AppLogService.error( "Error sending CRM Notification (NotifyGru) for Appointment ID: " + appointment.getIdAppointment( ), e );
             }
         }
-        if ( strIdDemand != null )
+        else
         {
-
-            String mesg = getMessageAppointment( config.getMessage( ), appointment, user );
-            _crmClientService.notify( strIdDemand, config.getObject( ), mesg, config.getSender( ) );
-
+            if( user == null )
+            {
+                AppLogService.error( "TaskNotifyAppointementCrm: Cannot send to CRM, user not found for Appointment ID " + appointment.getIdAppointment( ) );
+            }
         }
 
     }

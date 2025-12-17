@@ -105,7 +105,7 @@
 		p:taskConfigService-ref="workflow-appointment.taskUpdateAppointmentCancelActionConfigService" />
 	
 	<!-- Task noify crm -->
-	
+	<bean id="workflow-appointment.mockNotifier" class="fr.paris.lutece.plugins.librarynotifygru.services.MockNotifierService" />
 	<bean id="workflow-appointment.taskNotifyCrmConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyCrmConfigDAO"/>
 	<bean id="workflow-appointment.taskNotifyAppointementCrm" class="fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointementCrm" scope="prototype" />
  	<bean id="workflow-appointment.taskNotifyCrmConfig" class="fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyCrmConfig" scope="prototype" />
