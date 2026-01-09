@@ -51,6 +51,7 @@ public class NotifyAppointmentDTO extends TaskConfig
     private String _strLocation;
     private String _strCancelMotif;
     private boolean _bIsSms;
+    private int _nIdAppointmentForm = 0;
 
     public String getCancelMotif( )
     {
@@ -270,5 +271,26 @@ public class NotifyAppointmentDTO extends TaskConfig
     public void setIsSms( boolean bIsSms )
     {
         this._bIsSms = bIsSms;
+    }
+
+    /**
+     * Get the ID of the Appointment Form tied to this configuration
+     * 
+     * @return the ID of the Appointment Form
+     */
+    public int getIdAppointmentForm( )
+    {
+        return _nIdAppointmentForm;
+    }
+
+    /**
+     * Set the ID of the Appointment Form tied to this configuration
+     * 
+     * @param idAppointmentForm
+     *            ID of the Appointment Form
+     */
+    public void setIdAppointmentForm( int idAppointmentForm )
+    {
+        _nIdAppointmentForm = idAppointmentForm;
     }
 }
