@@ -38,7 +38,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +50,7 @@ import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppoi
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentNotificationMarkers;
 import fr.paris.lutece.plugins.workflow.web.task.NoConfigTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -60,10 +64,24 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * NotifyAppointmentTaskComponent
  *
  */
+@ApplicationScoped
 public class ManualAppointmentNotificationTaskComponent extends NoConfigTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION = "admin/plugins/workflow/modules/appointment/manual_appointment_notification_config.html";
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     */
+    @Inject
+    public ManualAppointmentNotificationTaskComponent(
+            @Named( "workflow-appointment.taskTypeManualAppointmentNotification" ) ITaskType taskType )
+    {
+        super( );
+        setTaskType( taskType );
+    }
     private static final String TEMPLATE_MANUAL_APPOINTMENT_NOTIFICATION_HISTORY = "admin/plugins/workflow/modules/appointment/manual_appointment_notification_history.html";
 
     // MESSAGES

@@ -3,7 +3,11 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service.archiver.an
 import java.util.concurrent.ThreadLocalRandom;
 
 import fr.paris.lutece.plugins.appointment.business.form.Form;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow-appointment.randomNumberAnonymizationService" )
 public class RandomNumberAnonymizationService extends AbstractUserAnonymizationService
 {
 	public static final String BEAN_NAME = "workflow-appointment.randomNumberAnonymizationService";

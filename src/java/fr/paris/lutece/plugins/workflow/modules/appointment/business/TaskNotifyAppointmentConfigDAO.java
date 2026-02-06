@@ -36,12 +36,16 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  *
  * TaskNotifyAppointmentConfigDAO
  *
  */
+@ApplicationScoped
+@Named( "workflow-appointment.taskNotifyAppointmentConfigDAO" )
 public class TaskNotifyAppointmentConfigDAO implements ITaskConfigDAO<TaskNotifyAppointmentConfig>
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,ical_notification,create_notif,location,is_sms "

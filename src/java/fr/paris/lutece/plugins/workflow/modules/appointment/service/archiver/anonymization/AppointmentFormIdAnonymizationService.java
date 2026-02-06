@@ -1,7 +1,11 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.service.archiver.anonymization;
 
 import fr.paris.lutece.plugins.appointment.business.form.Form;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow-appointment.appointmentFormIdAnonymizationService" )
 public class AppointmentFormIdAnonymizationService extends AbstractUserAnonymizationService
 {
 	public static final String BEAN_NAME = "workflow-appointment.appointmentFormIdAnonymizationService";

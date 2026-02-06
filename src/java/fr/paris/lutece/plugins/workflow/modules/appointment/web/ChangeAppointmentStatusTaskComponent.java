@@ -37,9 +37,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,6 +50,7 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.state.StateFilter;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -65,6 +67,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * ChangeAppointmentStatusTaskComponent
  */
+@ApplicationScoped
+@Named( "workflow-appointment.changeAppointmentStatusTaskComponent" )
 public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
 {
     // TEMPLATES
@@ -89,8 +93,6 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     private static final String PARAMETER_APPOINTMENT_STATUS = "status";
 
     // SERVICES
-    @Inject
-    @Named( TaskChangeAppointmentStatus.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskChangeAppointmentStatusConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
@@ -98,6 +100,23 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     @Inject
     @Named( StateService.BEAN_SERVICE )
     private IStateService _taskStateService;
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     * @param taskConfigService the task config service
+     */
+    @Inject
+    public ChangeAppointmentStatusTaskComponent(
+            @Named( "workflow-appointment.taskTypeChangeAppointmentStatus" ) ITaskType taskType,
+            @Named( TaskChangeAppointmentStatus.CONFIG_SERVICE_BEAN_NAME ) ITaskConfigService taskConfigService )
+    {
+        super( );
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+        _taskChangeAppointmentStatusConfigService = taskConfigService;
+    }
 
     /**
      * {@inheritDoc}

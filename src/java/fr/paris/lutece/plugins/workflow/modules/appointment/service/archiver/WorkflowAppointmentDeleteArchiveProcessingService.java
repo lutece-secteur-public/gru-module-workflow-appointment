@@ -3,7 +3,11 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service.archiver;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.AbstractArchiveProcessingService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow-appointment.workflowAppointmentDeleteArchiveProcessingService" )
 public class WorkflowAppointmentDeleteArchiveProcessingService extends AbstractArchiveProcessingService
 {
 	public static final String BEAN_NAME = "workflow-appointment.workflowAppointmentDeleteArchiveProcessingService";

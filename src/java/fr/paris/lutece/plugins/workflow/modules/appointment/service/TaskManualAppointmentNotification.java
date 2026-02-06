@@ -36,8 +36,10 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,6 +59,8 @@ import fr.paris.lutece.portal.service.mail.MailService;
 /**
  * Workflow task to manually notify a user of an appointment
  */
+@Dependent
+@Named( "workflow-appointment.taskManualAppointmentNotification" )
 public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppointment<NotifyAppointmentDTO>
 {
     // Messages

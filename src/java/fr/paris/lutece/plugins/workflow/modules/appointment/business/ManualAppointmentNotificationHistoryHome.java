@@ -38,15 +38,16 @@ import java.util.List;
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.WorkflowAppointmentPlugin;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * Home for manual appointment notification history
  */
 public final class ManualAppointmentNotificationHistoryHome
 {
-    private static IManualAppointmentNotificationHistoryDAO _dao = SpringContextService
-            .getBean( "workflow-appointment.manualAppointmentNotificationHistoryDAO" );
+    private static IManualAppointmentNotificationHistoryDAO _dao = CDI.current( )
+            .select( IManualAppointmentNotificationHistoryDAO.class, NamedLiteral.of( "workflow-appointment.manualAppointmentNotificationHistoryDAO" ) ).get( );
     private static Plugin _plugin = PluginService.getPlugin( WorkflowAppointmentPlugin.PLUGIN_NAME );
 
     /**

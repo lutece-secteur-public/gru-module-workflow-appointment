@@ -37,8 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -58,6 +60,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * TaskUpddateAppointment
  */
+@Dependent
+@Named( "workflow-appointment.taskUpdateAppointment" )
 public class TaskUpdateAppointment extends SimpleTask
 {
 

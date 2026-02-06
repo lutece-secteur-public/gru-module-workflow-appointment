@@ -33,58 +33,63 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
-import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 
 /**
- * TaskUpdateAppointmentCancelActionConfig
+ * CDI Producer for TaskConfig beans.
+ * These beans are looked up by TaskFactory using the configBeanName from properties.
  */
-@Dependent
-public class TaskUpdateAppointmentCancelActionConfig extends TaskConfig
+@ApplicationScoped
+public class TaskConfigProducer
 {
-    private int _nIdActionCancel;
-    private int _nIdActionReport;
-
     /**
-     * Get the id of the workflow action to cancel the appointment
-     * 
-     * @return The id of the workflow action to cancel the appointment
+     * Produces TaskNotifyAppointmentConfig
+     * @return a new TaskNotifyAppointmentConfig instance
      */
-    public int getIdActionCancel( )
+    @Produces
+    @Dependent
+    @Named( "workflow-appointment.taskNotifyAppointmentConfig" )
+    public TaskNotifyAppointmentConfig produceTaskNotifyAppointmentConfig( )
     {
-        return _nIdActionCancel;
+        return new TaskNotifyAppointmentConfig( );
     }
 
     /**
-     * Set the id of the workflow action to cancel the appointment
-     * 
-     * @param nIdActionCancel
-     *            The id of the workflow action to cancel the appointment
+     * Produces TaskNotifyAdminAppointmentConfig
+     * @return a new TaskNotifyAdminAppointmentConfig instance
      */
-    public void setIdActionCancel( int nIdActionCancel )
+    @Produces
+    @Dependent
+    @Named( "workflow-appointment.taskNotifyAdminAppointmentConfig" )
+    public TaskNotifyAdminAppointmentConfig produceTaskNotifyAdminAppointmentConfig( )
     {
-        this._nIdActionCancel = nIdActionCancel;
+        return new TaskNotifyAdminAppointmentConfig( );
     }
 
     /**
-     * Get the id of the workflow action to report the appointment
-     * 
-     * @return The id of the workflow action to report the appointment
+     * Produces TaskChangeAppointmentStatusConfig
+     * @return a new TaskChangeAppointmentStatusConfig instance
      */
-    public int getIdActionReport( )
+    @Produces
+    @Dependent
+    @Named( "workflow-appointment.taskChangeAppointmentStatusConfig" )
+    public TaskChangeAppointmentStatusConfig produceTaskChangeAppointmentStatusConfig( )
     {
-        return _nIdActionReport;
+        return new TaskChangeAppointmentStatusConfig( );
     }
 
     /**
-     * Set the id of the workflow action to report the appointment
-     * 
-     * @param nIdActionReport
-     *            The id of the workflow action to report the appointment
+     * Produces TaskUpdateAppointmentCancelActionConfig
+     * @return a new TaskUpdateAppointmentCancelActionConfig instance
      */
-    public void setIdActionReport( int nIdActionReport )
+    @Produces
+    @Dependent
+    @Named( "workflow-appointment.taskUpdateAppointmentCancelActionConfig" )
+    public TaskUpdateAppointmentCancelActionConfig produceTaskUpdateAppointmentCancelActionConfig( )
     {
-        this._nIdActionReport = nIdActionReport;
+        return new TaskUpdateAppointmentCancelActionConfig( );
     }
 }

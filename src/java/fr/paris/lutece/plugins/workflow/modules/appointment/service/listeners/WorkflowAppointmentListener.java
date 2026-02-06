@@ -33,47 +33,30 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.service.listeners;
 
-import fr.paris.lutece.plugins.appointment.service.listeners.IAppointmentListener;
+import fr.paris.lutece.plugins.appointment.service.event.AppointmentEvent;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
+import fr.paris.lutece.portal.service.event.EventAction;
+import fr.paris.lutece.portal.service.event.Type;
 
-import java.util.List;
-import java.util.Locale;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.ObservesAsync;
 
 /**
- * Appointment listener for module workflow appointment
+ * CDI event listener for appointment removal in module workflow appointment.
  */
-public class WorkflowAppointmentListener implements IAppointmentListener
+@ApplicationScoped
+public class WorkflowAppointmentListener
 {
     /**
-     * {@inheritDoc}
+     * Handle appointment removal event by cleaning up workflow history data.
+     *
+     * @param event
+     *            The appointment removal event
      */
-    @Override
-    public void notifyAppointmentRemoval( int nIdAppointment )
+    public void onAppointmentRemoved( @ObservesAsync @Type( EventAction.REMOVE ) AppointmentEvent event )
     {
-        ManualAppointmentNotificationHistoryHome.deleteByIdAppointment( nIdAppointment );
-        UpdateAdminAppointmentHistoryHome.deleteByIdAppointment( nIdAppointment );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String appointmentDateChanged( int nIdAppointment, List<Integer> listIdSlot, Locale locale )
-    {
-        // Do nothing
-        return null;
-    }
-
-    @Override
-    public void notifyAppointmentCreated( int nIdAppointment )
-    {
-        // Do nothing
-    }
-
-    @Override
-    public void notifyAppointmentUpdated( int nIdAppointment )
-    {
-        // Do nothing
+        ManualAppointmentNotificationHistoryHome.deleteByIdAppointment( event.getIdAppointment( ) );
+        UpdateAdminAppointmentHistoryHome.deleteByIdAppointment( event.getIdAppointment( ) );
     }
 }

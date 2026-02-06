@@ -35,9 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,6 +54,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * Workflow task to change the status of an appointment
  */
+@Dependent
+@Named( "workflow-appointment.taskChangeAppointmentStatus" )
 public class TaskChangeAppointmentStatus extends SimpleTask
 {
     /**

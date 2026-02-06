@@ -33,9 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
+import jakarta.enterprise.context.Dependent;
+
 /**
  * TaskNotifyAppointmentConfig
  */
+@Dependent
 public class TaskNotifyAppointmentConfig extends NotifyAppointmentDTO
 {
     private int _nIdActionCancel;

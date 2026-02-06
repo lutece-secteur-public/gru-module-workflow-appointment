@@ -35,9 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.business.appointment.AppointmentHome;
@@ -52,6 +53,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * TaskUpdateAppointmentCancelAction
  */
+@Dependent
+@Named( "workflow-appointment.taskUpdateAppointmentCancelReportAction" )
 public class TaskUpdateAppointmentCancelReportAction extends SimpleTask
 {
     /**

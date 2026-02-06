@@ -35,11 +35,13 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAdminAppointment;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -50,18 +52,35 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  * NotifyAppointmentTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow-appointment.notifyAdminAppointmentTaskComponent" )
 public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
 {
     // MESSAGES
     private static final String MESSAGE_EMAIL_SENT_TO_ADMIN_USER = "module.workflow.appointment.message.emailSentToAdminUser";
 
     // SERVICES
-    @Inject
-    @Named( TaskNotifyAdminAppointment.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskNotifyAdminAppointmentConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     * @param taskConfigService the task config service
+     */
+    @Inject
+    public NotifyAdminAppointmentTaskComponent(
+            @Named( "workflow-appointment.taskTypeNotifyAdminAppointment" ) ITaskType taskType,
+            @Named( TaskNotifyAdminAppointment.CONFIG_SERVICE_BEAN_NAME ) ITaskConfigService taskConfigService )
+    {
+        super( );
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+        _taskNotifyAdminAppointmentConfigService = taskConfigService;
+    }
 
     /**
      * {@inheritDoc}

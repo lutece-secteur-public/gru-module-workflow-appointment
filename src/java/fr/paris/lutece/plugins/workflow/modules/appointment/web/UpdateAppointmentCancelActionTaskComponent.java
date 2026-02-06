@@ -38,9 +38,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,6 +50,7 @@ import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskUpdateAp
 import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -64,6 +66,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * NotifyAppointmentTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow-appointment.updateAppointmentCancelActionTaskComponent" )
 public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskComponent
 {
     // TEMPLATES
@@ -84,12 +88,27 @@ public class UpdateAppointmentCancelActionTaskComponent extends NoFormTaskCompon
     private static final String PARAMETER_ID_ACTION_REPORT = "id_action_report";
 
     // SERVICES
-    @Inject
-    @Named( TaskUpdateAppointmentCancelReportAction.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskUpdateAppointmentCancelActionConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     * @param taskConfigService the task config service
+     */
+    @Inject
+    public UpdateAppointmentCancelActionTaskComponent(
+            @Named( "workflow-appointment.taskTypeUpdateAppointmentCancelAction" ) ITaskType taskType,
+            @Named( TaskUpdateAppointmentCancelReportAction.CONFIG_SERVICE_BEAN_NAME ) ITaskConfigService taskConfigService )
+    {
+        super( );
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+        _taskUpdateAppointmentCancelActionConfigService = taskConfigService;
+    }
 
     /**
      * {@inheritDoc}

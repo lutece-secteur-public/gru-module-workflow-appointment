@@ -38,12 +38,14 @@ import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.util.StringTokenizer;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.portal.service.mail.MailService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -80,13 +82,10 @@ import net.fortuna.ical4j.model.property.XProperty;
 /**
  * Service to send iCal appointments by email
  */
+@Dependent
+@Named( "workflow-appointment.iCalService" )
 public class ICalService
 {
-    /**
-     * The name of the bean of this service
-     */
-    public static final String BEAN_NAME = "workflow-appointment.iCalService";
-
     // properties
     private static final String PROPERTY_MAIL_LIST_SEPARATOR = "mail.list.separator";
     private static final String PROPERTY_ICAL_PRODID = "workflow-appointment.ical.prodid";
@@ -99,16 +98,6 @@ public class ICalService
     // messages
     private static final String MSG_TIMEZONE_FILE_NOT_FOUND = "iCal default Time zone file not found";
     private static final String MSG_TIMEZONE_FILE_INCORRECT = "iCal default Time zone file format problem";
-
-    /**
-     * Get an instance of the service
-     * 
-     * @return An instance of the bean of this service
-     */
-    public static ICalService getService( )
-    {
-        return SpringContextService.getBean( BEAN_NAME );
-    }
 
     /**
      * Send an appointment to a user by email.
