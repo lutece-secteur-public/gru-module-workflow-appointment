@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset workflow-appointment:create_db_workflow_appointment.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS workflow_task_notify_appointment_cf;
 DROP TABLE IF EXISTS workflow_task_change_appointment_status_cf;
 DROP TABLE IF EXISTS workflow_task_manual_app_notify;
