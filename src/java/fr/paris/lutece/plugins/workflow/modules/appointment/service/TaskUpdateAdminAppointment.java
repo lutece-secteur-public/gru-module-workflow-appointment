@@ -35,8 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,6 +53,8 @@ import fr.paris.lutece.portal.business.user.AdminUserHome;
 /**
  * Workflow task to update the admin user associated to an appointment
  */
+@Dependent
+@Named( "workflow-appointment.taskUpdateAdminAppointment" )
 public class TaskUpdateAdminAppointment extends SimpleTask
 {
     // TEMPLATES

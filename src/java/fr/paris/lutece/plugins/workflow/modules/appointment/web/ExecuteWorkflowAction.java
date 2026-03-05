@@ -36,8 +36,11 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 import java.util.Calendar;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,6 +55,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.util.CryptoService;
 import fr.paris.lutece.util.url.UrlItem;
@@ -59,6 +63,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * Do execute a workflow action
  */
+@ApplicationScoped
+@Named
 public class ExecuteWorkflowAction
 {
     // Parameters
@@ -92,7 +98,19 @@ public class ExecuteWorkflowAction
      * @throws SiteMessageException
      *             If a site message needs to be displayed
      */
-    public String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
+    public String doExecuteWorkflowAction( HttpServletRequest request, HttpServletResponse response )
+    {
+        try
+        {
+            return doExecuteWorkflowActionInternal( request, response );
+        }
+        catch( SiteMessageException e )
+        {
+            return AppPathService.getSiteMessageUrl( request );
+        }
+    }
+
+    private String doExecuteWorkflowActionInternal( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
     {
         String strIdAction = request.getParameter( PARAMETER_ID_ACTION );
         String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );

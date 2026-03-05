@@ -36,9 +36,10 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.appointment.business.user.User;
@@ -56,6 +57,8 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 /**
  * Workflow task to notify a user of an appointment
  */
+@Dependent
+@Named( "workflow-appointment.taskNotifyAppointment" )
 public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAppointmentConfig>
 {
     /**
@@ -89,7 +92,7 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         TaskNotifyAppointmentConfig config = _taskNotifyAppointmentConfigService.findByPrimaryKey( this.getId( ) );
         if ( config == null )
         {
-            AppLogService.error( "Error: No config for Task " + this.getId( ) );
+            AppLogService.error( "Error: No config for Task {}", this.getId( ) );
             return;
         }
         AppointmentDTO appointment = AppointmentService.buildAppointmentDTOFromIdAppointment( resourceHistory.getIdResource( ) );

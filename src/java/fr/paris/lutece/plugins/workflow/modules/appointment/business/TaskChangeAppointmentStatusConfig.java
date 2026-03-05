@@ -35,11 +35,14 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
+import jakarta.enterprise.context.Dependent;
+
 /**
  *
  * TaskChangeAppointmentStatusConfig
  *
  */
+@Dependent
 public class TaskChangeAppointmentStatusConfig extends TaskConfig
 {
     private int _nAppointmentStatus;

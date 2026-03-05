@@ -24,12 +24,20 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.archiver.anonymization.IAnonymizationService;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.AbstractArchiveProcessingService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "workflow-appointment.workflowAppointmentAnonymizeArchiveProcessingService" )
 public class WorkflowAppointmentAnonymizeArchiveProcessingService extends AbstractArchiveProcessingService
 {
 	
 	public static final String BEAN_NAME = "workflow-appointment.workflowAppointmentAnonymizeArchiveProcessingService";
+
+	@Inject
+	private Instance<IAnonymizationService> _anonymizationServices;
 
 	@Override
 	public void archiveResource(ResourceWorkflow resourceWorkflow)
@@ -62,10 +70,9 @@ public class WorkflowAppointmentAnonymizeArchiveProcessingService extends Abstra
 	
 	private IAnonymizationService getAnonymizationServiceByPattern(String pattern)
 	{
-		List<IAnonymizationService> anonymizationServiceList = SpringContextService.getBeansOfType(IAnonymizationService.class);
-		for(IAnonymizationService anonymizationService : anonymizationServiceList)
+		for ( IAnonymizationService anonymizationService : _anonymizationServices )
 		{
-			if (StringUtils.equals(pattern, anonymizationService.getPattern()))
+			if ( StringUtils.equals( pattern, anonymizationService.getPattern( ) ) )
 			{
 				return anonymizationService;
 			}

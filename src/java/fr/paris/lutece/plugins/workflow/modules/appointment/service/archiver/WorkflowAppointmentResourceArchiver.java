@@ -1,13 +1,16 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.service.archiver;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.IArchiveProcessingService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 
+@ApplicationScoped
+@Named( "workflow-appointment.workflowAppointmentResourceArchiver" )
 public class WorkflowAppointmentResourceArchiver implements IResourceArchiver {
 	
 	public static final String BEAN_NAME = "workflow-appointment.workflowAppointmentResourceArchiver";

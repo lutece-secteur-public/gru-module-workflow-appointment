@@ -39,7 +39,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,6 +51,7 @@ import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.UpdateAdminAppointmentHistoryHome;
 import fr.paris.lutece.plugins.workflow.web.task.NoConfigTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
@@ -61,10 +65,24 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * UpdateAdminAppointmentTaskComponent
  */
+@ApplicationScoped
 public class UpdateAdminAppointmentTaskComponent extends NoConfigTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_UPDATE_ADMIN_APPOINTMENT = "admin/plugins/workflow/modules/appointment/task_update_admin_appointment_config.html";
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     */
+    @Inject
+    public UpdateAdminAppointmentTaskComponent(
+            @Named( "workflow-appointment.taskTypeUpdateAdminAppointment" ) ITaskType taskType )
+    {
+        super( );
+        setTaskType( taskType );
+    }
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "portal.util.message.mandatoryFields";

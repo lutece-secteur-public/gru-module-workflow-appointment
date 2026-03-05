@@ -41,14 +41,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
-import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
-import fr.paris.lutece.plugins.appointment.service.UserService;
 import fr.paris.lutece.plugins.appointment.service.entrytype.EntryTypePhone;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
@@ -91,6 +90,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     private static final String TEMPLATE_TASK_NOTIFY_SMS = "admin/plugins/workflow/modules/appointment/task_notify_appointment_sms.html";
     private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_RECAP = "admin/plugins/workflow/modules/appointment/task_notify_appointment_recap.html";
 
+    @Inject
     private ICalService _iCalService;
 
     /**
@@ -136,7 +136,7 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
                 model ).getHtml( );
         if ( notifyAppointmentDTO.getSendICalNotif( ) )
         {
-            getICalService( ).sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject, strContent, notifyAppointmentDTO.getLocation( ),
+            _iCalService.sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject, strContent, notifyAppointmentDTO.getLocation( ),
                     notifyAppointmentDTO.getSenderName( ), notifyAppointmentDTO.getSenderEmail( ), appointment, notifyAppointmentDTO.getCreateNotif( ) );
         }
         else
@@ -229,20 +229,6 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
             strPhoneNumber = strPhoneNumber + AppPropertiesService.getProperty( PROPERTY_SMS_SERVER );
         }
         return strPhoneNumber;
-    }
-
-    /**
-     * Get the ICal service
-     * 
-     * @return The ICal service
-     */
-    private ICalService getICalService( )
-    {
-        if ( _iCalService == null )
-        {
-            _iCalService = ICalService.getService( );
-        }
-        return _iCalService;
     }
 
     /**

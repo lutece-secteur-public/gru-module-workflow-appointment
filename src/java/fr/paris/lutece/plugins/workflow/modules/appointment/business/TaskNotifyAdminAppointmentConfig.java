@@ -33,11 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
+import jakarta.enterprise.context.Dependent;
+
 /**
  *
  * TaskNotifyAppointmentConfig
  *
  */
+@Dependent
 public class TaskNotifyAdminAppointmentConfig extends TaskNotifyAppointmentConfig
 {
     private int _nIdAdminUser;

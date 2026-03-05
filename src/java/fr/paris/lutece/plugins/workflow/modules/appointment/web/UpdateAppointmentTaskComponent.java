@@ -39,7 +39,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -55,6 +58,7 @@ import fr.paris.lutece.plugins.appointment.web.dto.AppointmentFormDTO;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.workflow.web.task.NoConfigTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -70,10 +74,24 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * NotifyAppointmentTaskComponent
  *
  */
+@ApplicationScoped
 public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_FORM_BO = "admin/plugins/workflow/modules/appointment/task_update_appointment.html";
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     */
+    @Inject
+    public UpdateAppointmentTaskComponent(
+            @Named( "workflow-appointment.taskTypeUpdateAppointment" ) ITaskType taskType )
+    {
+        super( );
+        setTaskType( taskType );
+    }
     private static final String TEMPLATE_TASK_FORM_FO = "skin/plugins/workflow/modules/appointment/task_update_appointment.html";
 
     // MESSAGES

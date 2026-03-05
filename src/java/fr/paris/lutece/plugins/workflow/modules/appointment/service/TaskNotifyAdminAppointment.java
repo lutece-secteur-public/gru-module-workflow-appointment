@@ -36,9 +36,10 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -60,6 +61,8 @@ import fr.paris.lutece.portal.service.util.AppPathService;
  * The admin user is the admin user specified in the configuration of the task, or the admin user associated with the appointment if no admin user is associated
  * to the configuration.
  */
+@Dependent
+@Named( "workflow-appointment.taskNotifyAdminAppointment" )
 public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<TaskNotifyAdminAppointmentConfig>
 {
     /**

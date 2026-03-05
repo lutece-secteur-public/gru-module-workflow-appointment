@@ -35,11 +35,13 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.modules.appointment.service.TaskNotifyAppointment;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -50,17 +52,34 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  * NotifyAppointmentTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow-appointment.notifyAppointmentTaskComponent" )
 public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
 {
     private static final String MESSAGE_EMAIL_SENT_TO_USER = "module.workflow.appointment.message.emailSentToUser";
 
     // SERVICES
-    @Inject
-    @Named( TaskNotifyAppointment.CONFIG_SERVICE_BEAN_NAME )
     private ITaskConfigService _taskNotifyAppointmentConfigService;
     @Inject
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
+
+    /**
+     * Constructor
+     *
+     * @param taskType the task type
+     * @param taskConfigService the task config service
+     */
+    @Inject
+    public NotifyAppointmentTaskComponent(
+            @Named( "workflow-appointment.taskTypeNotifyAppointment" ) ITaskType taskType,
+            @Named( TaskNotifyAppointment.CONFIG_SERVICE_BEAN_NAME ) ITaskConfigService taskConfigService )
+    {
+        super( );
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+        _taskNotifyAppointmentConfigService = taskConfigService;
+    }
 
     /**
      * {@inheritDoc}

@@ -34,7 +34,10 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -42,6 +45,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * TaskReportAppointment
  */
+@Dependent
+@Named( "workflow-appointment.taskReportAppointment" )
 public class TaskReportAppointment extends SimpleTask
 {
 

@@ -38,10 +38,14 @@ import java.util.List;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * DAO to manage history of update admin appointment tasks
  */
+@ApplicationScoped
+@Named( "workflow-appointment.manualUpdateAdminAppointmentHistoryDAO" )
 public class UpdateAdminAppointmentHistoryDAO implements IUpdateAdminAppointmentHistoryDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_appointment,id_admin_user FROM workflow_task_update_admin_appointment WHERE id_update=?";
