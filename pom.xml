@@ -3,7 +3,7 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>8.0.0-SNAPSHOT</version>
+        <version>8.0.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-workflow</artifactId>
-            <version>[7.0.0-SNAPSHOT,)</version>
+            <version>[7.0.0,)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
@@ -54,7 +54,6 @@
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -67,15 +66,13 @@
 
     <properties>
         <componentName>appointment</componentName>
-        <jiraProjectName>WFAPPOINT</jiraProjectName>
-        <jiraComponentId>12294</jiraComponentId>
     </properties>
     
     <scm>
         <connection>scm:git:https://github.com/lutece-secteur-public/gru-module-workflow-appointment.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-module-workflow-appointment.git</developerConnection>
         <url>https://github.com/lutece-secteur-public/gru-module-workflow-appointment.git</url>
-      <tag>gru-module-workflow-appointment-1.1.0</tag>
+      <tag>HEAD</tag>
   </scm>
     
 </project>
