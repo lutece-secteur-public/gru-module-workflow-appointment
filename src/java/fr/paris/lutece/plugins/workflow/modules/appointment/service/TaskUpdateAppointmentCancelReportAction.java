@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * TaskUpdateAppointmentCancelAction
@@ -76,12 +77,35 @@ public class TaskUpdateAppointmentCancelReportAction extends SimpleTask
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-        TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId( ) );
-        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
-        appointment.setIdActionCancelled( config.getIdActionCancel( ) );
-        appointment.setIdActionReported( config.getIdActionReport( ) );
 
-        AppointmentHome.update( appointment );
+        if ( resourceHistory == null )
+        {
+            AppLogService.error( "WorkflowService - Error when executing task ID " + this.getId( ) + " : ResourceHistory is null for id history " + nIdResourceHistory );
+            return;
+        }
+
+        Appointment appointment = AppointmentService.findAppointmentById( resourceHistory.getIdResource( ) );
+
+        if ( appointment != null )
+        {
+            TaskUpdateAppointmentCancelActionConfig config = _taskUpdateAppointmentCancelActionConfigService.findByPrimaryKey( this.getId( ) );
+
+            if ( config != null )
+            {
+                appointment.setIdActionCancelled( config.getIdActionCancel( ) );
+                appointment.setIdActionReported( config.getIdActionReport( ) );
+
+                AppointmentHome.update( appointment );
+            }
+            else
+            {
+                AppLogService.error( "WorkflowService - Error when executing task ID " + this.getId( ) + " : TaskUpdateAppointmentCancelActionConfig is null" );
+            }
+        }
+        else
+        {
+            AppLogService.error( "WorkflowService - Error when executing task ID " + this.getId( ) + " : resource Id " + resourceHistory.getIdResource( ) + " of type appointment is null" );
+        }
     }
 
     /**
