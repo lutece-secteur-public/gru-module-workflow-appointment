@@ -75,19 +75,4 @@ CREATE TABLE workflow_task_update_admin_appointment(
   id_admin_user INT DEFAULT NULL,
   PRIMARY KEY  (id_update)
 );
-CREATE TABLE workflow_task_notify_appointment_crm(
-  
-  id_task INT NOT NULL,
-  id_demand_type VARCHAR(255) DEFAULT NULL,
-  data VARCHAR(255) DEFAULT NULL,
-  status_text VARCHAR(255) DEFAULT NULL,
-  id_status_crm VARCHAR(255) DEFAULT NULL,
-  object  VARCHAR(255) DEFAULT NULL,
-  message  VARCHAR(255) DEFAULT NULL,
-  sender  VARCHAR(255) DEFAULT NULL,
-  
-  PRIMARY KEY  (id_task)
-
-);
-
 CREATE INDEX idx_wf_task_update_admin_app ON workflow_task_update_admin_appointment (id_appointment);
