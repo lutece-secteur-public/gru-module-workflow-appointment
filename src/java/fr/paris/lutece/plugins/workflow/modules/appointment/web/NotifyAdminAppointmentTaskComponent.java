@@ -47,7 +47,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  *
- * NotifyAppointmentTaskComponent
+ * Task component used to notify an admin
  *
  */
 public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
@@ -63,13 +63,18 @@ public class NotifyAdminAppointmentTaskComponent extends AbstractNotifyAppointme
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
 
+    // Task's Title
+    private static final String PROPERTY_TASK_TITLE = "module.workflow.appointment.task_notify_admin_appointment_config.title";
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        return getDisplayConfigForm( request, locale, task, _taskNotifyAdminAppointmentConfigService, true );
+        // Get the title for this task
+        String taskTitle = I18nService.getLocalizedString( PROPERTY_TASK_TITLE, locale );
+        return getDisplayConfigForm( request, locale, task, _taskNotifyAdminAppointmentConfigService, true, taskTitle );
     }
 
     /**

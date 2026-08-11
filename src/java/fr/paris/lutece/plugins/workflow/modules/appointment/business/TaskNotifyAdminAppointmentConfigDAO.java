@@ -44,12 +44,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskNotifyAdminAppointmentConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_admin_user,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification,create_notif,location FROM workflow_task_notify_admin_appointment_cf WHERE id_task=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,id_appointment_form_selected,id_admin_user,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification,create_notif,location FROM workflow_task_notify_admin_appointment_cf WHERE id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_notify_admin_appointment_cf( "
-            + "id_task,id_admin_user,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification, create_notif, location) "
-            + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            + "id_task,id_appointment_form_selected,id_admin_user,sender_name,sender_email,subject,message,recipients_cc,recipients_bcc,id_action_cancel,id_action_validate,ical_notification, create_notif, location) "
+            + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_admin_appointment_cf "
-            + " SET id_admin_user = ?, sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, id_action_validate = ?, ical_notification = ?, create_notif = ?, location = ? WHERE id_task = ? ";
+            + " SET id_appointment_form_selected = ?, id_admin_user = ?, sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, id_action_validate = ?, ical_notification = ?, create_notif = ?, location = ? WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notify_admin_appointment_cf WHERE id_task = ? ";
 
     /**
@@ -63,6 +63,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
             int nIndex = 1;
 
             daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setInt( nIndex++, config.getIdAppointmentForm( ) );
             daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
             daoUtil.setString( nIndex++, config.getSenderName( ) );
             daoUtil.setString( nIndex++, config.getSenderEmail( ) );
@@ -89,6 +90,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowAppointmentPlugin.getPlugin( ) ) )
         {
             int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdAppointmentForm( ) );
             daoUtil.setInt( nIndex++, config.getIdAdminUser( ) );
             daoUtil.setString( nIndex++, config.getSenderName( ) );
             daoUtil.setString( nIndex++, config.getSenderEmail( ) );
@@ -124,6 +126,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
                 int nIndex = 1;
                 config = new TaskNotifyAdminAppointmentConfig( );
                 config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setIdAppointmentForm( daoUtil.getInt( nIndex++ ) );
                 config.setIdAdminUser( daoUtil.getInt( nIndex++ ) );
                 config.setSenderName( daoUtil.getString( nIndex++ ) );
                 config.setSenderEmail( daoUtil.getString( nIndex++ ) );

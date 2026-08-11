@@ -45,6 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.appointment.service.FormService;
+import fr.paris.lutece.plugins.referencelist.business.ReferenceItem;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAdminAppointmentConfig;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.TaskNotifyAppointmentConfig;
@@ -67,6 +69,7 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * Abstract task component to notify a user of an appointment
@@ -85,6 +88,9 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     private static final String MARK_LIST_ADMIN_USERS = "list_admin_users";
     private static final String MARK_DEFAULT_SENDER_NAME = "default_sender_name";
     private static final String MARK_LIST_MARKERS = "list_markers";
+    private static final String MARK_TASK_TITLE = "task_title";
+    private static final String MARK_LIST_APPOINTMENT_FORMS = "list_appointment_forms";
+    private static final String MARK_ID_SELECTED_APPOINTMENT_FORM = "id_selected_appointment_form";
 
     // PARAMETERS
     private static final String PARAMETER_SUBJECT = "subject";
@@ -100,9 +106,19 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
     private static final String PARAMETER_SEND_ICAL_NOTIF = "send_ical_notif";
     private static final String PARAMETER_ID_ACTION_CANCEL = "id_action_cancel";
     private static final String PARAMETER_ID_ACTION_VALIDATE = "id_action_validate";
+    private static final String PARAMETER_ID_TASK = "id_task";
+    private static final String PARAMETER_SELECT_APPOINTMENT_FORMS = "id_list_appointment_forms";
+    private static final String PARAMETER_APPLY_APPOINTMENT_FORM_SELECTION = "apply_appointment_form_selection";
+    private static final String PARAMETER_SELECTED_APPOINTMENT_FORM = "selected_appointment_form";
+
+    // ACTIONS
+    private static final String ACTION_APPLY_APPOINTMENT_FORM_SELECTION = "applyAppointmentFormSelection";
 
     // TEMPLATES
     private static final String TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG = "admin/plugins/workflow/modules/appointment/task_notify_appointment_config.html";
+
+    // JSPs
+    private static final String JSP_MODIFY_TASK = "jsp/admin/plugins/workflow/ModifyTask.jsp";
 
     // FIELDS
     private static final String FIELD_SUBJECT = "module.workflow.appointment.task_notify_appointment_config.label_subject";
@@ -132,11 +148,16 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
      *            The task config service to use
      * @param bNotifyAdmin
      *            True to notify an admin user, false to notify the user of the appointment
+     * @param taskConfigTitle
+     *            Title displayed on the configuration form's page
      * @return The HTML code to display
      */
-    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task, ITaskConfigService taskConfigService, boolean bNotifyAdmin )
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task, ITaskConfigService taskConfigService, boolean bNotifyAdmin, String taskConfigTitle )
     {
         TaskNotifyAppointmentConfig config = taskConfigService.findByPrimaryKey( task.getId( ) );
+
+        // Get the selected Appointment Form's ID
+        int idSelectedForm = getSelectedAppointmentFormId( request, config );
 
         ActionFilter filter = new ActionFilter( );
         filter.setAutomaticReflexiveAction( false );
@@ -193,7 +214,12 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, locale );
         model.put( MARK_LIST_ACTIONS, refListActions );
-        model.put( MARK_LIST_MARKERS, AppointmentNotificationMarkers.getMarkerDescriptions( bNotifyAdmin ) );
+        model.put( MARK_LIST_MARKERS, AppointmentNotificationMarkers.getMarkerDescriptions( idSelectedForm, bNotifyAdmin ) );
+        model.put( MARK_ID_SELECTED_APPOINTMENT_FORM, idSelectedForm );
+        // Set the custom title to display in this task's config
+        model.put( MARK_TASK_TITLE, taskConfigTitle );
+        // Set the list of appointment forms available, to display their specific InfoMarkers (depends on their entries)
+        model.put( MARK_LIST_APPOINTMENT_FORMS, getDisplayedFormList( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_NOTIFY_APPOINTMENT_CONFIG, locale, model );
 
@@ -217,6 +243,16 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
      */
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task, ITaskConfigService taskConfigService, boolean bNotifyAdmin )
     {
+        String paramActionAppointmentFormSelection = request.getParameter( PARAMETER_APPLY_APPOINTMENT_FORM_SELECTION );
+        String strSelectedAppointmentForm = request.getParameter( PARAMETER_SELECT_APPOINTMENT_FORMS );
+        // If the user clicks on the refresh button when selecting an Appointment Form, then reload the current page with that form's specific Entry Markers
+        if( StringUtils.equals( paramActionAppointmentFormSelection, ACTION_APPLY_APPOINTMENT_FORM_SELECTION ) &&
+                StringUtils.isNotBlank( strSelectedAppointmentForm ) )
+        {
+            // Reload the page with the new data (selected Appointment Form)
+            return getUrlToTaskModificationPage( request, task.getId( ), strSelectedAppointmentForm );
+        }
+
         String strSenderName = request.getParameter( PARAMETER_SENDER_NAME );
         String strSenderEmail = request.getParameter( PARAMETER_SENDER_EMAIL );
         String strSubject = request.getParameter( PARAMETER_SUBJECT );
@@ -225,6 +261,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         String strRecipientsBcc = request.getParameter( PARAMETER_RECIPIENTS_BCC );
         boolean bSendICalNotif = Boolean.parseBoolean( request.getParameter( PARAMETER_SEND_ICAL_NOTIF ) );
         String strLocation = request.getParameter( PARAMETER_LOCATION );
+
         String strError = StringUtils.EMPTY;
 
         if ( StringUtils.isBlank( strSenderName ) )
@@ -287,6 +324,7 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         config.setRecipientsBcc( StringUtils.isNotEmpty( strRecipientsBcc ) ? strRecipientsBcc : StringUtils.EMPTY );
         config.setSendICalNotif( bSendICalNotif );
         config.setLocation( strLocation );
+        config.setIdAppointmentForm( StringUtils.isNumeric( strSelectedAppointmentForm ) ? Integer.parseInt( strSelectedAppointmentForm ) : 0 );
 
         if ( bSendICalNotif )
         {
@@ -351,5 +389,72 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
         }
 
         return null;
+    }
+
+    /**
+     * Get the ID of the Appointment Form selected in the Task's configuration parameters
+     * 
+     * @param request
+     *            The HTTTP request
+     * @param config
+     *            The config of the current Task. Can be null if the config has not been created yet
+     * @return the ID of the Appointment Form selected
+     */
+    private int getSelectedAppointmentFormId( HttpServletRequest request, TaskNotifyAppointmentConfig config )
+    {
+        // When the page is reloaded after a form has been selected
+        String selectedAppointmentForm = request.getParameter( PARAMETER_SELECTED_APPOINTMENT_FORM );
+        if ( StringUtils.isNumeric( selectedAppointmentForm ) )
+        {
+            return Integer.parseInt( selectedAppointmentForm );
+        }
+        if ( config != null )
+        {
+            return config.getIdAppointmentForm( );
+        }
+        return 0;
+    }
+
+    /**
+     * Build and return the URL to modify a task (reloads the page)
+     * 
+     * @param request
+     *            The HTTP request
+     * @param idTask
+     *            The ID of the task whose configuration is getting modified
+     * @param idForm
+     *            ID of the form selected by the user
+     * @return The URL of this config's modification page
+     */
+    private String getUrlToTaskModificationPage( HttpServletRequest request, int idTask, String appointmentForm )
+    {
+        StringBuilder redirectUrl = new StringBuilder( AppPathService.getBaseUrl( request ) );
+        redirectUrl.append( JSP_MODIFY_TASK );
+
+        UrlItem url = new UrlItem( redirectUrl.toString( ) );
+        url.addParameter( PARAMETER_ID_TASK, idTask );
+        url.addParameter( PARAMETER_SELECTED_APPOINTMENT_FORM, appointmentForm );
+
+        return url.getUrl( );
+    }
+
+    /**
+     * Get a ReferenceList containing all the available Appointment Forms
+     * 
+     * @return the ReferenceList of all the Appointment Forms
+     */
+    private ReferenceList getDisplayedFormList( )
+    {
+        // Get a ReferenceList of all available Appointment Forms
+        ReferenceList refListForms = FormService.findAllInReferenceList( );
+
+        // Add a ReferenceItem to represent an empty choice / no value
+        ReferenceItem emptyReferenceItem = new ReferenceItem ( );
+        emptyReferenceItem.setCode( StringUtils.EMPTY );
+        emptyReferenceItem.setName( StringUtils.EMPTY );
+
+        refListForms.add( 0, emptyReferenceItem );
+
+        return refListForms;
     }
 }

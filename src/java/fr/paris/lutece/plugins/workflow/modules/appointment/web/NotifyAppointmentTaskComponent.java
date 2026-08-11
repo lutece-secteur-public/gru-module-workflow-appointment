@@ -47,11 +47,12 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  *
- * NotifyAppointmentTaskComponent
+ * Task component used to notify a user
  *
  */
 public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTaskComponent
 {
+    // MESSAGES
     private static final String MESSAGE_EMAIL_SENT_TO_USER = "module.workflow.appointment.message.emailSentToUser";
 
     // SERVICES
@@ -62,13 +63,18 @@ public class NotifyAppointmentTaskComponent extends AbstractNotifyAppointmentTas
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
 
+    // Task's Title
+    private static final String PROPERTY_TASK_TITLE = "module.workflow.appointment.task_notify_appointment_config.title";
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        return getDisplayConfigForm( request, locale, task, _taskNotifyAppointmentConfigService, false );
+        // Get the title for this task
+        String taskTitle = I18nService.getLocalizedString( PROPERTY_TASK_TITLE, locale );
+        return getDisplayConfigForm( request, locale, task, _taskNotifyAppointmentConfigService, false, taskTitle );
     }
 
     /**
