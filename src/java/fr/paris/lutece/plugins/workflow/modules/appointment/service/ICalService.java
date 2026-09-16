@@ -34,8 +34,10 @@
 package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 import jakarta.enterprise.context.Dependent;
@@ -55,9 +57,7 @@ import java.io.IOException;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.ParameterList;
-import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
@@ -145,35 +145,33 @@ public class ICalService
         }
 
         TimeZoneRegistry registry = builder.getRegistry( );
-        TimeZone timeZone = registry.getTimeZone( AppPropertiesService.getProperty( PROPERTY_DEFAULT_TIME_ZONE ) );
+        ZoneId zoneId = registry.getZoneId( AppPropertiesService.getProperty( PROPERTY_DEFAULT_TIME_ZONE ) );
 
-        DateTime beginningDateTime = new DateTime( appointment.getStartingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
-        DateTime endingDateTime = new DateTime( appointment.getEndingDateTime( ).atZone( ZoneId.systemDefault( ) ).toInstant( ).toEpochMilli( ) );
-
-        DtStart dtStart = new DtStart( beginningDateTime );
-        dtStart.setTimeZone( timeZone );
-
-        DtEnd dtEnd = new DtEnd( endingDateTime );
-        dtEnd.setTimeZone( timeZone );
+        // Same instant as before: the local date-time is read in the system zone, then
+        // rendered in the configured zone. ical4j 4 carries the zone in the temporal
+        // value itself, so DtStart/DtEnd no longer need a separate setTimeZone call.
+        ZonedDateTime beginningDateTime = toCalendarDateTime( appointment.getStartingDateTime( ), zoneId );
+        ZonedDateTime endingDateTime = toCalendarDateTime( appointment.getEndingDateTime( ), zoneId );
 
         VEvent event = new VEvent( );
-        event.getProperties( ).add( dtStart );
-        event.getProperties( ).add( dtEnd );
-        event.getProperties( ).add( new Summary( ( strSubject != null ) ? strSubject : StringUtils.EMPTY ) );
+        event = event.add( new DtStart<>( beginningDateTime ) );
+        event = event.add( new DtEnd<>( endingDateTime ) );
+        event = event.add( new Summary( ( strSubject != null ) ? strSubject : StringUtils.EMPTY ) );
 
         // Format the description that goes in the ICalendar
         String formatedIcalendarDescription = formatICalendarDescription( strBodyContent );
 
-        try
+        // ical4j 4 builds Organizer from a plain String without throwing URISyntaxException,
+        // so the try/catch that wrapped this block is gone.
         {
-            event.getProperties( ).add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment( ) ) );
+            event = event.add( new Uid( Appointment.APPOINTMENT_RESOURCE_TYPE + appointment.getIdAppointment( ) ) );
             String strEmailSeparator = AppPropertiesService.getProperty( PROPERTY_MAIL_LIST_SEPARATOR, ";" );
             if ( StringUtils.isNotEmpty( strEmailAttendee ) )
             {
                 StringTokenizer st = new StringTokenizer( strEmailAttendee, strEmailSeparator );
                 while ( st.hasMoreTokens( ) )
                 {
-                    addAttendee( event, st.nextToken( ), true );
+                    event = addAttendee( event, st.nextToken( ), true );
                 }
             }
             if ( StringUtils.isNotEmpty( strEmailOptionnal ) )
@@ -181,30 +179,43 @@ public class ICalService
                 StringTokenizer st = new StringTokenizer( strEmailOptionnal, strEmailSeparator );
                 while ( st.hasMoreTokens( ) )
                 {
-                    addAttendee( event, st.nextToken( ), false );
+                    event = addAttendee( event, st.nextToken( ), false );
                 }
             }
             Organizer organizer = new Organizer( strSenderEmail );
-            organizer.getParameters( ).add( new Cn( strSenderName ) );
-            event.getProperties( ).add( organizer );
-            event.getProperties( ).add( new Location( strLocation ) );
-            event.getProperties( ).add( new Description( formatedIcalendarDescription ) );
+            organizer = organizer.add( new Cn( strSenderName ) );
+            event = event.add( organizer );
+            event = event.add( new Location( strLocation ) );
+            event = event.add( new Description( formatedIcalendarDescription ) );
             // Add an alternative description to properly render HTML content
-            addAlternativeHtmlDescription( event, formatedIcalendarDescription );
-        }
-        catch( URISyntaxException e )
-        {
-            AppLogService.error( e.getMessage( ), e );
+            event = addAlternativeHtmlDescription( event, formatedIcalendarDescription );
         }
 
-        iCalendar.getProperties( ).add( bCreate ? Method.REQUEST : Method.CANCEL );
-        iCalendar.getProperties( ).add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
-        iCalendar.getProperties( ).add( Version.VERSION_2_0 );
-        iCalendar.getProperties( ).add( CalScale.GREGORIAN );
-        iCalendar.getComponents( ).add( event );
+        // ical4j 4 dropped the Method.REQUEST / Version.VERSION_2_0 / CalScale.GREGORIAN
+        // singletons; the properties are now built from their VALUE_* string constants.
+        iCalendar = iCalendar.add( new Method( bCreate ? Method.VALUE_REQUEST : Method.VALUE_CANCEL ) );
+        iCalendar = iCalendar.add( new ProdId( AppPropertiesService.getProperty( PROPERTY_ICAL_PRODID ) ) );
+        iCalendar = iCalendar.add( new Version( new ParameterList( ), Version.VALUE_2_0 ) );
+        iCalendar = iCalendar.add( new CalScale( CalScale.VALUE_GREGORIAN ) );
+        iCalendar = iCalendar.add( event );
 
         MailService.sendMailCalendar( strEmailAttendee, strEmailOptionnal, null, strSenderName, strSenderEmail,
                 ( strSubject != null ) ? strSubject : StringUtils.EMPTY, strBodyContent, iCalendar.toString( ), bCreate );
+    }
+
+    /**
+     * Convert an appointment date-time to the zone the calendar is rendered in. The local date-time is read in the system zone, then expressed in the target
+     * zone, so the instant is preserved and only its representation changes.
+     * 
+     * @param dateTime
+     *            The local date-time of the appointment
+     * @param zoneId
+     *            The zone the calendar is rendered in
+     * @return the same instant, expressed in the target zone
+     */
+    static ZonedDateTime toCalendarDateTime( LocalDateTime dateTime, ZoneId zoneId )
+    {
+        return dateTime.atZone( ZoneId.systemDefault( ) ).toInstant( ).atZone( zoneId );
     }
 
     /**
@@ -216,14 +227,15 @@ public class ICalService
      *            The email of the user
      * @param bRequired
      *            True if the presence of the user is mandatory, false if it is optional
+     * @return the event carrying the new attendee
      */
-    private void addAttendee( VEvent event, String strEmail, boolean bRequired )
+    private VEvent addAttendee( VEvent event, String strEmail, boolean bRequired )
     {
         Attendee attendee = new Attendee( URI.create( CONSTANT_MAILTO + strEmail ) );
-        attendee.getParameters( ).add( bRequired ? Role.REQ_PARTICIPANT : Role.OPT_PARTICIPANT );
-        attendee.getParameters( ).add( PartStat.NEEDS_ACTION );
-        attendee.getParameters( ).add( Rsvp.FALSE );
-        event.getProperties( ).add( attendee );
+        attendee = attendee.add( bRequired ? Role.REQ_PARTICIPANT : Role.OPT_PARTICIPANT );
+        attendee = attendee.add( PartStat.NEEDS_ACTION );
+        attendee = attendee.add( Rsvp.FALSE );
+        return event.add( attendee );
     }
 
     /**
@@ -276,8 +288,9 @@ public class ICalService
      *            The Calendar Event being created
      * @param description
      *            The description of the Event
+     * @return the event, carrying the alternative description when the content is HTML
      */
-    public void addAlternativeHtmlDescription( VEvent event, String description )
+    public VEvent addAlternativeHtmlDescription( VEvent event, String description )
     {
         // HTML regex pattern
         String patternHtml = "[\\S\\s]*\\<\\D+[\\S\\s]*\\>[\\S\\s]*\\<\\/\\D+[\\S\\s]*\\>[\\S\\s]*";
@@ -286,13 +299,13 @@ public class ICalService
         if ( description.matches( patternHtml ) )
         {
             // Create the alternative calendar description with the "X-ALT-DESC" property
-            ParameterList htmlParameters = new ParameterList( );
             XParameter fmtTypeParameter = new XParameter( "FMTTYPE", "text/html" );
-            htmlParameters.add( fmtTypeParameter );
+            ParameterList htmlParameters = new ParameterList( Collections.singletonList( fmtTypeParameter ) );
             XProperty htmlProp = new XProperty( "X-ALT-DESC", htmlParameters, description );
 
             // Add the alternative description to the event
-            event.getProperties( ).add( htmlProp );
+            return event.add( htmlProp );
         }
+        return event;
     }
 }

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>8.0.0</version>
+        <version>8.0.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -47,9 +47,15 @@
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
+            <!--
+              ical4j 4.x is a breaking change: net.fortuna.ical4j.model.DateTime gave way
+              to java.time, property and parameter lists became immutable with a fluent
+              add(), and the Method / Version / CalScale singletons were replaced by
+              VALUE_* string constants. ICalService was rewritten accordingly.
+            -->
             <groupId>org.mnode.ical4j</groupId>
             <artifactId>ical4j</artifactId>
-            <version>3.2.2</version>
+            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
