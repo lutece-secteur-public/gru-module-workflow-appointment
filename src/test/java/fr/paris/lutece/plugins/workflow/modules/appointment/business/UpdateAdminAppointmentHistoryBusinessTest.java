@@ -35,9 +35,12 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
+import org.junit.jupiter.api.Test;
+
 public class UpdateAdminAppointmentHistoryBusinessTest extends LuteceTestCase
 {
 
+    @Test
     public void testCRUD( )
     {
         UpdateAdminAppointmentHistory his = new UpdateAdminAppointmentHistory( );

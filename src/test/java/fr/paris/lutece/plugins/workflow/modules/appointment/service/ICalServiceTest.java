@@ -40,6 +40,8 @@ import java.util.List;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
+import org.junit.jupiter.api.Test;
+
 import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
@@ -62,6 +64,7 @@ public class ICalServiceTest extends LuteceTestCase
      * The conversion must preserve the instant and only change how it is represented. Reading the same local date-time against two zones has to yield two
      * ZonedDateTime pointing at the same moment.
      */
+    @Test
     public void testToCalendarDateTimePreservesInstant( )
     {
         LocalDateTime localDateTime = LocalDateTime.of( 2026, 3, 17, 14, 30 );
@@ -77,6 +80,7 @@ public class ICalServiceTest extends LuteceTestCase
     /**
      * The instant must be the one the local date-time designates in the system zone, which is what the 3.x code produced through epoch milliseconds.
      */
+    @Test
     public void testToCalendarDateTimeUsesSystemZoneAsSource( )
     {
         LocalDateTime localDateTime = LocalDateTime.of( 2026, 7, 1, 9, 0 );
@@ -89,6 +93,7 @@ public class ICalServiceTest extends LuteceTestCase
     /**
      * DtStart and DtEnd must carry the zone, since ical4j 4 dropped the separate setTimeZone call and reads it from the temporal value.
      */
+    @Test
     public void testEventCarriesZonedStartAndEnd( )
     {
         ZonedDateTime start = ICalService.toCalendarDateTime( LocalDateTime.of( 2026, 3, 17, 14, 30 ), ZONE_PARIS );
@@ -111,6 +116,7 @@ public class ICalServiceTest extends LuteceTestCase
     /**
      * An HTML description must add the X-ALT-DESC property, carrying FMTTYPE=text/html.
      */
+    @Test
     public void testAlternativeHtmlDescriptionAddedForHtmlContent( )
     {
         VEvent event = new VEvent( );
@@ -128,6 +134,7 @@ public class ICalServiceTest extends LuteceTestCase
     /**
      * Plain text must be left alone: no X-ALT-DESC, and the event comes back unchanged.
      */
+    @Test
     public void testAlternativeHtmlDescriptionSkippedForPlainText( )
     {
         VEvent event = new VEvent( );
@@ -140,6 +147,7 @@ public class ICalServiceTest extends LuteceTestCase
     /**
      * A description below the 75 character limit must be returned untouched.
      */
+    @Test
     public void testShortDescriptionIsNotFolded( )
     {
         String shortDescription = "Rendez-vous confirme";
@@ -150,6 +158,7 @@ public class ICalServiceTest extends LuteceTestCase
     /**
      * Beyond 75 characters the description must be folded, and no resulting line may exceed the limit.
      */
+    @Test
     public void testLongDescriptionIsFolded( )
     {
         String longDescription = "a".repeat( 200 );
