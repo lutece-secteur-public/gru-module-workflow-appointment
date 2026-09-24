@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.appointment.web;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -84,7 +86,7 @@ public class ExecuteWorkflowAction
     private static final String ERROR_MESSAGE_ACCESS_DENIED = "portal.site.message.pageAccessDenied";
 
     // Constants
-    private static final String DEFAULT_ENCRYPTION_ALGO = "SHA-256";
+    private static final String KEY_SEPARATOR = ":";
     private static final int DEFAULT_LIMIT_TIME_VALIDITY = 30;
 
     /**
@@ -152,7 +154,7 @@ public class ExecuteWorkflowAction
 
             String strComputedKey = computeAuthenticationKey( nIdAction, nIdAdminUser, lTimestamp, nIdResource );
 
-            if ( ( user == null ) || !StringUtils.equals( strComputedKey, strKey ) )
+            if ( ( user == null ) || !isSameKey( strComputedKey, strKey ) )
             {
                 SiteMessageService.setMessage( request, ERROR_MESSAGE_ACCESS_DENIED, SiteMessage.TYPE_ERROR );
 
@@ -212,12 +214,27 @@ public class ExecuteWorkflowAction
      *            The timestamp used when the link was created
      * @param nIdResource
      *            The id of the workflow resource
-     * @return The authentication key
+     * @return The HMAC-SHA256, keyed with the application crypto key, of the four values joined with a separator: each
+     *         value is signed on its own, so no other combination of values carries the same key
      */
-    private static String computeAuthenticationKey( int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource )
+    static String computeAuthenticationKey( int nIdAction, int nIdAdminUser, long nTimestamp, int nIdResource )
     {
-        String strPrivateKey = CryptoService.getCryptoKey( );
+        return CryptoService.hmacSHA256( String.join( KEY_SEPARATOR, String.valueOf( nIdAction ), String.valueOf( nIdAdminUser ),
+                String.valueOf( nTimestamp ), String.valueOf( nIdResource ) ) );
+    }
 
-        return CryptoService.encrypt( nIdAction + nIdAdminUser + nTimestamp + nIdResource + strPrivateKey, DEFAULT_ENCRYPTION_ALGO );
+    /**
+     * Compare a key received in a link with the computed one, in a time that does not depend on the first difference
+     *
+     * @param strComputedKey
+     *            The key computed from the link values
+     * @param strKey
+     *            The key the link carries
+     * @return true when both keys are equal
+     */
+    private static boolean isSameKey( String strComputedKey, String strKey )
+    {
+        return strComputedKey != null && strKey != null
+                && MessageDigest.isEqual( strComputedKey.getBytes( StandardCharsets.UTF_8 ), strKey.getBytes( StandardCharsets.UTF_8 ) );
     }
 }
