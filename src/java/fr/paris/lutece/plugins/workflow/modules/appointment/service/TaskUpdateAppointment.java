@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.workflow.modules.appointment.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Locale;
 
 import jakarta.enterprise.context.Dependent;
@@ -56,6 +57,7 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistorySer
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * TaskUpddateAppointment
@@ -72,7 +74,7 @@ public class TaskUpdateAppointment extends SimpleTask
     private static final String PARAMETER_FIRST_NAME = "firstname";
 
     // MESSAGES
-    private static final String MESSAGE_UPDATE_APPOINTMENT = "module.workflow.appointment.task_update_appointment_config.title";
+    private static final String MESSAGE_UPDATE_APPOINTMENT = "module.workflow.appointment.task_update_appointment.title";
 
     // SERVICES
     @Inject
@@ -110,7 +112,11 @@ public class TaskUpdateAppointment extends SimpleTask
             user.setPhoneNumber( appointmentDTO.getPhoneNumber( ) );
             AppointmentService.updateAppointmentDTO( appointmentDTO.getIdAppointment( ), user, appointmentDTO.getListResponse( ),
                     AdminUserService.getAdminUser( request ) != null );
-
+        }
+        else
+        {
+            AppLogService.error( "Appointment {} not updated: {}", appointmentDTO.getIdAppointment( ),
+                    listFormErrors.stream( ).map( GenericAttributeError::getErrorMessage ).collect( Collectors.joining( " | " ) ) );
         }
     }
 

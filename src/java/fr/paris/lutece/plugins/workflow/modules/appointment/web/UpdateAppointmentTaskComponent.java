@@ -110,6 +110,8 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
 
     private static final String PARAMETER_EMAIL = "email";
     private static final String PARAMETER_EMAIL_CONFIRMATION = "emailConfirm";
+    private static final String PARAMETER_LAST_NAME = "lastname";
+    private static final String PARAMETER_FIRST_NAME = "firstname";
     private static final String PARAMETER_ID_FORM = "id_form";
 
     /**
@@ -188,7 +190,10 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
         AppointmentFormDTO appointmentForm = FormService.buildAppointmentForm( Integer.parseInt( strIdForm ), 0 );
 
         String strEmail = request.getParameter( PARAMETER_EMAIL );
-        AppointmentUtilities.checkEmail( strEmail, request.getParameter( PARAMETER_EMAIL_CONFIRMATION ), appointmentForm, locale, listFormErrors );
+        String strEmailConfirm = request.getParameter( PARAMETER_EMAIL_CONFIRMATION );
+        AppointmentUtilities.checkEmail( strEmail, strEmailConfirm, appointmentForm, locale, listFormErrors );
+        AppointmentUtilities.fillAppointmentDTO( appointmentDTO, appointmentDTO.getNbBookedSeats( ), strEmail, strEmailConfirm,
+                request.getParameter( PARAMETER_FIRST_NAME ), request.getParameter( PARAMETER_LAST_NAME ) );
 
         if ( isAdminUser( request ) )
         {
