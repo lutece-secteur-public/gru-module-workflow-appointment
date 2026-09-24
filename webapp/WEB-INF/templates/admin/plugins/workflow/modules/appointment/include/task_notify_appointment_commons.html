@@ -8,44 +8,43 @@
 	<#if list_markers?exists>
 		<#list list_markers as marker>
 			<@tr>
-				<@td class='marker'>
+				<@td>
 					<#if marker.description ??>
 						<#assign description = i18n(marker.description) />
 						<#if description?has_content>${description}<#else>${marker.description!''}</#if>
 					</#if>
 				</@td>
 				<@td>
-					<@span class='copy-content marker'>${"${"+marker.marker+"!}"}</@span>
+					<@span class='copy-content marker-code'>${"${"+marker.marker+"!}"}</@span>
 				</@td>
 			</@tr>
 		</#list>
 	<#else>
 		<@tr>
-			<@td colspan=3></@td>
+			<@td colspan=2></@td>
 		</@tr>
 	</#if>
 </@table>
-<@copyElementToClipboard selector='.copy-content' class='"copy-icon"' showMsg=false />
-<style>
-	.marker:hover:hover {
-		cursor: pointer;
-		opacity: .8
-	}
-
-	.marker:nth-child(even) td {
-		background: #777;
-		color: #fff
-	}
-</style>
+<@copyElementToClipboard selector='.copy-content' />
 <script>
-	$('.marker').on( 'dblclick', function(e){
-	if( $( '.richtext' ).length > 0 ){
-		var c = '<p>' + $(this).text() + '</p>';
-		tinymce.activeEditor.insertContent( '<p>' + c + '</p>' );
-	} else {
-		var c = $(this).text().replace(/\s+/g, ' ');
-		$('textarea').val( c );
-	}
+document.addEventListener( 'DOMContentLoaded', () => {
+	let lastTextarea = null;
+	document.addEventListener( 'focusin', e => {
+		if ( e.target.matches( 'textarea' ) ) {
+			lastTextarea = e.target;
+		}
+	});
+	document.querySelectorAll( '.marker-code' ).forEach( marker => {
+		marker.addEventListener( 'dblclick', () => {
+			const text = marker.textContent.trim( );
+			if ( window.tinymce && tinymce.activeEditor ) {
+				tinymce.activeEditor.insertContent( text );
+			} else if ( lastTextarea ) {
+				lastTextarea.setRangeText( text, lastTextarea.selectionStart, lastTextarea.selectionEnd, 'end' );
+				lastTextarea.focus( );
+			}
+		});
+	});
 });
 </script>
 </#macro>

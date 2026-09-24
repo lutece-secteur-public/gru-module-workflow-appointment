@@ -1,11 +1,5 @@
-<fieldset>
-	<legend> #i18n{module.workflow.appointment.task_notify_appointment_config.title}</legend>
+<@fieldSet legend='#i18n{module.workflow.appointment.task_change_appointment_status.title}'>
 	<@formGroup labelFor='status' labelKey='#i18n{module.workflow.appointment.task_change_appointment_status_config.label_status}' helpKey='#i18n{module.workflow.appointment.task_change_appointment_status_config.label_status_comment}' mandatory=true>
-		<#if config??>
-			<#assign default_value = config.appointmentStatus?string />
-		<#else>
-			<#assign default_value = '' />
-		</#if> 
-		<@select name='status' items=refListStatus default_value=default_value />
+		<@select name='status' items=refListStatus default_value=( config.appointmentStatus?string )!'' />
 	</@formGroup>
-</fieldset>
+</@fieldSet>

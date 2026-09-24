@@ -1,12 +1,7 @@
 <#include "/admin/plugins/workflow/modules/appointment/include/task_notify_appointment_commons.html"/>
 <#include "/admin/util/editor/editor.html" />
-<@row>
-	<@columns>
-		<@div params='style="display:flex;justify-content:space-between;align-items:start;border-bottom:1px solid gainsboro;padding-bottom:5px;margin-bottom:15px"'>
-			<h4>#i18n{module.workflow.appointment.task_notify_appointment_config.title}</h4>
-		</@div>
-	</@columns>
-</@row>
+<#assign sms = !notify_admin && config?exists && config.isSms />
+<#assign ical = config?exists && config.sendICalNotif />
 <@row>
 	<@columns sm=8>
 		<#if notify_admin>
@@ -19,42 +14,42 @@
 				<@select items=list_admin_users name='id_admin_user' default_value=default_value />
 			</@formGroup>
 		<#else>
-			<@formGroup labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_sms}'>
-				<@checkBox labelFor='send_sms' name='send_sms' id='send_sms' params='onClick="javascript:doSendSmsCheck( );"' value='true' checked=config?exists&&config.isSms />
+			<@formGroup>
+				<@checkBox orientation='switch' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_sms}' name='send_sms' id='send_sms' value='true' checked=sms />
 			</@formGroup>
 		</#if>
-		<@div id="ical-block">
-			<@formGroup labelFor='send_ical_notif' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}'>
-				<@checkBox labelFor='send_ical_notif' name='send_ical_notif' id='send_ical_notif' params='onClick="javascript:$(\'#ical\').toggle();"' value='true' checked=config?exists&&config.sendICalNotif />
+		<@div id='ical-block' params=sms?then('hidden', '')>
+			<@formGroup helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}'>
+				<@checkBox orientation='switch' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}' name='send_ical_notif' id='send_ical_notif' value='true' checked=ical />
 			</@formGroup>
-			<@div id="ical">
+			<@div id='ical' params=ical?then('', 'hidden')>
 				<@formGroup helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}'>
-					<@radioButton orientation='horizontal' labelFor='create_notif' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}' name='create_notif' value='true' checked=!(config?exists) || config.createNotif />
-					<@radioButton orientation='horizontal' labelFor='create_notif' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}' name='create_notif' value='false' checked=config?exists && !(config.createNotif) />
+					<@radioButton orientation='horizontal' id='create_notif_true' labelFor='create_notif_true' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}' name='create_notif' value='true' checked=!(config?exists) || config.createNotif />
+					<@radioButton orientation='horizontal' id='create_notif_false' labelFor='create_notif_false' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}' name='create_notif' value='false' checked=config?exists && !(config.createNotif) />
 				</@formGroup>
-				<@formGroup id='location' labelFor='location' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}'>
-					<@input type='text' name='location' value='${(config.location)!}' maxlength=255 />
+				<@formGroup labelFor='location' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_location}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_location_comment}'>
+					<@input type='text' name='location' id='location' value='${(config.location)!}' maxlength=255 />
 				</@formGroup>
 			</@div>
 		</@div>
 		<@formGroup labelFor='sender_name' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name_comment}' mandatory=true>
 			<#if config?exists && config.senderName?has_content><#assign inputValue = config.senderName /><#else><#assign inputValue=default_sender_name /></#if>
-			<@input type='text' name='sender_name' id='' value=inputValue maxlength=255 />
+			<@input type='text' name='sender_name' id='sender_name' value=inputValue maxlength=255 />
 		</@formGroup>
-		<@formGroup labelFor='sender_email' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_email}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_name_comment}' mandatory=true>
+		<@formGroup labelFor='sender_email' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_email}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_sender_email_comment}' mandatory=true>
 			<#if config?exists && config.senderEmail?has_content><#assign inputValue = config.senderEmail /><#else><#assign inputValue = default_sender_name /></#if>
-			<@input type='text' name='sender_email' id='' value=inputValue maxlength=255 />
+			<@input type='text' name='sender_email' id='sender_email' value=inputValue maxlength=255 />
 		</@formGroup>
 		<@formGroup labelFor='recipients_cc' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_cc_comment}'>
-			<@input type='text' name='recipients_cc' id='' value='${(config.recipientsCc)!}' maxlength=255 />
+			<@input type='text' name='recipients_cc' id='recipients_cc' value='${(config.recipientsCc)!}' maxlength=255 />
 		</@formGroup>
 		<@formGroup labelFor='recipients_bcc' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_recipients_bcc_comment}'>
-			<@input type='text' name='recipients_bcc' id='' value='${(config.recipientsBcc)!}' maxlength=255 />
+			<@input type='text' name='recipients_bcc' id='recipients_bcc' value='${(config.recipientsBcc)!}' maxlength=255 />
 		</@formGroup>
 		<@formGroup labelFor='subject' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_subject}' mandatory=true>
-			<@input type='text' name='subject' id='' value='${(config.subject)!}' maxlength=255 />
+			<@input type='text' name='subject' id='subject' value='${(config.subject)!}' maxlength=255 />
 		</@formGroup>
-		<@formGroup labelFor='status' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_action}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_action_comment}'>
+		<@formGroup labelFor='id_action_cancel' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_action}' helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_action_comment}'>
 			<#if (config.idActionCancel)??>
 				<#assign default_value = config.idActionCancel?string>
 			<#else>
@@ -73,40 +68,30 @@
 			</@formGroup>
 		</#if>
 		<@formGroup labelFor='message' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_message}' mandatory=true>
-			<@input name='message' id='message' type='textarea' richtext=notify_admin||!config?exists||!config.isSms rows=15 cols=70>${(config.message)!}</@input>
+			<@input name='message' id='message' type='textarea' richtext=!sms rows=15>${(config.message)!}</@input>
 		</@formGroup>
 	</@columns>
 	<@columns sm=4>
 		<@marker_descriptions />
 	</@columns>
 </@row>
-<@initEditor />
-<#if !config?exists || !config.sendICalNotif>
-	<script type="text/javascript">
-		$(document).ready( function () {
-			$("#ical").toggle();
-			}); 
-	</script>
-</#if>
-<#if !notify_admin>
-	<script type="text/javascript">
-		<#if config?exists && config.isSms>
-		$(document).ready( function () {
-			$("#ical-block").toggle();
-			}); 
-		</#if>
-		
-		function doSendSmsCheck( )
-		{
-			$('#ical-block').toggle();
-			if ( $('#send_sms').is(':checked') )
-			{
-				tinymce.EditorManager.execCommand('mceRemoveEditor', true, 'message');
+<#if !sms><@initEditor /></#if>
+<script>
+document.addEventListener( 'DOMContentLoaded', () => {
+	const ical = document.getElementById( 'send_ical_notif' );
+	ical.addEventListener( 'change', () => {
+		document.getElementById( 'ical' ).hidden = !ical.checked;
+	});
+	const sms = document.getElementById( 'send_sms' );
+	if ( sms ) {
+		sms.addEventListener( 'change', () => {
+			document.getElementById( 'ical-block' ).hidden = sms.checked;
+			if ( sms.checked && window.tinymce && tinymce.get( 'message' ) ) {
+				tinymce.remove( '#message' );
+			} else if ( !sms.checked && typeof editorConfig !== 'undefined' ) {
+				tinymce.init( { ...editorConfig, selector: '#message' } );
 			}
-			else
-			{
-				tinymce.EditorManager.execCommand('mceAddEditor', true, 'message');
-			}
-		}
-	</script>
-</#if>
+		});
+	}
+});
+</script>
