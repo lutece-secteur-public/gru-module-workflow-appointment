@@ -75,7 +75,7 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     private static final String TEMPLATE_TASK_CHANGE_APPOINTMENT_STATUS_CONFIG = "admin/plugins/workflow/modules/appointment/task_change_appointment_status_config.html";
 
     // FIELDS
-    private static final String FIELD_APPOINTMENT_STATUS = "module.workflow.appointment.task_change_appointment_status.fieldAppointmentStatus";
+    private static final String FIELD_APPOINTMENT_STATUS = "module.workflow.appointment.task_change_appointment_status_config.label_status";
 
     // MESSAGES
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.appointment.message.mandatory.field";
@@ -89,7 +89,6 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     private static final String MARK_REF_LIST_STATUS = "refListStatus";
 
     // PARAMETERS
-    private static final String PARAMETER_APPLY = "apply";
     private static final String PARAMETER_APPOINTMENT_STATUS = "status";
 
     // SERVICES
@@ -125,15 +124,13 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
         String strAppointmentStatus = request.getParameter( PARAMETER_APPOINTMENT_STATUS );
-        String strApply = request.getParameter( PARAMETER_APPLY );
         String strError = StringUtils.EMPTY;
 
-        if ( StringUtils.isBlank( strApply ) && StringUtils.isBlank( strAppointmentStatus ) )
+        // The status is mandatory, whether the configuration is applied or saved
+        if ( !StringUtils.isNumeric( strAppointmentStatus ) )
         {
             strError = FIELD_APPOINTMENT_STATUS;
         }
-
-        int nAppointmentStatus = Integer.parseInt( strAppointmentStatus );
 
         if ( !strError.equals( WorkflowUtils.EMPTY_STRING ) )
         {
@@ -143,6 +140,8 @@ public class ChangeAppointmentStatusTaskComponent extends NoFormTaskComponent
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
+
+        int nAppointmentStatus = Integer.parseInt( strAppointmentStatus );
 
         TaskChangeAppointmentStatusConfig config = _taskChangeAppointmentStatusConfigService.findByPrimaryKey( task.getId( ) );
         boolean bCreate = false;
