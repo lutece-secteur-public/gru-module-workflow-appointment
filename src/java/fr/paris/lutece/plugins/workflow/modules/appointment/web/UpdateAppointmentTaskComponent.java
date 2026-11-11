@@ -66,6 +66,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -147,7 +148,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
                     EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, true, appointmentDTO );
                 }
 
-                model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
+                model.put( MARK_STR_ENTRY, HtmlMarkup.of( strBuffer.toString( ) ) );
                 template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_FO, locale, model );
                 SecurityService.getInstance( ).getRemoteUser( request );
 
@@ -166,7 +167,7 @@ public class UpdateAppointmentTaskComponent extends NoConfigTaskComponent
                 EntryService.getHtmlEntry( model, entry.getIdEntry( ), strBuffer, locale, false, appointmentDTO );
             }
 
-            model.put( MARK_STR_ENTRY, strBuffer.toString( ) );
+            model.put( MARK_STR_ENTRY, HtmlMarkup.of( strBuffer.toString( ) ) );
             template = AppTemplateService.getTemplate( TEMPLATE_TASK_FORM_BO, locale, model );
         }
 

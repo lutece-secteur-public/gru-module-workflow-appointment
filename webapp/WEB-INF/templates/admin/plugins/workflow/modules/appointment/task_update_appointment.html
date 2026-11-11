@@ -1,5 +1,5 @@
 <#if form.displayTitleFo && form.title != ""><#assign title = form.title /><#else><#assign title = '#i18n{appointment.appointmentApp.defaultTitle}' /></#if>
-<@input type='hidden' name='id_form' value='${form.idForm}' />
+<@input type='hidden' name='id_form' value='${form.idForm?c}' />
 <@input type='hidden' name='date_of_display' value='${date_of_display}' />
 <fieldset>
 	<legend>${title}</legend>
