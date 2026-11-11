@@ -9,7 +9,7 @@
 	<#return ''>
 </#function>
 <#assign title><#if form.displayTitleFo && form.title != "">${form.title}<#else>#i18n{appointment.appointmentApp.defaultTitle}</#if></#assign>
-<@cInput type='hidden' name='id_form' value='${form.idForm}' class='' />
+<@cInput type='hidden' name='id_form' value='${form.idForm?c}' class='' />
 <@cInput type='hidden' name='date_of_display' value='${date_of_display}' class='' />
 <@cFieldset legend=title>
 	<#if infos?? && infos?size gt 0><#list infos as info><@cAlert type='info' title=info.message ! /></#list></#if>

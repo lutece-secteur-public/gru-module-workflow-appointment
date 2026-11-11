@@ -18,11 +18,11 @@
 				<@checkBox orientation='switch' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_sms}' name='send_sms' id='send_sms' value='true' checked=sms />
 			</@formGroup>
 		</#if>
-		<@div id='ical-block' params=sms?then('hidden', '')>
+		<@div id='ical-block' params=sms?then({ 'hidden': true }, {})>
 			<@formGroup helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif_comment}'>
 				<@checkBox orientation='switch' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_send_ical_notif}' name='send_ical_notif' id='send_ical_notif' value='true' checked=ical />
 			</@formGroup>
-			<@div id='ical' params=ical?then('', 'hidden')>
+			<@div id='ical' params=ical?then({}, { 'hidden': true })>
 				<@formGroup helpKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create_notif_comment}'>
 					<@radioButton orientation='horizontal' id='create_notif_true' labelFor='create_notif_true' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_create}' name='create_notif' value='true' checked=!(config?exists) || config.createNotif />
 					<@radioButton orientation='horizontal' id='create_notif_false' labelFor='create_notif_false' labelKey='#i18n{module.workflow.appointment.task_notify_appointment_config.label_remove}' name='create_notif' value='false' checked=config?exists && !(config.createNotif) />

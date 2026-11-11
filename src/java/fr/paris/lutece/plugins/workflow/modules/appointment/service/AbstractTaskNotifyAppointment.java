@@ -45,6 +45,7 @@ import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.service.AppointmentResponseService;
@@ -68,6 +69,7 @@ import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
@@ -128,12 +130,16 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
             notifyAppointmentDTO.setSenderName( notifyAppointmentDTO.getSenderEmail( ) );
         }
         Map<String, Object> model = fillModel( request, notifyAppointmentDTO, appointment, locale );
-        String strSubject = AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject( ), locale, model ).getHtml( );
+        String strSubject = toPlainText( AppTemplateService.getTemplateFromStringFtl( notifyAppointmentDTO.getSubject( ), locale, model ).getHtml( ) );
         boolean bHasRecipients = ( StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsBcc( ) )
                 || StringUtils.isNotBlank( notifyAppointmentDTO.getRecipientsCc( ) ) );
         String strContent = AppTemplateService.getTemplateFromStringFtl( AppTemplateService
                 .getTemplate( notifyAppointmentDTO.getIsSms( ) ? TEMPLATE_TASK_NOTIFY_SMS : TEMPLATE_TASK_NOTIFY_MAIL, locale, model ).getHtml( ), locale,
                 model ).getHtml( );
+        if ( notifyAppointmentDTO.getIsSms( ) )
+        {
+            strContent = toPlainText( strContent );
+        }
         if ( notifyAppointmentDTO.getSendICalNotif( ) )
         {
             _iCalService.sendAppointment( strEmail, notifyAppointmentDTO.getRecipientsCc( ), strSubject, strContent, notifyAppointmentDTO.getLocation( ),
@@ -274,20 +280,43 @@ public abstract class AbstractTaskNotifyAppointment<T extends NotifyAppointmentD
     }
 
     /**
-     * Converts the specified collection of Appointment Notification markers into a <key,value> Map
+     * Converts the specified collection of Appointment Notification markers into a <key,value> Map. The message of the task
+     * (the FreeMarker template the administrator wrote, rendered afterwards) and the recap (rendered by this module) are
+     * HTML: they are given as markup, the other markers (the user's data) are escaped by the templates.
      * 
      * @param collectionMarkers
      *            The collection to convert
      * @return the Map containing the markers and their values
      */
-    private Map<String, Object> markersToModel( Collection<InfoMarker> collectionMarkers )
+    static Map<String, Object> markersToModel( Collection<InfoMarker> collectionMarkers )
     {
         Map<String, Object> model = new HashMap<>( );
 
         for ( InfoMarker marker : collectionMarkers )
         {
-            model.put( marker.getMarker( ), marker.getValue( ) );
+            if ( AppointmentWorkflowConstants.MARK_MESSAGE.equals( marker.getMarker( ) )
+                    || AppointmentWorkflowConstants.MARK_RECAP.equals( marker.getMarker( ) ) )
+            {
+                model.put( marker.getMarker( ), HtmlMarkup.of( marker.getValue( ) ) );
+            }
+            else
+            {
+                model.put( marker.getMarker( ), marker.getValue( ) );
+            }
         }
         return model;
+    }
+
+    /**
+     * Turns the rendering of a text template (a mail subject, a SMS) back into plain text: the templates are rendered with
+     * HTML auto-escaping, which writes the &lt; &gt; &amp; &quot; ' of the marker values as entities. They are decoded once.
+     * 
+     * @param strRendered
+     *            the rendered text
+     * @return the plain text
+     */
+    static String toPlainText( String strRendered )
+    {
+        return StringEscapeUtils.unescapeHtml4( strRendered );
     }
 }

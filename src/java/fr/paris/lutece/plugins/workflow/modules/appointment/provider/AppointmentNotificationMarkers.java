@@ -121,7 +121,7 @@ public class AppointmentNotificationMarkers
         collectionNotifyMarkers.add( createMarkerValues( AppointmentWorkflowConstants.MARK_REFERENCE, _appointment.getReference( ) ) );
         // Retrieve the URLs to cancel, report... an appointment
         String strUrlReport = AppointmentApp.getReportAppointmentUrl( _appointment );
-        collectionNotifyMarkers.add( createMarkerValues( AppointmentWorkflowConstants.MARK_URL_REPORT, strUrlReport.replaceAll( "&", "&amp;" ) ) );
+        collectionNotifyMarkers.add( createMarkerValues( AppointmentWorkflowConstants.MARK_URL_REPORT, strUrlReport ) );
         collectionNotifyMarkers.add( createMarkerValues( AppointmentWorkflowConstants.MARK_CANCEL_MOTIF, _notifyAppointmentDTO.getCancelMotif( ) ) );
         // Add the notification's main message body, where the markers will be replaced by their values
         collectionNotifyMarkers.add( createMarkerValues( AppointmentWorkflowConstants.MARK_MESSAGE, _notifyAppointmentDTO.getMessage( ) ) );
