@@ -46,11 +46,13 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.service.UserService;
+import fr.paris.lutece.plugins.appointment.web.AppointmentApp;
 import fr.paris.lutece.plugins.appointment.web.dto.AppointmentDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.EmailDTO;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistory;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.ManualAppointmentNotificationHistoryHome;
 import fr.paris.lutece.plugins.workflow.modules.appointment.business.NotifyAppointmentDTO;
+import fr.paris.lutece.plugins.workflow.modules.appointment.provider.AppointmentWorkflowConstants;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -169,5 +171,18 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
     public String getTitle( Locale locale )
     {
         return I18nService.getLocalizedString( MESSAGE_TASK_TITLE, locale );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Object> fillModel( HttpServletRequest request, NotifyAppointmentDTO notifyAppointmentDTO, AppointmentDTO appointment, Locale locale )
+    {
+        Map<String, Object> model = super.fillModel( request, notifyAppointmentDTO, appointment, locale );
+        // The mail is sent to the user: the marker url_cancel offered by the form is the cancel link of the user, as in the user notification
+        model.put( AppointmentWorkflowConstants.MARK_URL_CANCEL, AppointmentApp.getCancelAppointmentUrl( appointment ) );
+
+        return model;
     }
 }
