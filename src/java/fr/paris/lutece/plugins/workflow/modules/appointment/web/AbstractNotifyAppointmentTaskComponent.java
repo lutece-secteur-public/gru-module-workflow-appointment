@@ -318,14 +318,11 @@ public abstract class AbstractNotifyAppointmentTaskComponent extends NoFormTaskC
 
             String strIdAdminUser = request.getParameter( PARAMETER_ID_ADMIN_USER );
 
-            if ( StringUtils.isNotEmpty( strIdAdminUser ) && StringUtils.isNumeric( strIdAdminUser ) )
+            if ( strIdAdminUser != null )
             {
-                int nIdAdminUser = Integer.parseInt( strIdAdminUser );
-
-                if ( nIdAdminUser > 0 )
-                {
-                    configAdmin.setIdAdminUser( nIdAdminUser );
-                }
+                // The empty choice resets the admin: the admin of the appointment is then notified
+                int nIdAdminUser = StringUtils.isNumeric( strIdAdminUser ) ? Integer.parseInt( strIdAdminUser ) : 0;
+                configAdmin.setIdAdminUser( Math.max( nIdAdminUser, 0 ) );
             }
         }
         else
