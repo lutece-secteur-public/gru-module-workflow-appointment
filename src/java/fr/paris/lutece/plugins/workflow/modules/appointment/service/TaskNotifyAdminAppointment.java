@@ -165,11 +165,13 @@ public class TaskNotifyAdminAppointment extends AbstractTaskNotifyAppointment<Ta
     private void addAdminValuesToModel( HttpServletRequest request, Map<String, Object> model, TaskNotifyAdminAppointmentConfig notifyAppointmentDTO,
             AppointmentDTO appointment )
     {
+        // The links are for the admin the mail is sent to: the admin of the configuration, else the admin of the appointment
+        int nIdAdminUser = ( notifyAppointmentDTO.getIdAdminUser( ) > 0 ) ? notifyAppointmentDTO.getIdAdminUser( ) : appointment.getIdAdminUser( );
         // Add a URL to cancel the appointment through a Workflow Action
         model.put( AppointmentWorkflowConstants.MARK_URL_CANCEL, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionCancel( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
+                notifyAppointmentDTO.getIdActionCancel( ), nIdAdminUser, appointment.getIdAppointment( ) ) );
         // Add a URL to validate the appointment through a Workflow Action
         model.put( AppointmentWorkflowConstants.MARK_URL_VALIDATE, ExecuteWorkflowAction.getExecuteWorkflowActionUrl( AppPathService.getBaseUrl( request ),
-                notifyAppointmentDTO.getIdActionValidate( ), notifyAppointmentDTO.getIdAdminUser( ), appointment.getIdAppointment( ) ) );
+                notifyAppointmentDTO.getIdActionValidate( ), nIdAdminUser, appointment.getIdAppointment( ) ) );
     }
 }
