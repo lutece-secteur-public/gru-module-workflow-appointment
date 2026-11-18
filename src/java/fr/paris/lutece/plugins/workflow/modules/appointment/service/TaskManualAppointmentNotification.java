@@ -69,8 +69,8 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
     // Parameters
     private static final String PARAMETER_SENDER_NAME = "sender_name";
     private static final String PARAMETER_SENDER_EMAIL = "sender_email";
-    private static final String PARAMETER_CC = "receipient_cc";
-    private static final String PARAMETER_BCC = "receipient_bcc";
+    private static final String PARAMETER_CC = "recipients_cc";
+    private static final String PARAMETER_BCC = "recipients_bcc";
     private static final String PARAMETER_MESSAGE = "message";
     private static final String PARAMETER_SUBJECT = "subject";
     private static final String PARAMETER_SEND_ICAL_NOTIF = "send_ical_notif";
