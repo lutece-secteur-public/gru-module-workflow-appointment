@@ -72,8 +72,6 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
 
     private static final String PROPERTY_MAIL_LANG_SERVER = "workflow-appointment.server.mail.lang";
 
-    // PARAMETERS
-    private static final String ERROR_CANCEL_APPOINTMENT_MSG = "<p>Nous sommes désolés, l'annulation de votre rendez-vous ne peut être prise en compte. Vous pouvez contacter le service aux coordonnées fournies dans l'e-mail de confirmation initial</p>";
     // SERVICES
     @Inject
     private IResourceHistoryService _resourceHistoryService;
@@ -134,11 +132,6 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
         if ( !sServerMailLang.isEmpty( ) )
         {
             lEmailLocale = new Locale( sServerMailLang.split( "_" )[0], sServerMailLang.split( "_" )[1] );
-        }
-
-        if ( appointment.getIsCancelled( ) && StringUtils.isNotEmpty( config.getCancelMotif( ) ) )
-        {
-            config.setMessage( ERROR_CANCEL_APPOINTMENT_MSG );
         }
 
         if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null && config.getIdActionCancel( ) > 0 )
