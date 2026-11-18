@@ -42,6 +42,7 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.appointment.business.user.User;
 import fr.paris.lutece.plugins.appointment.service.AppointmentService;
 import fr.paris.lutece.plugins.appointment.web.AppointmentApp;
@@ -140,11 +141,16 @@ public class TaskNotifyAppointment extends AbstractTaskNotifyAppointment<TaskNot
             config.setMessage( ERROR_CANCEL_APPOINTMENT_MSG );
         }
 
-        if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null && config.getIdActionCancel( ) > 0
-                && config.getIdActionCancel( ) != appointment.getIdActionCancelled( ) )
+        if ( this.sendEmail( appointment, resourceHistory, request, lEmailLocale, config, strEmail ) != null && config.getIdActionCancel( ) > 0 )
         {
-            appointment.setIdActionCancelled( config.getIdActionCancel( ) );
-            AppointmentService.updateAppointment( appointment );
+            // The DTO does not carry the stored columns of the appointment (places, cancel and report actions, notification):
+            // update the stored appointment
+            Appointment storedAppointment = AppointmentService.findAppointmentById( appointment.getIdAppointment( ) );
+            if ( storedAppointment != null && config.getIdActionCancel( ) != storedAppointment.getIdActionCancelled( ) )
+            {
+                storedAppointment.setIdActionCancelled( config.getIdActionCancel( ) );
+                AppointmentService.updateAppointment( storedAppointment );
+            }
         }
     }
 
