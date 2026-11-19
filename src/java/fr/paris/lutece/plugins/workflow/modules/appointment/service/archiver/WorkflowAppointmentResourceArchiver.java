@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import fr.paris.lutece.plugins.appointment.business.appointment.Appointment;
 import fr.paris.lutece.plugins.workflow.modules.archive.ArchivalType;
 import fr.paris.lutece.plugins.workflow.modules.archive.IResourceArchiver;
 import fr.paris.lutece.plugins.workflow.modules.archive.service.IArchiveProcessingService;
@@ -25,6 +26,12 @@ public class WorkflowAppointmentResourceArchiver implements IResourceArchiver {
 
 	@Override
 	public void archiveResource(ArchivalType archivalType, ResourceWorkflow resourceWorkflow) {
+		// The archive task calls every archiver for each archived resource: only the appointments are handled here, the id of a
+		// resource of another type (a forms response...) would delete or anonymize the appointment that has the same id
+		if ( resourceWorkflow == null || !Appointment.APPOINTMENT_RESOURCE_TYPE.equals( resourceWorkflow.getResourceType( ) ) )
+		{
+			return;
+		}
 		switch( archivalType )
         {
         	case DELETE:
