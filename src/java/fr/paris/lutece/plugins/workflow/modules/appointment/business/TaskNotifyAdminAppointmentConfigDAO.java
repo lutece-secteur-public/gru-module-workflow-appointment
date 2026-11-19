@@ -55,6 +55,7 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_notify_admin_appointment_cf "
             + " SET id_admin_user = ?, sender_name = ?, sender_email = ?, subject = ?, message = ?, recipients_cc = ?, recipients_bcc = ?, id_action_cancel = ?, id_action_validate = ?, ical_notification = ?, create_notif = ?, location = ? WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_notify_admin_appointment_cf WHERE id_task = ? ";
+    private static final String SQL_QUERY_COUNT_BY_ID_ADMIN_USER = "SELECT COUNT(*) FROM workflow_task_notify_admin_appointment_cf WHERE id_admin_user = ? ";
 
     /**
      * {@inheritDoc}
@@ -155,6 +156,24 @@ public class TaskNotifyAdminAppointmentConfigDAO implements ITaskConfigDAO<TaskN
         {
             daoUtil.setInt( 1, nIdTask );
             daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * Counts the configurations of the task notifying a given back office user
+     *
+     * @param nIdAdminUser
+     *            the id of the back office user
+     * @return the number of task configurations notifying the user
+     */
+    public int countByIdAdminUser( int nIdAdminUser )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_BY_ID_ADMIN_USER, WorkflowAppointmentPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdAdminUser );
+            daoUtil.executeQuery( );
+
+            return daoUtil.next( ) ? daoUtil.getInt( 1 ) : 0;
         }
     }
 }
