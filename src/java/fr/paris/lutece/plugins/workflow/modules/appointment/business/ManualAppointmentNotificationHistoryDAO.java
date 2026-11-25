@@ -55,6 +55,7 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
     private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_manual_app_notify( " + "id_notif,id_history,id_appointment,email,subject,message)"
             + "VALUES (?,?,?,?,?,?)";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_manual_app_notify WHERE id_notif = ? ";
+    private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = "DELETE FROM workflow_task_manual_app_notify WHERE id_history = ? ";
     private static final String SQL_QUERY_DELETE_BY_ID_APPOINTMENT = "DELETE FROM workflow_task_manual_app_notify WHERE id_appointment = ? ";
     private static final String SQL_QUEERY_NEW_PRIMARY_KEY = "SELECT MAX(id_notif) FROM workflow_task_manual_app_notify";
 
@@ -176,6 +177,19 @@ public class ManualAppointmentNotificationHistoryDAO implements IManualAppointme
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_APPOINTMENT, plugin ) )
         {
             daoUtil.setInt( 1, nIdAppointment );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByIdHistory( int nIdHistory, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_HISTORY, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
             daoUtil.executeUpdate( );
         }
     }

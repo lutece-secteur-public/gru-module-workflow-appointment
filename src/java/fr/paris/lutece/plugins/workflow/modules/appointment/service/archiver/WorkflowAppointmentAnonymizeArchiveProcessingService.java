@@ -60,12 +60,30 @@ public class WorkflowAppointmentAnonymizeArchiveProcessingService extends Abstra
 			 IAnonymizationService anonymizationService = getAnonymizationServiceByPattern(form.getAnonymizationPattern());
 			 if (anonymizationService != null)
 			 {
-				 user.setFirstName(anonymizationService.getAnonymisedValue(form));
-				 user.setLastName(anonymizationService.getAnonymisedValue(form));
-				 user.setEmail(anonymizationService.getAnonymisedValue(form));
+				 anonymizeUser( user, form, anonymizationService );
 				 UserHome.update(user);
 			 }
 		}
+	}
+
+	/**
+	 * Replaces the personal data of the user of an appointment: names and e-mail by the anonymised value, phone number and
+	 * GUID (account of the user) removed.
+	 *
+	 * @param user
+	 *            the user
+	 * @param form
+	 *            the form of the appointment
+	 * @param anonymizationService
+	 *            the anonymisation service of the pattern of the form
+	 */
+	static void anonymizeUser( User user, Form form, IAnonymizationService anonymizationService )
+	{
+		user.setFirstName( anonymizationService.getAnonymisedValue( form ) );
+		user.setLastName( anonymizationService.getAnonymisedValue( form ) );
+		user.setEmail( anonymizationService.getAnonymisedValue( form ) );
+		user.setPhoneNumber( null );
+		user.setGuid( null );
 	}
 	
 	private IAnonymizationService getAnonymizationServiceByPattern(String pattern)

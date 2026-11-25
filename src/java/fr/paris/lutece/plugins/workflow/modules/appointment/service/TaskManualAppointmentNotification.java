@@ -185,4 +185,17 @@ public class TaskManualAppointmentNotification extends AbstractTaskNotifyAppoint
 
         return model;
     }
+
+    /**
+     * Removes the notifications sent by this task for the history (e-mail address, subject and message): also what the
+     * anonymisation of the archive does, through {@link #doAnonymizeTaskInformation(int)}.
+     *
+     * @param nIdHistory
+     *            the id of the resource history
+     */
+    @Override
+    public void doRemoveTaskInformation( int nIdHistory )
+    {
+        ManualAppointmentNotificationHistoryHome.deleteByIdHistory( nIdHistory );
+    }
 }

@@ -114,4 +114,15 @@ public final class ManualAppointmentNotificationHistoryHome
     {
         _dao.deleteByIdAppointment( nIdAppointment, _plugin );
     }
+
+    /**
+     * Remove every history associated with a given resource history
+     * 
+     * @param nIdHistory
+     *            The id of the resource history
+     */
+    public static void deleteByIdHistory( int nIdHistory )
+    {
+        _dao.deleteByIdHistory( nIdHistory, _plugin );
+    }
 }

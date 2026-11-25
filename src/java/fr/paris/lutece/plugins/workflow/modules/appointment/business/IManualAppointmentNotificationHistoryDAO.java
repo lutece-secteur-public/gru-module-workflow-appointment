@@ -93,4 +93,14 @@ public interface IManualAppointmentNotificationHistoryDAO
      *            the plugin
      */
     void deleteByIdAppointment( int nIdAppointment, Plugin plugin );
+
+    /**
+     * Remove every history associated with a given resource history
+     * 
+     * @param nIdHistory
+     *            The id of the resource history
+     * @param plugin
+     *            the plugin
+     */
+    void deleteByIdHistory( int nIdHistory, Plugin plugin );
 }
